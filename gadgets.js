@@ -11,8 +11,8 @@ const gadgetconfig = {
 
     2: {
         
-        uselimit: 34,
-         gadget
+        use_limit: 34,
+        // gadget
 
 
         }
