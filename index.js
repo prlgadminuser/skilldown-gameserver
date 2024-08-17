@@ -72,7 +72,7 @@ const wss = new WebSocket.Server({
   },
   //perMessageDeflate: true,
   proxy: true,
-  maxPayload: 104,
+  maxPayload: 1004,
   //maxPayload: 10 * 1024 * 1024 
 });
 
@@ -275,19 +275,33 @@ console.log(connectedUsernames)
         // console.log("Joined room:", result);
 
         ws.on("message", (message) => {
-         // const sanitizedMessage = sanitize(message);
-         const player = result.room.players.get(result.playerId);
-          if (result.room.players.has(result.playerId) && message.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {    
-              handleRequest(result, message);
+      
+          let jsonString = ""; 
 
+          if (Buffer.isBuffer(message)) {
 
-            
+              const binaryString = message.toString("utf-8");
+              const binaryArray = binaryString.split(" ");
+              for (const binary of binaryArray) {
+              jsonString += String.fromCharCode(parseInt(binary, 2));
+              }
+  
           } else {
-
-            console.log("Player not found in the room.");
-            player.ws.close(4004, "Unauthorized");
+              jsonString = message; // If it's already a string
           }
-        });
+      
+          try {
+              const parsedMessage = jsonString;
+      
+              // Pass the parsed JSON object directly to handleRequest
+              const player = result.room.players.get(result.playerId);
+              if (result.room.players.has(result.playerId) && jsonString.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {
+                  handleRequest(result, parsedMessage);  // Pass parsedMessage directly
+              }
+          } catch (error) {
+              console.error("Failed to parse JSON:", error.message);
+          }
+      });
 
         ws.on('close', (code, reason) => {
           const player = result.room.players.get(result.playerId);

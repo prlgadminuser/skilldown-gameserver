@@ -8,6 +8,14 @@ const gadgetconfig = {
             player.health = Math.min(player.health + Math.round(player.starthealth / 5), player.starthealth);
         },
     
+
+    2: {
+        
+        uselimit: 34,
+        // gadget
+
+
+        }
     },
 
 };
