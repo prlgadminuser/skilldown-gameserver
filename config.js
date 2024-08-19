@@ -124,6 +124,8 @@ const gunsconfig = {
   },
   2: {
     cooldown: 600,
+    maxexistingtime: 2500,
+    maxbounces: 5
     damage: 2,
     width: 5,
     height: 5,
