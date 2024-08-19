@@ -359,7 +359,7 @@ console.log(connectedUsernames)
  
 
      server.on("upgrade", (request, socket, head) => {
-      const ip = request.headers["x-forwarded-for"] || request.socket.remoteAddress;
+      const ip = request.socket["true-client-ip"] || request.socket["x-forwarded-for"] || request.socket.remoteAddress;
     
       rateLimiterConnection.consume(ip)
         .then(() => {
