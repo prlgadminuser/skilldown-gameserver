@@ -67,7 +67,7 @@ function moveBullet(room, player, bullet) {
     if (bouncesLeft > 0) {
       let collision = isCollisionWithBullet(room.walls, newX, newY, height, width)
       if (collision) {
-        adjustBulletDirection(bullet, collision, 100);
+        adjustBulletDirection(bullet, collision, 50);
         bullet.bouncesLeft -= 1;
         bullet.x = newX; // Update bullet position after bouncing
         bullet.y = newY;
