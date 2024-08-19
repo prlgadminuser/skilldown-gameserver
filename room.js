@@ -215,7 +215,7 @@ function cleanupRoom(roomId) {
 
 const playersWithOpenConnections = room.players.filter(player => player.ws && player.ws.readyState === WebSocket.OPEN);
   // Close the room if it has no players
-  if (room.players.size < 1 || playersWithOpenConnections.length < 1) {
+  if (room.players.size < 1 || playersWithOpenConnections.length < 1 || !room.players || room.players.size === 0) {
     closeRoom(roomId);
   }
 }
