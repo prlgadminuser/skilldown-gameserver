@@ -77,13 +77,25 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
     }
   }
 
-  // Calculate the reflection angle based on the incoming angle and the wall's normal angle
+  // Convert angles to radians
   const incomingAngle = bullet.direction * (Math.PI / 180);
   const normalAngleRadians = normalAngle * (Math.PI / 180);
-  const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
-  const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
-  bullet.direction = Math.round(reflectionAngleDegrees % 360);
 
+  // Calculate the reflection angle in radians
+  const reflectionAngleRadians = 2 * normalAngleRadians - incomingAngle;
+
+  // Convert the reflection angle back to degrees
+  let reflectionAngleDegrees = (reflectionAngleRadians * 180) / Math.PI;
+
+  // Normalize the reflection angle to the range -180 to 180
+  if (reflectionAngleDegrees > 180) {
+    reflectionAngleDegrees -= 360;
+  } else if (reflectionAngleDegrees < -180) {
+    reflectionAngleDegrees += 360;
+  }
+
+  // Update bullet direction to the normalized reflection angle
+  bullet.direction = reflectionAngleDegrees;
 }
 
 
