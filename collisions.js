@@ -3,7 +3,7 @@
 const wallblocksize = 50
 function isCollisionWithWalls(walls, x, y) {
   
-  const threshold = 100;
+  const threshold = 10;
   let collisionDetected = false;
   const nearbyWalls = walls.filter((wall) => {
   
@@ -47,7 +47,7 @@ function isCollisionWithWalls(walls, x, y) {
 
 function isCollisionWithBullet(walls, x, y, height, width) {
 
-  const threshold = 60;
+  const threshold = 1;
   let collisionDetected = false;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
@@ -84,13 +84,15 @@ function isCollisionWithBullet(walls, x, y, height, width) {
       y + halfHeight > wallTop
     ) {
       collisionDetected = true;
-     
-      break; 
+      return (
+        x - halfWidth < wallRight &&
+        x + halfWidth > wallLeft &&
+        y - halfHeight < wallBottom &&
+        y + halfHeight > wallTop);
     }
   }
-
-   return collisionDetected;
 }
+
 
 
 function adjustBulletDirection(bullet, wall, wallblocksize) {
@@ -111,8 +113,9 @@ function adjustBulletDirection(bullet, wall, wallblocksize) {
   const normalAngleRadians = normalAngle * (Math.PI / 180);
   const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
   const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
-  bullet.direction = reflectionAngleDegrees % 360;
+  bullet.direction = Math.round(reflectionAngleDegrees % 360);
 }
+
 
 module.exports = {
   isCollisionWithWalls,
