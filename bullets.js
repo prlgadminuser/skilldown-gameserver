@@ -1,10 +1,10 @@
 "use strict";
 
-const { isCollisionWithBullet } = require('./collisions');
+const { isCollisionWithBullet, adjustBulletDirection } = require('./collisions');
 const { handlePlayerCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
-const BULLET_MOVE_INTERVAL = server_tick_rate; // milliseconds
+const BULLET_MOVE_INTERVAL = 50; // milliseconds
 
 // Helper functions
 const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -34,16 +34,24 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 function moveBullet(room, player, bullet) {
   if (!bullet) return;
 
-  const { speed, direction, distance, timestamp, height, width } = bullet;
+  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime } = bullet;
+
   const radians = toRadians(direction - 90); // Adjust direction to radians
   const xDelta = speed * Math.cos(radians);
   const yDelta = speed * Math.sin(radians);
 
   const newX = Math.round(bullet.x + xDelta);
   const newY = Math.round(bullet.y + yDelta);
-  const distanceTraveled = calculateDistance(bullet.startX, bullet.startY, newX, newY);
+  
+  const timenow = Date.now();
+//console.log(t1, bullet.maxtime);
 
-  if (!isCollisionWithBullet(room.walls, newX, newY, height, width) && distanceTraveled <= distance) {
+  if (timenow > maxtime) {
+    player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
+    return;
+  }
+  const collisionwithwall = isCollisionWithBullet(room.walls, newX, newY, height, width)
+  if (!collisionwithwall) {
     bullet.x = newX;
     bullet.y = newY;
 
@@ -56,7 +64,18 @@ function moveBullet(room, player, bullet) {
       }
     }
   } else {
-    player.bullets.delete(timestamp);
+    // Check if the bullet can bounce
+    if (bouncesLeft > 0) {
+      if (collisionwithwall) {
+        adjustBulletDirection(bullet, collisionwithwall, 50);
+        bullet.bouncesLeft -= 1;
+        bullet.x = newX; // Update bullet position after bouncing
+        bullet.y = newY;
+      }
+    } else {
+      player.bullets.delete(timestamp); // Remove the bullet if no bounces are left
+      return;
+    }
   }
 }
 
@@ -72,7 +91,7 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 
 // Shoot Bullet
 async function shootBullet(room, player, bulletdata) {
-  const { angle, offset, damage, distance, speed, height, width } = bulletdata;
+  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime } = bulletdata;
   const radians = toRadians(angle);
   const xOffset = offset * Math.cos(radians);
   const yOffset = offset * Math.sin(radians);
@@ -86,10 +105,11 @@ async function shootBullet(room, player, bulletdata) {
     direction: angle,
     timestamp,
     damage,
-    distance,
     speed,
     height,
     width,
+    bouncesLeft, // Initialize with the number of bounces allowed
+    maxtime,
   };
 
   player.bullets.set(timestamp, bullet);
@@ -118,19 +138,20 @@ async function handleBulletFired(room, player, gunType) {
   const definedAngle = gun.useplayerangle ? player.shoot_direction : 0;
 
   for (const bullet of gun.bullets) {
-    
     const bulletdata = {
-      speed: bullet.speed / 2,
-      distance: bullet.distance,
+      speed: bullet.speed * 2,
       delay: bullet.delay,
       offset: bullet.offset,
       damage: gun.damage,
       angle: gun.useplayerangle ? bullet.angle + definedAngle : bullet.angle,
       height: gun.height,
       width: gun.width,
+      bouncesLeft: gun.maxbounces || 0, // Set initial bounces
+      maxtime: Date.now() + gun.maxexistingtime,
+     
     };
 
-   shootBulletsWithDelay(room, player, bulletdata);
+    shootBulletsWithDelay(room, player, bulletdata);
   }
 
   setTimeout(() => {
