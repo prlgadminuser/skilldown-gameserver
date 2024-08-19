@@ -22,6 +22,10 @@ function createRateLimiter() {
 }
 
 
+      let roomId;
+      let room;
+
+
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
@@ -57,9 +61,6 @@ function closeRoom(roomId) {
 
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
-
-      let roomId;
-      let room;
 
       const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget } = playerVerified;
 
