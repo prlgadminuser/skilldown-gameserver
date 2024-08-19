@@ -600,12 +600,14 @@ function handleRequest(result, message) {
 				}
 			}
 			if (data.type === "pong") {
-				const timestamp = new Date().getTime();
-				if (player.lastping && (timestamp - player.lastping < 2000)) {
-					player.ping = timestamp - player.lastping;
-				} else {
+
+				clearTimeout(player.timeout); 
+			      //    const timestamp = new Date().getTime();
+				//if (player.lastping && (timestamp - player.lastping < 2000)) {
+				//	player.ping = timestamp - player.lastping;
+				//} else {
 	
-				}
+				//}
 			}
 
 			if (data.type === "switch_gun") {
