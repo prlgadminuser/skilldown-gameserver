@@ -492,22 +492,6 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
 console.log("room created:", roomId)
 
 
-
-room.matchmaketimeout = setTimeout(() => {
-
-  
-  room.players.forEach((player) => {
-
-    clearInterval(player.moveInterval)
-    clearTimeout(player.timeout)
-  
-      if (room.eliminatedPlayers) {
-        player.ws.close(4100, "matchmaking_timeout");
-      }
-    });
-  closeRoom(roomId);
-}, matchmaking_timeout);
-
   // Start sending batched messages at regular intervals
   room.intervalId = setInterval(() => {
     
