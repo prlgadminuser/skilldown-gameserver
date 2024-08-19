@@ -207,14 +207,6 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         }, 1000);
       }
 
-
-	const playerTimeout = setTimeout(() => {
-        player.ws.close(4100, "matchmaking_timeout");
-      }, matchmaking_timeout);
-
-      // Assign the timeout ID to the player
-      room.players.get(playerId).timeout = playerTimeout;
-
       return { roomId, playerId, room };
     
   } catch (error) {
