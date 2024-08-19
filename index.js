@@ -50,7 +50,13 @@ let connectedUsernames = [];
 
 const rateLimiterConnection = new RateLimiterMemory(ConnectionOptionsRateLimit);
 
-const server = http.createServer();
+const server = http.createServer() {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'interest-cohort=()');
+  });
+
 
 const wss = new WebSocket.Server({
   noServer: true,
