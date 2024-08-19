@@ -51,6 +51,8 @@ function handleMovement(result, player) {
   player.x = Math.max(-WORLD_WIDTH, Math.min(WORLD_WIDTH, player.x));
   player.y = Math.max(-WORLD_HEIGHT, Math.min(WORLD_HEIGHT, player.y));
 
+	 }
+
 
  /* const collectedCoins = [];
   if (result.room.coins) {
