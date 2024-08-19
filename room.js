@@ -59,6 +59,26 @@ function closeRoom(roomId) {
   }
 }
 
+function playerLeave(roomId, playerId) {
+    const room = rooms.get(roomId);
+    if (room) {
+        const player = room.players.get(playerId);
+        if (player) {
+            clearTimeout(player.timeout);
+            clearInterval(player.moveInterval);
+
+            // Remove the player from the room
+            room.players.delete(playerId);
+
+            // If no players left in the room, close the room
+            if (room.players.size === 0) {
+                closeRoom(roomId);
+            }
+        }
+    }
+}
+
+
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
 
