@@ -107,16 +107,16 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
   // Determine the side of the wall the bullet is hitting
   if (Math.abs(deltaX) > Math.abs(deltaY)) {
     // The bullet is closer to the left or right of the wall
-    if (deltaX < 0) {
+    if (deltaX < -halfBlockSize) {
       normalAngle = 180; // Left side
-    } else {
+    } else if (deltaX > halfBlockSize) {
       normalAngle = 0;   // Right side
     }
   } else {
     // The bullet is closer to the top or bottom of the wall
-    if (deltaY < 0) {
+    if (deltaY < -halfBlockSize) {
       normalAngle = 90;  // Top side
-    } else {
+    } else if (deltaY > halfBlockSize) {
       normalAngle = 270; // Bottom side
     }
   }
@@ -131,9 +131,10 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
 
   // Move the bullet slightly out of the wall to prevent sticking
   const correctionDistance = 1; // Small correction value
-  bullet.x += correctionDistance * Math.cos(reflectionAngle);
-  bullet.y += correctionDistance * Math.sin(reflectionAngle);
+  bullet.x += correctionDistance * Math.cos(reflectionAngleRadians);
+  bullet.y += correctionDistance * Math.sin(reflectionAngleRadians);
 }
+
 
 
 
