@@ -96,25 +96,27 @@ function isCollisionWithBullet(walls, x, y, height, width) {
 
 
 function adjustBulletDirection(bullet, wall, wallBlockSize) {
-  let normalAngle = 0;
   const halfBlockSize = wallBlockSize / 2;
-
-  // Determine the collision side (left, right, top, bottom) based on bullet's position
+  
+  // Calculate differences between bullet and wall center
   const deltaX = bullet.x - wall.x;
   const deltaY = bullet.y - wall.y;
 
+  let normalAngle;
+
+  // Determine the side of the wall the bullet is hitting
   if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    // Bullet is more to the left or right of the wall
-    if (deltaX < -halfBlockSize) {
+    // The bullet is closer to the left or right of the wall
+    if (deltaX < 0) {
       normalAngle = 180; // Left side
-    } else if (deltaX > halfBlockSize) {
-      normalAngle = 0; // Right side
+    } else {
+      normalAngle = 0;   // Right side
     }
   } else {
-    // Bullet is more above or below the wall
-    if (deltaY < -halfBlockSize) {
-      normalAngle = 90; // Top side
-    } else if (deltaY > halfBlockSize) {
+    // The bullet is closer to the top or bottom of the wall
+    if (deltaY < 0) {
+      normalAngle = 90;  // Top side
+    } else {
       normalAngle = 270; // Bottom side
     }
   }
@@ -124,10 +126,11 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const normalAngleRadians = normalAngle * (Math.PI / 180);
   const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
   const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
+
   bullet.direction = Math.round(reflectionAngleDegrees % 360);
 
-  // Correct the bullet's position slightly away from the wall to prevent it from getting stuck
-  const correctionDistance = 1; // Small correction value to push the bullet out of the wall
+  // Move the bullet slightly out of the wall to prevent sticking
+  const correctionDistance = 1; // Small correction value
   bullet.x += correctionDistance * Math.cos(reflectionAngle);
   bullet.y += correctionDistance * Math.sin(reflectionAngle);
 }
