@@ -129,7 +129,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         player_color: player_color,
         hat_color: hat_color,
         top_color: top_color,
-        timeout: null,
+        timeout: setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
         health: gamemodeconfig[gamemode].playerhealth,
         starthealth: gamemodeconfig[gamemode].playerhealth,
         damage: 0,
@@ -206,6 +206,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
          // generateRandomCoins(room);
         }, 1000);
       }
+
 
       return { roomId, playerId, room };
     
