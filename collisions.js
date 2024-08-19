@@ -94,29 +94,35 @@ function isCollisionWithBullet(walls, x, y, height, width) {
 }
 
 
+function adjustBulletDirection(bullet, wall) {
+  // Wall boundaries
+  const wallLeft = wall.x - wall.width / 2;
+  const wallRight = wall.x + wall.width / 2;
+  const wallTop = wall.y - wall.height / 2;
+  const wallBottom = wall.y + wall.height / 2;
 
-function adjustBulletDirection(bullet, wall, wallBlockSize) {
-  let normalAngle = 0;
-  const halfBlockSize = wallBlockSize / 2;
+  // Bullet center position
+  const bulletCenterX = bullet.x;
+  const bulletCenterY = bullet.y;
 
-  // Determine the collision side (left, right, top, bottom) based on bullet's position
-  const deltaX = bullet.x - wall.x;
-  const deltaY = bullet.y - wall.y;
+  // Determine the closest wall side
+  let normalAngle;
 
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    // Bullet is more to the left or right of the wall
-    if (deltaX < -halfBlockSize) {
-      normalAngle = 180; // Left side
-    } else if (deltaX > halfBlockSize) {
-      normalAngle = 0; // Right side
-    }
-  } else {
-    // Bullet is more above or below the wall
-    if (deltaY < -halfBlockSize) {
-      normalAngle = 90; // Top side
-    } else if (deltaY > halfBlockSize) {
-      normalAngle = 270; // Bottom side
-    }
+  const distanceLeft = Math.abs(bulletCenterX - wallLeft);
+  const distanceRight = Math.abs(bulletCenterX - wallRight);
+  const distanceTop = Math.abs(bulletCenterY - wallTop);
+  const distanceBottom = Math.abs(bulletCenterY - wallBottom);
+
+  const minDistance = Math.min(distanceLeft, distanceRight, distanceTop, distanceBottom);
+
+  if (minDistance === distanceLeft) {
+    normalAngle = 180; // Left side
+  } else if (minDistance === distanceRight) {
+    normalAngle = 0; // Right side
+  } else if (minDistance === distanceTop) {
+    normalAngle = 90; // Top side
+  } else if (minDistance === distanceBottom) {
+    normalAngle = 270; // Bottom side
   }
 
   // Calculate reflection angle
@@ -124,7 +130,7 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const normalAngleRadians = normalAngle * (Math.PI / 180);
   const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
   const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
-  
+
   // Round and update bullet's direction
   bullet.direction = Math.round(reflectionAngleDegrees % 360);
 
@@ -136,6 +142,7 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
   bullet.x += correctionDistance * Math.cos(reflectionAngleRadians);
   bullet.y += correctionDistance * Math.sin(reflectionAngleRadians);
 }
+
 
 
 
