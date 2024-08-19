@@ -1,7 +1,5 @@
 "use strict";
 
-const { Collection } = require("mongodb");
-
 const wallblocksize = 50
 function isCollisionWithWalls(walls, x, y) {
   
