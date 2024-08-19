@@ -50,8 +50,7 @@ function moveBullet(room, player, bullet) {
     player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
     return;
   }
-  const collisionwithwall = isCollisionWithBullet(room.walls, newX, newY, height, width)
-  if (!collisionwithwall) {
+  if (!isCollisionWithBullet(room.walls, newX, newY, height, width)) {
     bullet.x = newX;
     bullet.y = newY;
 
@@ -66,7 +65,8 @@ function moveBullet(room, player, bullet) {
   } else {
     // Check if the bullet can bounce
     if (bouncesLeft > 0) {
-      if (collisionwithwall) {
+      let collision = isCollisionWithBullet(room.walls, newX, newY, height, width)
+      if (collision) {
         adjustBulletDirection(bullet, collisionwithwall, 50);
         bullet.bouncesLeft -= 1;
         bullet.x = newX; // Update bullet position after bouncing
