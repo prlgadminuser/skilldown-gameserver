@@ -180,6 +180,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       if (room.state === "waiting" && room.players.size > room.maxplayers - 1) {
         room.state = "await";
+        clearTimeout(room.matchmaketimeout);
         room.fixtimeout = setTimeout(() => {
           
       
@@ -498,6 +499,21 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   
   rooms.set(roomId, room);
 console.log("room created:", roomId)
+
+	room.matchmaketimeout = setTimeout(() => {
+
+  
+  room.players.forEach((player) => {
+
+    clearInterval(player.moveInterval)
+    clearTimeout(player.timeout)
+  
+      if (room.eliminatedPlayers) {
+        player.ws.close(4100, "matchmaking_timeout");
+      }
+    });
+  closeRoom(roomId);
+}, matchmaking_timeout);
 
 
   // Start sending batched messages at regular intervals
