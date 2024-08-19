@@ -54,7 +54,7 @@ const server = http.createServer();
 
 const wss = new WebSocket.Server({
   noServer: true,
- // clientTracking: true, 
+  clientTracking: true, 
   perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,
