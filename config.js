@@ -58,7 +58,7 @@ const gamemodeconfig = {
     respawns_allowed: 4,
     playerhealth: 77,
     zonespeed: 13.4,
-    usezone: true,
+    //usezone: true,
     health_restore: true,
   //  health_autodamage: true,
   },

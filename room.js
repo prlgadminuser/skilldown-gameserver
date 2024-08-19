@@ -29,6 +29,7 @@ function createRateLimiter() {
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
+    clearTimeout(room.matchmaketimeout);
     clearTimeout(room.fixtimeout);
     clearTimeout(room.fixtimeout2);
     clearTimeout(room.fixtimeout3);
@@ -200,21 +201,11 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
             startDecreasingHealth(room, 1)
             }
            
-          }, 5000);
+          }, game_start_time);
          // generateRandomCoins(room);
-        }, game_start_time);
+        }, 1000);
       }
    
-    
-
-      // Set timeout to disconnect player after 5 minutes of inactivity
-      const playerTimeout = setTimeout(() => {
-        player.ws.close(4100, "matchmaking_timeout");
-      }, matchmaking_timeout);
-
-      // Assign the timeout ID to the player
-      room.players.get(playerId).timeout = playerTimeout;
-
       return { roomId, playerId, room };
     
   } catch (error) {
@@ -500,6 +491,22 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   rooms.set(roomId, room);
 console.log("room created:", roomId)
 
+
+
+room.matchmaketimeout = setTimeout(() => {
+
+  
+  room.players.forEach((player) => {
+
+    clearInterval(player.moveInterval)
+    clearTimeout(player.timeout)
+  
+      if (room.eliminatedPlayers) {
+        player.ws.close(4100, "matchmaking_timeout");
+      }
+    });
+  closeRoom(roomId);
+}, matchmaking_timeout);
 
   // Start sending batched messages at regular intervals
   room.intervalId = setInterval(() => {

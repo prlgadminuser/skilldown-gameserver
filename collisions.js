@@ -1,5 +1,7 @@
 "use strict";
 
+const { Collection } = require("mongodb");
+
 const wallblocksize = 50
 function isCollisionWithWalls(walls, x, y) {
   
@@ -84,66 +86,47 @@ function isCollisionWithBullet(walls, x, y, height, width) {
       y + halfHeight > wallTop
     ) {
       collisionDetected = true;
-      return (
-        x - halfWidth < wallRight &&
-        x + halfWidth > wallLeft &&
-        y - halfHeight < wallBottom &&
-        y + halfHeight > wallTop);
+      return collisionDetected;
+
     }
   }
 }
-
-
 function adjustBulletDirection(bullet, wall, wallblocksize) {
-  // Wall boundaries
-  const wallLeft = wall.x - wallblocksize / 2;
-  const wallRight = wall.x + wallblocksize / 2;
-  const wallTop = wall.y - wallblocksize / 2;
-  const wallBottom = wall.y + wallblocksize / 2;
+  const halfBlockSize = wallblocksize / 2;
 
-  // Bullet center position
-  const bulletCenterX = bullet.x;
-  const bulletCenterY = bullet.y;
-
-  // Determine the closest wall side
-  let normalAngle;
-
-  const distanceLeft = Math.abs(bulletCenterX - wallLeft);
-  const distanceRight = Math.abs(bulletCenterX - wallRight);
-  const distanceTop = Math.abs(bulletCenterY - wallTop);
-  const distanceBottom = Math.abs(bulletCenterY - wallBottom);
-
-  const minDistance = Math.min(distanceLeft, distanceRight, distanceTop, distanceBottom);
-
-  if (minDistance === distanceLeft) {
-    normalAngle = 180; // Left side
-  } else if (minDistance === distanceRight) {
-    normalAngle = 0; // Right side
-  } else if (minDistance === distanceTop) {
-    normalAngle = 90; // Top side
-  } else if (minDistance === distanceBottom) {
-    normalAngle = 270; // Bottom side
-  }
-
-  // Calculate reflection angle
-  const incomingAngle = bullet.direction * (Math.PI / 180);
-  const normalAngleRadians = normalAngle * (Math.PI / 180);
-  const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
-  const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
-
-  // Round and update bullet's direction
-  bullet.direction = Math.round(reflectionAngleDegrees % 360);
-
-  // Convert reflection angle back to radians for position correction
-  const reflectionAngleRadians = reflectionAngleDegrees * (Math.PI / 180);
-
-  // Correct the bullet's position slightly away from the wall to prevent it from getting stuck
-  const correctionDistance = 1; // Small correction value to push the bullet out of the wall
-  bullet.x += correctionDistance * Math.cos(reflectionAngleRadians);
-  bullet.y += correctionDistance * Math.sin(reflectionAngleRadians);
+  // Determine the wall normal angle based on the bullet's position
+  let normalAngle = 0;
+  if (bullet.x < wall.x - halfBlockSize) {
+    normalAngle = 180; // Wall is to the left of the bullet
+  } else if (bullet.x > wall.x + halfBlockSize) {
+    normalAngle = 0;   // Wall is to the right of the bullet
+  } else if (bullet.y < wall.y - halfBlockSize) {
+    normalAngle = 90;  // Wall is below the bullet
+  } else if (bullet.y > wall.y + halfBlockSize) {
+    normalAngle = 270; // Wall is above the bullet
+} else {
+  // Bullet is within the wall block area or on its edge; no reflection needed
+  return;
 }
 
 
+  // Convert angles to radians
+  const incomingAngleRad = bullet.direction * (Math.PI / 180);
+  const normalAngleRad = normalAngle * (Math.PI / 180);
+
+  // Calculate the reflection angle in radians
+  const reflectionAngleRad = 2 * normalAngleRad - incomingAngleRad;
+
+  // Convert the reflection angle back to degrees
+  let reflectionAngleDeg = (reflectionAngleRad * 180) / Math.PI;
+
+  // Normalize the reflection angle to be within -180 to 180 degrees
+  reflectionAngleDeg = ((reflectionAngleDeg + 180) % 360 + 360) % 360 - 180;
+
+  // Update bullet direction
+  bullet.direction = reflectionAngleDeg;
+  console.log(reflectionAngleDeg)
+}
 
 
 

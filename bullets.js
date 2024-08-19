@@ -42,6 +42,7 @@ function moveBullet(room, player, bullet) {
 
   const newX = Math.round(bullet.x + xDelta);
   const newY = Math.round(bullet.y + yDelta);
+  const distanceTraveled = calculateDistance(bullet.startX, bullet.startY, newX, newY);
   
   const timenow = Date.now();
 //console.log(t1, bullet.maxtime);
@@ -49,7 +50,11 @@ function moveBullet(room, player, bullet) {
   if (timenow > maxtime) {
     player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
     return;
+
   }
+
+  
+ 
   if (!isCollisionWithBullet(room.walls, newX, newY, height, width)) {
     bullet.x = newX;
     bullet.y = newY;
@@ -65,18 +70,35 @@ function moveBullet(room, player, bullet) {
   } else {
     // Check if the bullet can bounce
     if (bouncesLeft > 0) {
-      const collision = isCollisionWithBullet(room.walls, newX, newY, height, width)
-      if (collision) {
-        adjustBulletDirection(bullet, collision, 50);
-        bullet.bouncesLeft -= 1;
-        bullet.x = newX; // Update bullet position after bouncing
-        bullet.y = newY;
+      const collidedWall = findCollidedWall(room.walls, newX, newY, height, width); // Find the wall the bullet collided with
+      if (collidedWall) {
+        adjustBulletDirection(bullet, collidedWall, 50);
+        bullet.bouncesLeft = bouncesLeft - 1; // Decrease bouncesLeft
       }
     } else {
       player.bullets.delete(timestamp); // Remove the bullet if no bounces are left
       return;
     }
   }
+}
+
+function findCollidedWall(walls, x, y, height, width) {
+  return walls.find((wall) => {
+    const halfWidth = 50 / 2;
+    const halfHeight = 50 / 2;
+
+    const wallLeft = wall.x - halfWidth;
+    const wallRight = wall.x + halfWidth;
+    const wallTop = wall.y - halfHeight;
+    const wallBottom = wall.y + halfHeight;
+
+    return (
+      x - width / 2 < wallRight &&
+      x + width / 2 > wallLeft &&
+      y - height / 2 < wallBottom &&
+      y + height / 2 > wallTop
+    );
+  });
 }
 
 // Bullet Shooting with Delay
