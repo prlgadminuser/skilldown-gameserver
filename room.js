@@ -154,6 +154,11 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       room.players.set(playerId, newPlayer);
 
+ if (ws.readyState === ws.CLOSED) {
+    playerLeave(roomId, playerId);
+    return;
+}
+
     }
 
       if (room.state === "waiting" && room.players.size > room.maxplayers - 1) {
