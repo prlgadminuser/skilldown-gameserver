@@ -121,4 +121,5 @@ module.exports = {
   isCollisionWithWalls,
   isCollisionWithBullet,
   wallblocksize,
+  adjustBulletDirection,
 };
