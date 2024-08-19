@@ -82,21 +82,17 @@ function playerLeave(roomId, playerId) {
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
 
-      const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget } = playerVerified;
+      const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints } = playerVerified;
 
      const gadgetselected = selected_gadget || 1;
-  
-     const { skillpoints } = playerVerified;
+     const finalskillpoints = skillpoints || 0;
 
-     const targetValue = skillpoints;
-
-     const roomjoiningvalue = matchmakingsp(targetValue);
+     const roomjoiningvalue = matchmakingsp(finalskillpoints);
       // Check if there's an existing room with available slots
       const availableRoom = Array.from(rooms.values()).find(
         (currentRoom) =>
           currentRoom.players.size < gamemodeconfig[gamemode].maxplayers &&
-          currentRoom.state !== "playing" &&
-          currentRoom.state !== "countdown" &&
+          currentRoom.state === "waiting" &&
           currentRoom.gamemode === gamemode && currentRoom.sp_level === roomjoiningvalue
       );
 
