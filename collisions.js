@@ -95,26 +95,43 @@ function isCollisionWithBullet(walls, x, y, height, width) {
 
 
 
-function adjustBulletDirection(bullet, wall, wallblocksize) {
+function adjustBulletDirection(bullet, wall, wallBlockSize) {
   let normalAngle = 0;
-  const halfBlockSize = wallblocksize / 2;
+  const halfBlockSize = wallBlockSize / 2;
 
-  if (bullet.x < wall.x - halfBlockSize) {
-    normalAngle = 180;
-  } else if (bullet.x > wall.x + halfBlockSize) {
-    normalAngle = 0;
-  } else if (bullet.y < wall.y - halfBlockSize) {
-    normalAngle = 90;
-  } else if (bullet.y > wall.y + halfBlockSize) {
-    normalAngle = 270;
+  // Determine the collision side (left, right, top, bottom) based on bullet's position
+  const deltaX = bullet.x - wall.x;
+  const deltaY = bullet.y - wall.y;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // Bullet is more to the left or right of the wall
+    if (deltaX < -halfBlockSize) {
+      normalAngle = 180; // Left side
+    } else if (deltaX > halfBlockSize) {
+      normalAngle = 0; // Right side
+    }
+  } else {
+    // Bullet is more above or below the wall
+    if (deltaY < -halfBlockSize) {
+      normalAngle = 90; // Top side
+    } else if (deltaY > halfBlockSize) {
+      normalAngle = 270; // Bottom side
+    }
   }
 
+  // Calculate reflection angle
   const incomingAngle = bullet.direction * (Math.PI / 180);
   const normalAngleRadians = normalAngle * (Math.PI / 180);
   const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
   const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
   bullet.direction = Math.round(reflectionAngleDegrees % 360);
+
+  // Correct the bullet's position slightly away from the wall to prevent it from getting stuck
+  const correctionDistance = 1; // Small correction value to push the bullet out of the wall
+  bullet.x += correctionDistance * Math.cos(reflectionAngle);
+  bullet.y += correctionDistance * Math.sin(reflectionAngle);
 }
+
 
 
 module.exports = {
