@@ -47,7 +47,7 @@ function isCollisionWithWalls(walls, x, y) {
 
 function isCollisionWithBullet(walls, x, y, height, width) {
 
-  const threshold = 60;
+  const threshold = 1;
   let collisionDetected = false;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
