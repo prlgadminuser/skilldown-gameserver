@@ -1,94 +1,56 @@
 "use strict";
 
 const wallblocksize = 50
+
+
 function isCollisionWithWalls(walls, x, y) {
+  const halfBlockSize = wallblocksize / 2;
   
-  const threshold = 10;
-  let collisionDetected = false;
-  const nearbyWalls = walls.filter((wall) => {
-  
-    const closestX = Math.max(
-      wall.x - wallblocksize,
-      Math.min(x, wall.x + wallblocksize),
-    );
-    const closestY = Math.max(
-      wall.y - wallblocksize,
-      Math.min(y, wall.y + wallblocksize),
-    );
-    const distanceX = x - closestX;
-    const distanceY = y - closestY;
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+  for (const wall of walls) {
+      const wallLeft = wall.x - halfBlockSize;
+      const wallRight = wall.x + halfBlockSize;
+      const wallTop = wall.y - halfBlockSize;
+      const wallBottom = wall.y + halfBlockSize;
 
-    return distance < threshold;
-  });
-
-  
-  for (const wall of nearbyWalls) {
-    
-    const wallLeft = wall.x - wallblocksize / 2;
-    const wallRight = wall.x + wallblocksize / 2;
-    const wallTop = wall.y - wallblocksize / 2;
-    const wallBottom = wall.y + wallblocksize / 2;
-
-    if (
-      x + 20 > wallLeft &&
-      x - 20 < wallRight &&
-      y + 45 > wallTop &&
-      y - 45 < wallBottom
-    ) {
-      collisionDetected = true; 
-      break; 
-     
-    }
+      if (
+          x >= wallLeft &&
+          x <= wallRight &&
+          y >= wallTop &&
+          y <= wallBottom
+      ) {
+          return true;  // Collision detected
+      }
   }
 
-   return collisionDetected;
+  return false;  // No collision detected
 }
 
 function isCollisionWithBullet(walls, x, y, height, width) {
-
-  const threshold = 1;
-  let collisionDetected = false;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
 
-  const nearbyWalls = walls.filter((wall) => {
-  
-    const closestX = Math.max(
-      wall.x - wallblocksize + 1,
-      Math.min(x, wall.x + wallblocksize),
-    );
-    const closestY = Math.max(
-      wall.y - wallblocksize + 1,
-      Math.min(y, wall.y + wallblocksize),
-    );
-    const distanceX = x - closestX;
-    const distanceY = y - closestY;
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-
-    return distance < threshold;
-  });
-
-  
-  for (const wall of nearbyWalls) {
+  // Iterate through each wall
+  for (const wall of walls) {
+    // Determine the boundaries of the wall
     const wallLeft = wall.x - wallblocksize / 2;
     const wallRight = wall.x + wallblocksize / 2;
     const wallTop = wall.y - wallblocksize / 2;
     const wallBottom = wall.y + wallblocksize / 2;
 
-   
+    // Check if the bullet's bounding box intersects with the wall's bounding box
     if (
       x - halfWidth < wallRight &&
       x + halfWidth > wallLeft &&
       y - halfHeight < wallBottom &&
       y + halfHeight > wallTop
     ) {
-      collisionDetected = true;
-      return collisionDetected;
-
+      return true; // Collision detected
     }
   }
+
+  return false; // No collision detected
 }
+
 function adjustBulletDirection(bullet, wall, wallblocksize) {
   const halfBlockSize = wallblocksize / 2;
 
