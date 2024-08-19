@@ -47,7 +47,7 @@ function isCollisionWithWalls(walls, x, y) {
 
 function isCollisionWithBullet(walls, x, y, height, width) {
 
-  const threshold = 100;
+  const threshold = 1;
   let collisionDetected = false;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
@@ -94,12 +94,12 @@ function isCollisionWithBullet(walls, x, y, height, width) {
 }
 
 
-function adjustBulletDirection(bullet, wall) {
+function adjustBulletDirection(bullet, wall, wallblocksize) {
   // Wall boundaries
-  const wallLeft = wall.x - wall.width / 2;
-  const wallRight = wall.x + wall.width / 2;
-  const wallTop = wall.y - wall.height / 2;
-  const wallBottom = wall.y + wall.height / 2;
+  const wallLeft = wall.x - wallblocksize / 2;
+  const wallRight = wall.x + wallblocksize / 2;
+  const wallTop = wall.y - wallblocksize / 2;
+  const wallBottom = wall.y + wallblocksize / 2;
 
   // Bullet center position
   const bulletCenterX = bullet.x;
