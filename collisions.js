@@ -51,42 +51,41 @@ function isCollisionWithBullet(walls, x, y, height, width) {
   return false; // No collision detected
 }
 
-function adjustBulletDirection(bullet, wall, wallblocksize) {
-  const halfBlockSize = wallblocksize / 2;
+function adjustBulletDirection(bullet, wall, wallBlockSize) {
+  const halfBlockSize = wallBlockSize / 2;
 
-  // Determine the wall normal angle based on the bullet's position
-  let normalAngle = 0;
-  if (bullet.x < wall.x - halfBlockSize) {
-    normalAngle = 180; // Wall is to the left of the bullet
-  } else if (bullet.x > wall.x + halfBlockSize) {
-    normalAngle = 0;   // Wall is to the right of the bullet
-  } else if (bullet.y < wall.y - halfBlockSize) {
-    normalAngle = 90;  // Wall is below the bullet
-  } else if (bullet.y > wall.y + halfBlockSize) {
-    normalAngle = 270; // Wall is above the bullet
-} else {
-  // Bullet is within the wall block area or on its edge; no reflection needed
-  return;
+  // Calculate the differences between the bullet's position and the wall's center
+  const deltaX = bullet.x - wall.x;
+  const deltaY = bullet.y - wall.y;
+
+  let normalAngle;
+
+  // Determine which side of the wall the bullet is hitting
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // The bullet is closer to the left or right of the wall
+    if (deltaX < -halfBlockSize) {
+      normalAngle = 180; // Left side
+    } else if (deltaX > halfBlockSize) {
+      normalAngle = 0;   // Right side
+    }
+  } else {
+    // The bullet is closer to the top or bottom of the wall
+    if (deltaY < -halfBlockSize) {
+      normalAngle = 90;  // Top side
+    } else if (deltaY > halfBlockSize) {
+      normalAngle = 270; // Bottom side
+    }
+  }
+
+  // Calculate the reflection angle based on the incoming angle and the wall's normal angle
+  const incomingAngle = bullet.direction * (Math.PI / 180);
+  const normalAngleRadians = normalAngle * (Math.PI / 180);
+  const reflectionAngle = 2 * normalAngleRadians - incomingAngle;
+  const reflectionAngleDegrees = (reflectionAngle * 180) / Math.PI;
+  bullet.direction = Math.round(reflectionAngleDegrees % 360);
+
 }
 
-
-  // Convert angles to radians
-  const incomingAngleRad = bullet.direction * (Math.PI / 180);
-  const normalAngleRad = normalAngle * (Math.PI / 180);
-
-  // Calculate the reflection angle in radians
-  const reflectionAngleRad = 2 * normalAngleRad - incomingAngleRad;
-
-  // Convert the reflection angle back to degrees
-  let reflectionAngleDeg = (reflectionAngleRad * 180) / Math.PI;
-
-  // Normalize the reflection angle to be within -180 to 180 degrees
-  reflectionAngleDeg = ((reflectionAngleDeg + 180) % 360 + 360) % 360 - 180;
-
-  // Update bullet direction
-  bullet.direction = reflectionAngleDeg;
-  console.log(reflectionAngleDeg)
-}
 
 
 
