@@ -152,7 +152,7 @@ const {
   verifyPlayer,
 } = require("./dbrequests");
 
-const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig } = require("./config");
+const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./config");
 
 
 
@@ -171,6 +171,27 @@ function endGame(room) {
   });
 }
 }
+
+
+function playerLeave(roomId, playerId) {
+    const room = rooms.get(roomId);
+    if (room) {
+        const player = room.players.get(playerId);
+        if (player) {
+            clearTimeout(player.timeout);
+            clearInterval(player.moveInterval);
+
+            // Remove the player from the room
+            room.players.delete(playerId);
+
+            // If no players left in the room, close the room
+            if (room.players.size === 0) {
+                closeRoom(roomId);
+            }
+        }
+    }
+}
+
 
 
 const allowedOrigins = [
@@ -305,6 +326,7 @@ console.log(connectedUsernames)
 
         ws.on('close', (code, reason) => {
           const player = result.room.players.get(result.playerId);
+          playerLeave(result.roomId, result.playerId);
           if (player) {
             clearInterval(player.moveInterval);
             if (player.timeout) clearTimeout(player.timeout);
