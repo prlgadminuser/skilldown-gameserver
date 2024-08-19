@@ -13,10 +13,10 @@ function isCollisionWithWalls(walls, x, y) {
       const wallBottom = wall.y + halfBlockSize;
 
       if (
-          x >= wallLeft &&
-          x <= wallRight &&
-          y >= wallTop &&
-          y <= wallBottom
+      x + 20 > wallLeft &&
+      x - 20 < wallRight &&
+      y + 45 > wallTop &&
+      y - 45 < wallBottom
       ) {
           return true;  // Collision detected
       }
