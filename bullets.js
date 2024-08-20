@@ -170,7 +170,7 @@ async function handleBulletFired(room, player, gunType) {
       height: gun.height,
       width: gun.width,
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
-      maxtime: Date.now() + gun.maxexistingtime - bullet.delay,
+      maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
      
     };
 
