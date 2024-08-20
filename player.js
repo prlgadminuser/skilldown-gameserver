@@ -51,7 +51,9 @@ function handleMovement(result, player) {
   player.x = Math.max(-WORLD_WIDTH, Math.min(WORLD_WIDTH, player.x));
   player.y = Math.max(-WORLD_HEIGHT, Math.min(WORLD_HEIGHT, player.y));
 
-	 }
+	  clearTimeout(player.movetimeout);
+  player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); }
+
 
 
  /* const collectedCoins = [];
