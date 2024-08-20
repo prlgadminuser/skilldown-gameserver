@@ -162,7 +162,7 @@ async function handleBulletFired(room, player, gunType) {
   for (const bullet of gun.bullets) {
 
     const bulletdata = {
-      speed: bullet.speed,
+      speed: bullet.speed / 2,
       delay: bullet.delay,
       offset: bullet.offset,
       damage: gun.damage,
