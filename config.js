@@ -105,6 +105,7 @@ const mapsconfig = {
 const gunsconfig = {
   1: {
     cooldown: 500,
+    distance: 300,
     maxexistingtime: 500,
     maxbounces: 5,
     damage: 5,
@@ -124,6 +125,7 @@ const gunsconfig = {
   },
   2: {
     cooldown: 600,
+    distance: 300,
     maxexistingtime: 600,
     maxbounces: 5,
     damage: 2,
