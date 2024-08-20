@@ -27,7 +27,7 @@ async function verifyPlayer(token) {
           equipped_hat_color: 1,
           equipped_body_color: 1,
           sp: 1,
-          gadget: 1,
+          gadget_selected: 1,
         },
       }
     );
