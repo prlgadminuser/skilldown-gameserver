@@ -43,7 +43,7 @@ async function verifyPlayer(token) {
       equipped_hat_color,
       equipped_body_color,
       sp,
-      gadget,
+      equipped_gadget,
     } = userInformation;
 
     return {
@@ -54,7 +54,7 @@ async function verifyPlayer(token) {
       hat_color: equipped_hat_color,
       top_color: equipped_body_color,
       skillpoints: sp,
-      selected_gadget: gadget,
+      selected_gadget: equipped_gadget,
     };
 
    
