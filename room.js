@@ -49,6 +49,7 @@ function closeRoom(roomId) {
     room.players.forEach(player => {
       clearInterval(player.moveInterval);
       clearTimeout(player.timeout);
+     clearTimeout(player.movetimeout);
       player.ws.close();
     });
 
