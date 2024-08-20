@@ -34,7 +34,7 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 function moveBullet(room, player, bullet) {
   if (!bullet) return;
 
-  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime } = bullet;
+  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance } = bullet;
 
   const radians = toRadians(direction - 90); // Adjust direction to radians
   const xDelta = speed * Math.cos(radians);
@@ -46,6 +46,13 @@ function moveBullet(room, player, bullet) {
   
   const timenow = Date.now();
 //console.log(t1, bullet.maxtime);
+
+    if (distanceTraveled > distance) {
+    player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
+    return;
+
+  }
+
 
   if (timenow > maxtime) {
     player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
@@ -61,8 +68,8 @@ function moveBullet(room, player, bullet) {
 
     for (const [id, otherPlayer] of room.players) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
-        const shootDistance = (distanceTraveled / maxtime + 0.5).toFixed(1);
-        handlePlayerCollision(room, player, otherPlayer, maxtime, bullet.damage);
+        const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
+        handlePlayerCollision(room, player, otherPlayer, distance, bullet.damage);
         player.bullets.delete(timestamp);
         return;
       }
@@ -113,7 +120,7 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 
 // Shoot Bullet
 async function shootBullet(room, player, bulletdata) {
-  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime } = bulletdata;
+  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance } = bulletdata;
   const radians = toRadians(angle);
   const xOffset = offset * Math.cos(radians);
   const yOffset = offset * Math.sin(radians);
@@ -132,6 +139,7 @@ async function shootBullet(room, player, bulletdata) {
     width,
     bouncesLeft, // Initialize with the number of bounces allowed
     maxtime,
+    distance,
   };
 
   player.bullets.set(timestamp, bullet);
@@ -171,6 +179,7 @@ async function handleBulletFired(room, player, gunType) {
       width: gun.width,
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
       maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
+      distance: gun.distance,
      
     };
 
