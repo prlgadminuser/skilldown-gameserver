@@ -34,7 +34,7 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 function moveBullet(room, player, bullet) {
   if (!bullet) return;
 
-  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance } = bullet;
+  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce } = bullet;
 
   const radians = toRadians(direction - 90); // Adjust direction to radians
   const xDelta = speed * Math.cos(radians);
@@ -76,11 +76,11 @@ function moveBullet(room, player, bullet) {
     }
   } else {
     // Check if the bullet can bounce
-    if (bouncesLeft > 0) {
+    if (canbounce === true) {
       const collidedWall = findCollidedWall(room.walls, newX, newY, height, width); // Find the wall the bullet collided with
       if (collidedWall) {
         adjustBulletDirection(bullet, collidedWall, 50);
-        bullet.bouncesLeft = bouncesLeft - 1; // Decrease bouncesLeft
+       // bullet.bouncesLeft = bouncesLeft - 1; // Decrease bouncesLeft
       }
     } else {
       player.bullets.delete(timestamp); // Remove the bullet if no bounces are left
@@ -120,7 +120,7 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 
 // Shoot Bullet
 async function shootBullet(room, player, bulletdata) {
-  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance } = bulletdata;
+  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance, canbounce } = bulletdata;
   const radians = toRadians(angle - 90);
   const xOffset = offset * Math.cos(radians);
   const yOffset = offset * Math.sin(radians);
@@ -143,6 +143,7 @@ async function shootBullet(room, player, bulletdata) {
     bouncesLeft, // Initialize with the number of bounces allowed
     maxtime,
     distance,
+    canbounce,
   };
 
   player.bullets.set(timestamp, bullet);
@@ -183,7 +184,7 @@ async function handleBulletFired(room, player, gunType) {
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
       maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
       distance: gun.distance,
-     
+      canbounce: player.can_bullets_bounce, 
     };
 
     shootBulletsWithDelay(room, player, bulletdata);

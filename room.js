@@ -47,9 +47,12 @@ function closeRoom(roomId) {
 
     // Clean up resources associated with players in the room
     room.players.forEach(player => {
-      clearInterval(player.moveInterval);
       clearTimeout(player.timeout);
-     clearTimeout(player.movetimeout);
+      clearTimeout(player.movetimeout);
+      clearTimeout(player.gadget);
+      clearTimeout(player.gadget_timeout);
+      clearInterval(player.moveInterval);
+
       player.ws.close();
     });
 
@@ -86,7 +89,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints } = playerVerified;
 
-     const gadgetselected = selected_gadget || 1;
+     const gadgetselected = selected_gadget || 3;
      const finalskillpoints = skillpoints || 0;
 
      const roomjoiningvalue = matchmakingsp(finalskillpoints);
@@ -133,6 +136,9 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         timeout: setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
         health: gamemodeconfig[gamemode].playerhealth,
         starthealth: gamemodeconfig[gamemode].playerhealth,
+        speed: gamemodeconfig[gamemode].playerspeed,
+        startspeed: gamemodeconfig[gamemode].playerspeed,
+        can_bullets_bounce: false,
         damage: 0,
         kills: 0,
         lastShootTime: 0,
@@ -375,6 +381,7 @@ player.bullets.forEach(bullet => {
         currentPlayerData.hc = player.hat_color;
         currentPlayerData.tc = player.top_color;
         currentPlayerData.sh = player.starthealth;
+        currentPlayerData.gid = player.gadgetid
       }
 
       playerData[player.playerId] = currentPlayerData;

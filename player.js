@@ -30,8 +30,8 @@ function handleMovement(result, player) {
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
 
   const radians = (finalDirection * Math.PI) / 180;
-  const xDelta = playerspeed * deltaTime * Math.cos(radians);
-  const yDelta = playerspeed * deltaTime * Math.sin(radians);
+  const xDelta = player.speed * deltaTime * Math.cos(radians);
+  const yDelta = player.speed * deltaTime * Math.sin(radians);
 
   const newX = Math.round(player.x + xDelta);
   const newY = Math.round(player.y + yDelta);
