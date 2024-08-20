@@ -190,6 +190,12 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         room.fixtimeout2 = setTimeout(() => {
           room.state = "playing";
 
+	 room.players.forEach((player) => {
+
+            player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
+
+            });
+
          if (room.zoneallowed === true) {
             UseZone(room);
             }
@@ -696,6 +702,7 @@ function handleRequest(result, message) {
 						}
 					
 						if (!player.moveInterval) {
+							clearInterval(player.moveInterval);
 							player.moveInterval = setInterval(() => {
              
 								if (player.moving) {
