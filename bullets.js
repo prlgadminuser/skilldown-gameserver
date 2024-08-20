@@ -115,8 +115,10 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 async function shootBullet(room, player, bulletdata) {
   const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime } = bulletdata;
   const radians = toRadians(angle);
-  const xOffset = offset * Math.cos(radians);
-  const yOffset = offset * Math.sin(radians);
+
+    const startOffset = 50;
+  const xOffset = (offset + startOffset) * Math.cos(radians);
+  const yOffset = (offset + startOffset) * Math.sin(radians);
   const timestamp = Math.random().toString(36).substring(2, 7);
 
   const bullet = {
