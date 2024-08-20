@@ -89,7 +89,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints } = playerVerified;
 
-     const gadgetselected = selected_gadget || 3;
+     const gadgetselected = selected_gadget || 1;
      const finalskillpoints = skillpoints || 0;
 
      const roomjoiningvalue = matchmakingsp(finalskillpoints);
