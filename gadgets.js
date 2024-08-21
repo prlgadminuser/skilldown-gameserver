@@ -12,7 +12,7 @@ const gadgetconfig = {
     },
     
     2: {  // Highspeeder = increases the player speed by 50 %  for 5 seconds
-        use_limit: 34,
+        use_limit: 3,
         cooldown: 10000,
         gadget(player) {
             player.speed = player.speed + player.speed / 2;
@@ -26,7 +26,7 @@ const gadgetconfig = {
     },
 
     3: {  // bouncetech = bullets do now bounce from walls for 20 seconds
-        use_limit: 5,
+        use_limit: 3,
         cooldown: 30000,
         gadget(player) {
             player.can_bullets_bounce = true
