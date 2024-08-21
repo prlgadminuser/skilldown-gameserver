@@ -11,7 +11,7 @@ const WORLD_HEIGHT = 800;
 const playerspeed = 0.26;
 const SHOOT_COOLDOWN = 100; 
 const BULLET_DAMAGE = 5;
-const game_start_time = 1000;
+const game_start_time = 5000;
 const game_win_rest_time = 10000;
 const maxClients = 20;
 
