@@ -603,6 +603,11 @@ const isValidDirection = (direction) => {
 
 function handleRequest(result, message) {
 	const player = result.room.players.get(result.playerId);
+	const data = JSON.parse(message);
+
+	if (message.length > 100) {
+	  player.ws.close(4000, "ahhh whyyyyy");
+		}
 
 	if (player) {
 
@@ -623,10 +628,6 @@ function handleRequest(result, message) {
 
 	if (result.room.state === "playing" && player.visible !== false && !player.eliminated) {
 		try {
-			const data = JSON.parse(message);
-			if (message.length > 100) {
-				player.ws.close(4000, "ahhh whyyyyy");
-			}
 			if (data.type === "shoot") {
 				if (data.shoot_direction > -181 && data.shoot_direction < 181) {
 					player.shoot_direction = parseFloat(data.shoot_direction);
