@@ -133,7 +133,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         player_color: player_color,
         hat_color: hat_color,
         top_color: top_color,
-        timeout: null,
+        timeout: setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
         health: gamemodeconfig[gamemode].playerhealth,
         starthealth: gamemodeconfig[gamemode].playerhealth,
         speed: gamemodeconfig[gamemode].playerspeed,
@@ -603,6 +603,24 @@ const isValidDirection = (direction) => {
 
 function handleRequest(result, message) {
 	const player = result.room.players.get(result.playerId);
+
+	if (player) {
+
+	if (data.type === "pong") {
+
+				clearTimeout(player.timeout); 
+
+				player.timeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
+			      //    const timestamp = new Date().getTime();
+				//if (player.lastping && (timestamp - player.lastping < 2000)) {
+				//	player.ping = timestamp - player.lastping;
+				//} else {
+	
+				//}
+			}
+                  }
+	
+
 	if (result.room.state === "playing" && player.visible !== false && !player.eliminated) {
 		try {
 			const data = JSON.parse(message);
@@ -617,18 +635,7 @@ function handleRequest(result, message) {
 				//	console.log(data.shoot_direction)
 				}
 			}
-			if (data.type === "pong") {
-
-				clearTimeout(player.timeout); 
-
-				player.timeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
-			      //    const timestamp = new Date().getTime();
-				//if (player.lastping && (timestamp - player.lastping < 2000)) {
-				//	player.ping = timestamp - player.lastping;
-				//} else {
-	
-				//}
-			}
+			
 
 			if (data.type === "switch_gun") {
 				const selectedGunNumber = parseFloat(data.gun);
