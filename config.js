@@ -3,9 +3,14 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const server_tick_rate = 17;
+const server_tick_rate = 18;
 const matchmaking_timeout = 300000;
 const player_idle_timeout = 60000;
+const WORLD_WIDTH = 800;
+const WORLD_HEIGHT = 800;
+const playerspeed = 0.26;
+const SHOOT_COOLDOWN = 100; 
+const BULLET_DAMAGE = 5;
 const game_start_time = 5000;
 const game_win_rest_time = 10000;
 const maxClients = 20;
@@ -160,6 +165,11 @@ module.exports = {
   server_tick_rate,
   matchmaking_timeout,
   player_idle_timeout,
+  WORLD_WIDTH,
+  WORLD_HEIGHT,
+  playerspeed,
+  SHOOT_COOLDOWN,
+  BULLET_DAMAGE,
   game_start_time,
   game_win_rest_time,
   maxClients,
