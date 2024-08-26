@@ -393,7 +393,7 @@ player.bullets.forEach(bullet => {
 
         // Only check for changes in non-bullets data
         Object.keys(currentPlayerData).forEach(key => {
-          if (key !== 'bullets' && key !== 'shooting') {
+          if (key !== 'bullets') {
             if (JSON.stringify(currentPlayerData[key]) !== JSON.stringify(previousPlayerData[key])) {
               changes[key] = currentPlayerData[key];
             }
