@@ -724,7 +724,7 @@ function handleRequest(result, message) {
 								if (player.moving) {
                   
 
-									handleMovement(result, player);
+									handleMovement(player, result.room);
 								} else {
                
 									clearInterval(player.moveInterval);
