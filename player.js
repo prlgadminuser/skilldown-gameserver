@@ -22,7 +22,7 @@ function getDistance(x1, y1, x2, y2) {
 
 
 
-function handleMovement(result, player) {
+function handleMovement(player, room) {
 
   //const { handleCoinCollected2 } = require('./room')
   const deltaTime = 20
@@ -37,7 +37,7 @@ function handleMovement(result, player) {
   const newY = Math.round(player.y + yDelta);
 
   // Check collision with walls before updating player position
-  if (!isCollisionWithWalls(result.room.walls, newX, newY)) {
+  if (!isCollisionWithWalls(room.walls, newX, newY)) {
     player.x = newX;
     player.y = newY;
     player.lastProcessedPosition = { x: newX, y: newY };
@@ -48,14 +48,13 @@ function handleMovement(result, player) {
   }
 
   // Clamp player position within world bounds
-  player.x = Math.max(-WORLD_WIDTH, Math.min(WORLD_WIDTH, player.x));
-  player.y = Math.max(-WORLD_HEIGHT, Math.min(WORLD_HEIGHT, player.y));
+  player.x = Math.max(-room.mapWidth, Math.min(room.mapWidth, player.x));
+  player.y = Math.max(-room.mapHeight, Math.min(room.mapHeight, player.y));
 
 	  clearTimeout(player.movetimeout);
-  player.movetimeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); }
+  player.movetimeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
 
-
-
+}
  /* const collectedCoins = [];
   if (result.room.coins) {
   result.room.coins.forEach((coin, index) => {
