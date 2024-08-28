@@ -271,13 +271,10 @@ async function checkForMaintenance() {
       { projection: { status: 1 } } // Only retrieve the maintenanceStatus field
     );
 
-    if (result) {
-      const maintenanceStatus = result.status;
-
-      maintenanceMode = maintenanceStatus === "true";
+    if (result.status === "true") {
+maintenanceMode = true;
     } else {
-      maintenanceMode = true;
-      console.log("Maintenance document not found.");
+      maintenanceMode = false;
     }
   } catch (error) {
     console.error("Error checking maintenance status:", error);
