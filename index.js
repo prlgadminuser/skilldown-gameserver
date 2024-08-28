@@ -276,7 +276,7 @@ wss.on("connection", (ws, req) => {
 
                 connectedClientsCount++;
                 connectedUsernames.push(result.playerId);
-                console.log(connectedUsernames);
+              //  console.log(connectedUsernames);
 
                 ws.on("message", message => {
                     let jsonString = "";
