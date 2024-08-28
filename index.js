@@ -226,166 +226,129 @@ async function handlePlayerVerification(token) {
 }
 
 wss.on("connection", (ws, req) => {
-
-   try {
-    const maintenanceMode = checkForMaintenance();
-    if (maintenanceMode) {
-      ws.close(4008, "maintenance");
-      return;
-    }
-
-
-    if (connectedClientsCount > maxClients) {
-      ws.close(4004, "code:full");
-      return;
-    }
-
-  const urlParts = req.url.split('/');
-  const token = (urlParts[1]);
-  const gamemode = (urlParts[2]);
-
-    const origin = req.headers["sec-websocket-origin"] || req.headers.origin;
-
-    if (req.length > 2000 || origin.length > 50 || !isValidOrigin(origin)) {
-      ws.close(4004, "Unauthorized");
-      return;
-    }
-
-   // console.log(gamemode, token)
-     
-
-   if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
-    ws.close(4004, "Unauthorized");
-    console.log("not correct")
-    return;
-  }
-
-  handlePlayerVerification(token).then(playerVerified => {
-    if (!playerVerified) {
-      ws.close(4001, "Invalid token");
-      return;
-    }
-  
-  if (connectedUsernames.includes(playerVerified.playerId)) {
-    ws.close(4006, "code:double");
-    return;
-    }
-
-
-    
-
-
-
-  joinRoom(ws, token, gamemode, playerVerified)
-  .then((result) => {
-    if (!result) {
-      ws.close(4001, "Invalid token");
-      return;
-    }
-
-    connectedClientsCount++;
-connectedUsernames.push(result.playerId);
-console.log(connectedUsernames)
- 
-   // console.log("before closed", connectedUsernames);
-   
-    
-
-    //console.log(connectedUsernames, connectedClientsCount)
-    
-   
-  
-
-        // console.log("Joined room:", result);
-
-        ws.on("message", (message) => {
-      
-          let jsonString = ""; 
-
-          if (Buffer.isBuffer(message)) {
-
-              const binaryString = message.toString("utf-8");
-              const binaryArray = binaryString.split(" ");
-              for (const binary of binaryArray) {
-              jsonString += String.fromCharCode(parseInt(binary, 2));
-              }
-  
-          } else {
-              jsonString = message; // If it's already a string
-          }
-      
-          try {
-              const parsedMessage = jsonString;
-      
-              // Pass the parsed JSON object directly to handleRequest
-              const player = result.room.players.get(result.playerId);
-              if (result.room.players.has(result.playerId) && jsonString.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {
-                  handleRequest(result, parsedMessage);  // Pass parsedMessage directly
-              }
-          } catch (error) {
-              console.error("Failed to parse JSON:", error.message);
-          }
-      });
-
-        ws.on('close', (code, reason) => {
-          const player = result.room.players.get(result.playerId);
-          if (player) {
-            clearInterval(player.moveInterval);
-            if (player.timeout) clearTimeout(player.timeout);
-  
-            if (player.damage > 0) increasePlayerDamage(player.playerId, player.damage);
-            if (player.kills > 0) increasePlayerKills(player.playerId, player.kills);
-
-            connectedClientsCount--;
-            connectedUsernames = connectedUsernames.filter(username => username !== player.playerId);
-  
-            result.room.players.delete(result.playerId);
-           
-  
-            if (result.room.players.size < 1) {
-              closeRoom(result.roomId);
-              console.log('Room closed');
-              return;
-            }
-  
-            if (result.room.state === "playing" && result.room.winner === 0) {
-              let remainingPlayers = Array.from(result.room.players.values())
-                .filter(player => !player.eliminated);
-  
-              if (remainingPlayers.length === 1) {
-                const winner = remainingPlayers[0];
-                result.room.winner = winner.playerId;
-  
-                increasePlayerWins(winner.playerId, 1);
-                increasePlayerPlace(winner.playerId, 1);
-                result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
-  
-                setTimeout(() => endGame(result.room), game_win_rest_time);
-                }
-          }
+    try {
+        // Check for maintenance mode
+        if (checkForMaintenance()) {
+            ws.close(4008, "maintenance");
+            return;
         }
-      } catch (error) {
-        console.error("Error handling connection close:", error.message);
-      }
-    });
-  } catch (error) {
-    console.error("Error during WebSocket connection handling:", error);
-    ws.close(1011, "Internal server error");
-  }
+
+        // Check for maximum clients limit
+        if (connectedClientsCount > maxClients) {
+            ws.close(4004, "code:full");
+            return;
+        }
+
+        // Parse URL and headers
+        const [_, token, gamemode] = req.url.split('/');
+        const origin = req.headers["sec-websocket-origin"] || req.headers.origin;
+
+        // Validate request
+        if (req.length > 2000 || (origin && origin.length > 50) || !isValidOrigin(origin)) {
+            ws.close(4004, "Unauthorized");
+            return;
+        }
+
+        if (!token || token.length >= 300 || !(gamemode in gamemodeconfig)) {
+            ws.close(4004, "Unauthorized");
+            console.log("Invalid token or gamemode");
+            return;
+        }
+
+        // Verify player token
+        handlePlayerVerification(token).then(playerVerified => {
+            if (!playerVerified) {
+                ws.close(4001, "Invalid token");
+                return;
+            }
+
+            if (connectedUsernames.includes(playerVerified.playerId)) {
+                ws.close(4006, "code:double");
+                return;
+            }
+
+            // Join room and handle connection
+            joinRoom(ws, token, gamemode, playerVerified).then(result => {
+                if (!result) {
+                    ws.close(4001, "Invalid token");
+                    return;
+                }
+
+                connectedClientsCount++;
+                connectedUsernames.push(result.playerId);
+                console.log(connectedUsernames);
+
+                ws.on("message", message => {
+                    let jsonString = "";
+
+                    if (Buffer.isBuffer(message)) {
+                        const binaryString = message.toString("utf-8");
+                        jsonString = binaryString.split(" ").map(binary => String.fromCharCode(parseInt(binary, 2))).join("");
+                    } else {
+                        jsonString = message;
+                    }
+
+                    try {
+                        const parsedMessage = jsonString;
+                        const player = result.room.players.get(result.playerId);
+
+                        if (player && jsonString.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {
+                            handleRequest(result, parsedMessage);
+                        }
+                    } catch (error) {
+                        console.error("Failed to parse JSON:", error.message);
+                    }
+                });
+
+                ws.on('close', (code, reason) => {
+                    const player = result.room.players.get(result.playerId);
+                    if (player) {
+                        clearInterval(player.moveInterval);
+                        if (player.timeout) clearTimeout(player.timeout);
+
+                        if (player.damage > 0) increasePlayerDamage(player.playerId, player.damage);
+                        if (player.kills > 0) increasePlayerKills(player.playerId, player.kills);
+
+                        connectedClientsCount--;
+                        connectedUsernames = connectedUsernames.filter(username => username !== player.playerId);
+                        result.room.players.delete(result.playerId);
+
+                        if (result.room.players.size < 1) {
+                            closeRoom(result.roomId);
+                            console.log('Room closed');
+                            return;
+                        }
+
+                        if (result.room.state === "playing" && result.room.winner === 0) {
+                            let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
+
+                            if (remainingPlayers.length === 1) {
+                                const winner = remainingPlayers[0];
+                                result.room.winner = winner.playerId;
+
+                                increasePlayerWins(winner.playerId, 1);
+                                increasePlayerPlace(winner.playerId, 1);
+                                result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
+
+                                setTimeout(() => endGame(result.room), game_win_rest_time);
+                            }
+                        }
+                    }
+                });
+            }).catch(err => {
+                console.error("Error joining room:", err);
+                ws.close(1011, "Internal server error");
+            });
+        }).catch(err => {
+            console.error("Error verifying player:", err);
+            ws.close(1011, "Internal server error");
+        });
+    } catch (error) {
+        console.error("Error during WebSocket connection handling:", error);
+        ws.close(1011, "Internal server error");
+    }
 });
     
-
-
-      .catch((error) => {
-        console.error("Error during joinRoom:", error);
-        ws.close(4001, "Token verification error");
-        });
-    })
-    .catch((error) => {
-      console.error("Error during maintenance check:", error);
-      ws.close(1011, "Internal server error"); // Close connection with a generic error code
-    });
-});
     
  
 
