@@ -295,5 +295,5 @@ module.exports = {
   increasePlayerPlace,
   increasePlayerWins,
   verifyPlayer,
-  checkforMaintenance,
+  checkForMaintenance,
 };
