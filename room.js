@@ -615,7 +615,7 @@ function handleRequest(result, message) {
 
 				clearTimeout(player.timeout); 
 
-				player.timeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
+				player.timeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
 			      //    const timestamp = new Date().getTime();
 				//if (player.lastping && (timestamp - player.lastping < 2000)) {
 				//	player.ping = timestamp - player.lastping;
