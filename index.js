@@ -281,21 +281,27 @@ wss.on("connection", (ws, req) => {
                 connectedUsernames.push(result.playerId);
               //  console.log(connectedUsernames);
 
-               ws.on("message", (message) => {
+             ws.on("message", (message) => {
+  let jsonString = ""; // Initialize the JSON string
 
-          let jsonString = ""; 
+  if (Buffer.isBuffer(message)) {
+    const compressedBinary = message.toString("utf-8"); // Convert Buffer to string
+    let binaryString = "";
 
-          if (Buffer.isBuffer(message)) {
+    // Step 1: Decompress the binary string
+    for (const hexDigit of compressedBinary) {
+      const binaryNibble = parseInt(hexDigit, 16).toString(2).padStart(4, "0");
+      binaryString += binaryNibble;
+    }
 
-              const binaryString = message.toString("utf-8");
-              const binaryArray = binaryString.split(" ");
-              for (const binary of binaryArray) {
-              jsonString += String.fromCharCode(parseInt(binary, 2));
-              }
-  
-          } else {
-              jsonString = message; // If it's already a string
-          }
+    // Step 2: Convert the binary string back to text
+    const binaryArray = binaryString.match(/.{1,8}/g); // Split into 8-bit chunks
+    for (const binary of binaryArray) {
+      jsonString += String.fromCharCode(parseInt(binary, 2));
+    }
+  } else {
+    jsonString = message; // If it's already a string
+  }
 
                     try {
                         const parsedMessage = jsonString;
