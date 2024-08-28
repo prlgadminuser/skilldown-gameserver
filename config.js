@@ -7,7 +7,7 @@ const server_tick_rate = 17;
 const matchmaking_timeout = 300000;
 const player_idle_timeout = 60000;
 const game_start_time = 5000;
-const game_win_rest_time = 5000;
+const game_win_rest_time = 8000;
 const maxClients = 20;
 
 const playerHitboxWidth = 60; 
