@@ -4,6 +4,8 @@ const { shopcollection, userCollection, battlePassCollection, jwt } = require('.
 
 const tokenkey = "d8ce40604d359eeb9f2bff31beca4b4b"
 
+const maintenanceId = "maintenance"; 
+
 async function verifyPlayer(token) {
   if (!token) {
     throw new Error("Unauthorized");
