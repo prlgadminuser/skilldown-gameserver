@@ -133,6 +133,7 @@ startServer();
 const db = client.db("Cluster0");
 const userCollection = db.collection("users");
 const battlePassCollection = db.collection("battlepass_users");
+const shopcollection = db.collection("serverconfig");
 
 module.exports = {
   LZString,
@@ -146,6 +147,7 @@ module.exports = {
   db,
   userCollection,
   battlePassCollection,
+  shopcollection,
   jwt,
 };
 
