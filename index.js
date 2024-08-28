@@ -228,7 +228,7 @@ async function handlePlayerVerification(token) {
 wss.on("connection", (ws, req) => {
     try {
         // Check for maintenance mode
-         const isMaintenance = await checkForMaintenance(); 
+         const isMaintenance = checkForMaintenance(); 
         
       if (isMaintenance) {      
             ws.close(4008, "maintenance");
