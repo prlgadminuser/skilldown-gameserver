@@ -494,7 +494,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     zoneEndY: mapsconfig[mapid].height,
     mapHeight: mapsconfig[mapid].height,
     mapWidth: mapsconfig[mapid].width,
-    walls: mapsconfig[mapid].walls.map(({ x, y }) => ({ x, y })),
+    walls: mapsconfig[mapid].walls, //mapsconfig[mapid].walls.map(({ x, y }) => ({ x, y })),
     spawns: mapsconfig[mapid].spawns,
     map: mapid,
     respawns: gmconfig.respawns_allowed,
