@@ -273,7 +273,7 @@ async function checkForMaintenance() {
       { projection: { status: 1 } } // Only retrieve the maintenanceStatus field
     );
 
-    if (result.status === "await") {
+    if (result.status === "await" || result.status === "true" ) {
 maintenanceMode = true;
     } else {
       maintenanceMode = false;
