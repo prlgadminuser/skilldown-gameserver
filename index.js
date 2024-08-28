@@ -278,15 +278,21 @@ wss.on("connection", (ws, req) => {
                 connectedUsernames.push(result.playerId);
               //  console.log(connectedUsernames);
 
-                ws.on("message", message => {
-                    let jsonString = "";
+               ws.on("message", (message) => {
 
-                    if (Buffer.isBuffer(message)) {
-                        const binaryString = message.toString("utf-8");
-                        jsonString = binaryString.split(" ").map(binary => String.fromCharCode(parseInt(binary, 2))).join("");
-                    } else {
-                        jsonString = message;
-                    }
+          let jsonString = ""; 
+
+          if (Buffer.isBuffer(message)) {
+
+              const binaryString = message.toString("utf-8");
+              const binaryArray = binaryString.split(" ");
+              for (const binary of binaryArray) {
+              jsonString += String.fromCharCode(parseInt(binary, 2));
+              }
+  
+          } else {
+              jsonString = message; // If it's already a string
+          }
 
                     try {
                         const parsedMessage = jsonString;
