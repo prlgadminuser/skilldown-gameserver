@@ -228,14 +228,13 @@ async function handlePlayerVerification(token) {
 wss.on("connection", (ws, req) => {
     try {
         // Check for maintenance mode
-         const isMaintenance = checkForMaintenance(); 
+          checkForMaintenance()
+        .then(isMaintenance => {
+            if (isMaintenance) {
+                ws.close(4008, "maintenance");
+                return;
+            }
 
-      console.log(isMaintenance)
-        
-      if (isMaintenance) {      
-            ws.close(4008, "maintenance");
-            return;
-        }
 
         // Check for maximum clients limit
         if (connectedClientsCount > maxClients) {
@@ -341,9 +340,14 @@ wss.on("connection", (ws, req) => {
                                 result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
 
                                 setTimeout(() => endGame(result.room), game_win_rest_time);
-                            }
+                          }
+                           
                         }
+                        
                     }
+                   
+            
+                })
                 });
             }).catch(err => {
                 console.error("Error joining room:", err);
