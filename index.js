@@ -163,6 +163,7 @@ const {
   increasePlayerPlace,
   increasePlayerWins,
   verifyPlayer,
+  checkForMaintenance,
 } = require("./dbrequests");
 
 const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./config");
@@ -225,6 +226,13 @@ async function handlePlayerVerification(token) {
 }
 
 wss.on("connection", (ws, req) => {
+
+    checkForMaintenance()
+    .then((maintenanceMode) => {
+      if (maintenanceMode) {
+        ws.close(4008, "Server is under maintenance");
+        return;
+      }
 
 
     if (connectedClientsCount > maxClients) {
