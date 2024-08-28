@@ -261,6 +261,33 @@ async function increasePlayerPlace(playerId, place2) {
   }
 }
 
+async function checkForMaintenance() {
+  let maintenanceMode = false;
+
+  try {
+    // Find the maintenanceStatus directly from the document
+    const result = await shopcollection.findOne(
+      { _id: maintenanceId },
+      { projection: { status: 1 } } // Only retrieve the maintenanceStatus field
+    );
+
+    if (result) {
+      const maintenanceStatus = result.status;
+
+      maintenanceMode = maintenanceStatus === "true";
+    } else {
+      maintenanceMode = true;
+      console.log("Maintenance document not found.");
+    }
+  } catch (error) {
+    console.error("Error checking maintenance status:", error);
+    maintenanceMode = true;
+  }
+
+  return maintenanceMode;
+}
+
+
 
 module.exports = {
   increasePlayerDamage,
@@ -268,4 +295,5 @@ module.exports = {
   increasePlayerPlace,
   increasePlayerWins,
   verifyPlayer,
+  checkforMaintenance,
 };
