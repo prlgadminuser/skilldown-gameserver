@@ -154,6 +154,17 @@ const gunsconfig = {
 };
 
 
+function extractWallCoordinates(mapConfig) {
+  return mapConfig.walls.map(({ x, y }) => ({ x, y }));
+}
+
+// Transform all map configurations
+const transformedMaps = Object.keys(mapsconfig).reduce((acc, key) => {
+  acc[key] = extractWallCoordinates(mapsconfig[key]);
+  return acc;
+}, {});
+
+
 
 module.exports = {
   batchedMessages,
