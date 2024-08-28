@@ -230,7 +230,7 @@ wss.on("connection", (ws, req) => {
     checkForMaintenance()
     .then((maintenanceMode) => {
       if (maintenanceMode) {
-        ws.close(4008, "Server is under maintenance");
+        ws.close(4008, "maintenance");
         return;
       }
 
@@ -373,9 +373,13 @@ console.log(connectedUsernames)
       .catch((error) => {
         console.error("Error during joinRoom:", error);
         ws.close(4001, "Token verification error");
-      });
-     });
+        });
+    })
+    .catch((error) => {
+      console.error("Error during maintenance check:", error);
+      ws.close(1011, "Internal server error"); // Close connection with a generic error code
     });
+});
     
  
 
