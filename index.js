@@ -228,7 +228,7 @@ async function handlePlayerVerification(token) {
 wss.on("connection", (ws, req) => {
     try {
         // Check for maintenance mode
-        if (checkForMaintenance()) {
+        if (checkForMaintenance) {
             ws.close(4008, "maintenance");
             return;
         }
@@ -249,7 +249,7 @@ wss.on("connection", (ws, req) => {
             return;
         }
 
-        if (!token || token.length >= 300 || !(gamemode in gamemodeconfig)) {
+          if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
             ws.close(4004, "Unauthorized");
             console.log("Invalid token or gamemode");
             return;
