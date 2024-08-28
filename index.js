@@ -229,6 +229,8 @@ wss.on("connection", (ws, req) => {
     try {
         // Check for maintenance mode
          const isMaintenance = checkForMaintenance(); 
+
+      console.log(isMaintenance)
         
       if (isMaintenance) {      
             ws.close(4008, "maintenance");
