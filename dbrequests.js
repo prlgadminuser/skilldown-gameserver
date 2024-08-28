@@ -1,6 +1,6 @@
 "use strict";
 
-const { userCollection, battlePassCollection, jwt } = require('./index');
+const { shopcollection, userCollection, battlePassCollection, jwt } = require('./index');
 
 const tokenkey = "d8ce40604d359eeb9f2bff31beca4b4b"
 
