@@ -227,12 +227,12 @@ async function handlePlayerVerification(token) {
 
 wss.on("connection", (ws, req) => {
 
-    checkForMaintenance()
-    .then((maintenanceMode) => {
-      if (maintenanceMode) {
-        ws.close(4008, "maintenance");
-        return;
-      }
+   try {
+    const maintenanceMode = await checkForMaintenance();
+    if (maintenanceMode) {
+      ws.close(4008, "maintenance");
+      return;
+    }
 
 
     if (connectedClientsCount > maxClients) {
@@ -361,12 +361,18 @@ console.log(connectedUsernames)
                 result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
   
                 setTimeout(() => endGame(result.room), game_win_rest_time);
-              }
-            }
+                }
           }
-        });
-      })
-
+        }
+      } catch (error) {
+        console.error("Error handling connection close:", error.message);
+      }
+    });
+  } catch (error) {
+    console.error("Error during WebSocket connection handling:", error);
+    ws.close(1011, "Internal server error");
+  }
+});
     
 
 
