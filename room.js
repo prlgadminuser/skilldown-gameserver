@@ -219,6 +219,12 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
          // generateRandomCoins(room);
         }, 1000);
       }
+   
+     if (ws.readyState === ws.CLOSED) {
+        playerLeave(roomId, playerId);
+        return;
+    }
+
 
 
       return { roomId, playerId, room };
