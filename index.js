@@ -1,7 +1,7 @@
 "use strict";
 
 const WebSocket = require("ws");
-const http = require("http");
+const https = require('https');
 const cors = require("cors");
 const axios = require("axios");
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -50,7 +50,7 @@ let connectedUsernames = [];
 
 const rateLimiterConnection = new RateLimiterMemory(ConnectionOptionsRateLimit);
 
-const server = http.createServer((req, res) => {
+const server = https.createServer((req, res) => {
   // Set security headers
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -140,7 +140,7 @@ module.exports = {
   axios,
   Limiter,
   WebSocket,
-  http,
+  https,
   connectedClientsCount,
   MongoClient, 
   ServerApiVersion,
@@ -394,7 +394,7 @@ wss.on("connection", (ws, req) => {
           }
         })
         .catch(() => {
-          socket.write('HTTP/1.1 429 Too Many Requests\r\n\r\n');
+          socket.write('HTTPS/1.1 429 Too Many Requests\r\n\r\n');
           socket.destroy();
         });
     });
