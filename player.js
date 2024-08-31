@@ -25,7 +25,7 @@ function getDistance(x1, y1, x2, y2) {
 function handleMovement(player, room) {
 
   //const { handleCoinCollected2 } = require('./room')
-  const deltaTime = 20
+  const deltaTime = 15
 
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
 
