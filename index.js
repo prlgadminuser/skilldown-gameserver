@@ -140,7 +140,7 @@ module.exports = {
   axios,
   Limiter,
   WebSocket,
-  https,
+  http,
   connectedClientsCount,
   MongoClient, 
   ServerApiVersion,
