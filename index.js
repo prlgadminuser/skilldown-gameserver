@@ -315,6 +315,24 @@ wss.on("connection", (ws, req) => {
                     }
                 });
 
+
+ /*            ws.on("message", (message) => {
+         // const sanitizedMessage = sanitize(message);
+         const player = result.room.players.get(result.playerId);
+          if (result.room.players.has(result.playerId) && message.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {    
+              handleRequest(result, message);
+
+
+            
+          } else {
+
+            console.log("Player not found in the room.");
+            player.ws.close(4004, "Unauthorized");
+          }
+        });
+*/
+          
+
                 ws.on('close', (code, reason) => {
                     const player = result.room.players.get(result.playerId);
                     if (player) {
