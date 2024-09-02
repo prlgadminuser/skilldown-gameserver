@@ -360,7 +360,7 @@ wss.on("connection", (ws, req) => {
                                 result.room.winner = winner.playerId;
 
                                 increasePlayerWins(winner.playerId, 1);
-                                increasePlayerPlace(winner.playerId, 1);
+                                increasePlayerPlace(winner.playerId, 1, result.room);
                                 result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
 
                                 setTimeout(() => endGame(result.room), game_win_rest_time);

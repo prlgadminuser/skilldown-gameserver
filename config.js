@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const server_tick_rate = 17;
+const server_tick_rate = 9;
 const matchmaking_timeout = 300000;
 const player_idle_timeout = 60000;
 const game_start_time = 5000;
@@ -50,12 +50,14 @@ function matchmakingsp(target) {
 const gamemodeconfig = {
   1: {
     maxplayers: 1,
-    respawns_allowed: 4,
+    respawns_allowed: 0,
     playerhealth: 77,
     playerspeed: 0.26,           //(0.26 * server_tick_rate) / 17,
-    zonespeed: 1.4,
+    zonespeed: 11.4,
     usezone: true,
     health_restore: true,
+    placereward: [167, 7, 1, -2, -4],
+    seasoncoinsreward: [25, 17, 12, 10, 7],
   //  health_autodamage: true,
   },
   2: {
@@ -66,6 +68,8 @@ const gamemodeconfig = {
     zonespeed: 1.4,
     usezone: true,
     health_restore: true,
+    placereward: [16, 7, 1, -2, -4],
+    seasoncoinsreward: [25, 17, 12, 10, 7],
    //health_autodamage: true,
   },
 };

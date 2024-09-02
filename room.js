@@ -421,6 +421,24 @@ player.bullets.forEach(bullet => {
 
   const playercountroom = Array.from(room.players.values()).filter(player => player.eliminated === false).length;
   // Create the new message based on room state
+  function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+  
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
+  
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+  
+ const ep = arraysEqual(room.lastSent?.ep || [], JSON.stringify(room.eliminatedPlayers)) ? undefined : room.eliminatedPlayers;
+  
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
     st: room.lastSent?.state !== room.state ? room.state : undefined,
@@ -429,7 +447,7 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ...(room.eliminatedPlayers && room.eliminatedPlayers.length > 0 ? { ep: room.eliminatedPlayers } : {}),
+    ep: ep,
   };
 
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
@@ -440,6 +458,13 @@ player.bullets.forEach(bullet => {
   // Check if the message has changed
   if (room.lastSentMessage !== jsonString) {
     room.players.forEach(player => {
+
+      const selfPlayerData = {
+        place: player.place,
+        health: player.health,
+        // Add more fields that need to be sent privately
+      };
+
       if (player.ws) {
         player.ws.send(compressedString, { binary: true });
       }
@@ -458,7 +483,7 @@ player.bullets.forEach(bullet => {
       playersize: room.players.size,
       state: room.state,
       id: room.map,
-      ep: room.eliminatedPlayers
+      ep: JSON.stringify(room.eliminatedPlayers),
     };
   }
 
@@ -505,6 +530,8 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     walls: mapsconfig[mapid].walls, //mapsconfig[mapid].walls.map(({ x, y }) => ({ x, y })),
     spawns: mapsconfig[mapid].spawns,
     map: mapid,
+    place_counts: gmconfig.placereward,
+    ss_counts: gmconfig.seasoncoinsreward,
     respawns: gmconfig.respawns_allowed,
     zonespeed: gmconfig.zonespeed,
     zoneallowed: gmconfig.usezone,

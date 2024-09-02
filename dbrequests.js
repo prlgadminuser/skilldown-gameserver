@@ -190,7 +190,7 @@ async function increasePlayerWins(playerId, wins2) {
   }
 }
 
-async function increasePlayerPlace(playerId, place2) {
+async function increasePlayerPlace(playerId, place2, room) {
   const username = playerId;
   const place = +place2; 
 
@@ -198,12 +198,10 @@ async function increasePlayerPlace(playerId, place2) {
     return res.status(400).json({ error: "Invalid place provided. Place should be a number between 1 and 5." });
   }
   
-  const place_counts = [16, 7, 1, -2, -4];
-  const ss_counts = [25, 17, 12, 10, 7];
 
   try {
-    const skillpoints = place_counts[place - 1];
-    const season_coins = ss_counts[place - 1];
+    const skillpoints = room.place_counts[place - 1];
+    const season_coins = room.ss_counts[place - 1];
     
 
     const updateResult = await userCollection.updateOne(

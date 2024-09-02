@@ -186,7 +186,7 @@ function handleElimination(room, player) {
             place: player.place,
                });
 
-          increasePlayerPlace(player.playerId, player.place);
+          increasePlayerPlace(player.playerId, player.place, room);
 
           player.visible = false;
 
@@ -216,7 +216,7 @@ function handleElimination(room, player) {
          //   console.log(`Last player standing! ${room.winner} wins!`);
 
             increasePlayerWins(room.winner, 1);
-            increasePlayerPlace(room.winner, 1);
+            increasePlayerPlace(room.winner, 1, room);
 
             room.eliminatedPlayers.push({
               username: room.winner,

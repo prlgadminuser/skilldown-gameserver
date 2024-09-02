@@ -151,7 +151,7 @@ const GUN_BULLET_DAMAGE = damage
       eliminator: shootingPlayer.playerId,
     });
 
-    increasePlayerPlace(nearestObject.playerId, nearestObject.place);
+    increasePlayerPlace(nearestObject.playerId, nearestObject.place, room);
 
     nearestObject.visible = false;
 
@@ -177,7 +177,7 @@ const GUN_BULLET_DAMAGE = damage
     //  console.log(`Last player standing! ${room.winner} wins!`);
 
       increasePlayerWins(room.winner, 1);
-      increasePlayerPlace(room.winner, 1);
+      increasePlayerPlace(room.winner, 1, room);
 
       room.eliminatedPlayers.push({
         username: room.winner,
