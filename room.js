@@ -347,21 +347,33 @@ function sendBatchedMessages(roomId) {
 
 
 
-function arraysEqual(a, b) {
+function arraysHaveEqualObjects(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;
   if (a.length !== b.length) return false;
 
-  for (let i = 0; i < a.length; ++i) {
-    if (Object.keys(a[i]).length !== Object.keys(b[i]).length) {
-      return false;
-    }
-    for (const key in a[i]) {
-      if (a[i][key] !== b[i][key]) {
+  // Create a comparison function to check if two objects are the same
+  const areObjectsEqual = (obj1, obj2) => {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) return false;
+
+    for (const key of keys1) {
+      if (obj1[key] !== obj2[key]) {
         return false;
       }
     }
+    return true;
+  };
+
+  for (let i = 0; i < a.length; ++i) {
+    const foundMatchingObject = b.some((obj) => areObjectsEqual(a[i], obj));
+    if (!foundMatchingObject) {
+      return false;
+    }
   }
+
   return true;
 }
 
@@ -450,10 +462,10 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-     ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) 
-        ? undefined 
-        : room.eliminatedPlayers,  // Send eliminatedPlayers only if they have changed
-};
+    ep: arraysHaveEqualObjects(room.lastSent?.ep || [], room.eliminatedPlayers)
+      ? undefined
+      : room.eliminatedPlayers,  // Send eliminatedPlayers only if they have changed
+  };
 
 	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
 
