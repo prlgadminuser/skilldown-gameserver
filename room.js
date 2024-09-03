@@ -345,14 +345,19 @@ function sendBatchedMessages(roomId) {
 
 */
 
+
+
 function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
 
-    for (let i = 0; i < a.length; i++) {
-        if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i].username !== b[i].username || a[i].place !== b[i].place) {
+      return false;
     }
-
-    return true;
+  }
+  return true;
 }
 
 function sendBatchedMessages(roomId) {
@@ -440,9 +445,13 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ep: room.eliminatedPlayers,
+     ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) 
+        ? undefined 
+        : room.eliminatedPlayers,  // Send eliminatedPlayers only if they have changed
+};
+
 	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
-  };
+
 
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
 
@@ -461,7 +470,7 @@ player.bullets.forEach(bullet => {
 
 	    const playerSpecificMessage = {
       ...newMessage,
-      selfPlayerData, // Include selfPlayerData in the message
+     // selfPlayerData, // Include selfPlayerData in the message
     };
 
     const playerMessageString = JSON.stringify(playerSpecificMessage);
