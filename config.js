@@ -129,7 +129,7 @@ const gunsconfig = {
     distance: 300,
     maxexistingtime: 5000,
     maxbounces: 5,
-    damage: 2,
+    damage: 25,
     width: 5,
     height: 5,
     useplayerangle: true,
