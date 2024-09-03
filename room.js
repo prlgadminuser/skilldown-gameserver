@@ -635,7 +635,7 @@ const validDirections = [-90, 0, 180, -180, 90, 45, 135, -135, -45];
 
 const isValidDirection = (direction) => {
   const numericDirection = parseFloat(direction);
-  return !isNaN(numericDirection) && validDirections.includes(numericDirection);
+  return !isNaN(numericDirection); //&& validDirections.includes(numericDirection);
 };
 
 function handleRequest(result, message) {
