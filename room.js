@@ -432,7 +432,9 @@ player.bullets.forEach(bullet => {
   const playercountroom = Array.from(room.players.values()).filter(player => player.eliminated === false).length;
   // Create the new message based on room state
 
-  
+  const lastEp = room.lastSent?.ep || [];
+const currentEp = room.eliminatedPlayers;
+	
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
     st: room.lastSent?.state !== room.state ? room.state : undefined,
