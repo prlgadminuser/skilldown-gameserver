@@ -502,18 +502,22 @@ player.bullets.forEach(bullet => {
     room.lastSentPlayerData = playerData;
   
 
+   const now = Date.now();
+    const delay = 100; // 5 seconds delay
+    const shouldUpdateEp = !room.lastEpUpdate || now - room.lastEpUpdate > delay;
 
-    // Update the last sent message and player data
     room.lastSent = {
       zone: room.zone,
       maxplayers: room.maxplayers,
-     // sendping: room.sendping,
       playersize: room.players.size,
       state: room.state,
       id: room.map,
-      ep: room.eliminatedPlayers,
+      ep: shouldUpdateEp ? room.eliminatedPlayers : room.lastSent?.ep,
     };
-  }
+
+    if (shouldUpdateEp) {
+      room.lastEpUpdate = now; // Update the last timestamp for ep
+    }
 
 
   batchedMessages.set(roomId, []); // Clear the batch after sending
