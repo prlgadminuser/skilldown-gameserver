@@ -114,14 +114,14 @@ const gunsconfig = {
     height: 5,
     useplayerangle: false,
     bullets: [
-      { angle: 90, speed: 13, delay: 0, offset: 0 },
-      { angle: 0, speed: 13, delay: 0, offset: 0 },
-      { angle: 180, speed: 13, delay: 0, offset: 0 },
-      { angle: -90, speed: 13, delay: 0, offset: 0 },
-      { angle: 45, speed: 13, delay: 0, offset: 0 },
-      { angle: -45, speed: 13, delay: 0, offset: 0 },
-      { angle: -135, speed: 13, delay: 0, offset: 0 },
-      { angle: 135, speed: 13, delay: 0, offset: 0 }
+      { angle: 90, speed: 19, delay: 0, offset: 0 },
+      { angle: 0, speed: 19, delay: 0, offset: 0 },
+      { angle: 180, speed: 19, delay: 0, offset: 0 },
+      { angle: -90, speed: 19, delay: 0, offset: 0 },
+      { angle: 45, speed: 19, delay: 0, offset: 0 },
+      { angle: -45, speed: 19, delay: 0, offset: 0 },
+      { angle: -135, speed: 19, delay: 0, offset: 0 },
+      { angle: 135, speed: 19, delay: 0, offset: 0 }
     ]
   },
   2: {
