@@ -423,9 +423,6 @@ player.bullets.forEach(bullet => {
   // Create the new message based on room state
 
   
- const currentEp = room.eliminatedPlayers;
-const lastEp = room.lastSent.ep || [];
-  
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
     st: room.lastSent?.state !== room.state ? room.state : undefined,
@@ -434,7 +431,7 @@ const lastEp = room.lastSent.ep || [];
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ep: currentEp.length !== lastEp.length ? room.eliminatedPlayers : undefined
+    ep: room.lastSent.ep.length !== room.eliminatedPlayers.length ? room.eliminatedPlayers : undefined,
   };
 
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
