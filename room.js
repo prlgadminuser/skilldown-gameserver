@@ -421,23 +421,10 @@ player.bullets.forEach(bullet => {
 
   const playercountroom = Array.from(room.players.values()).filter(player => player.eliminated === false).length;
   // Create the new message based on room state
-  function arraysEqual(a, b) {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) return false;
+
   
-    // If you don't care about the order of the elements inside
-    // the array, you should sort both arrays here.
-    // Please note that calling sort on an array will modify that array.
-    // you might want to clone your array first.
-  
-    for (var i = 0; i < a.length; ++i) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
-  }
-  
- const ep = arraysEqual(room.lastSent?.ep || [], JSON.stringify(room.eliminatedPlayers)) ? undefined : room.eliminatedPlayers;
+ const currentEp = room.eliminatedPlayers;
+const lastEp = room.lastSent?.ep || [];
   
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
@@ -447,7 +434,7 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ep: ep,
+    ep: currentEp.length !== lastEp.length ? room.eliminatedPlayers : undefined
   };
 
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
@@ -483,7 +470,7 @@ player.bullets.forEach(bullet => {
       playersize: room.players.size,
       state: room.state,
       id: room.map,
-      ep: JSON.stringify(room.eliminatedPlayers),
+      ep: room.eliminatedPlayers,
     };
   }
 
