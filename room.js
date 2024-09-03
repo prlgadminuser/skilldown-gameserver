@@ -424,7 +424,7 @@ player.bullets.forEach(bullet => {
 
   
  const currentEp = room.eliminatedPlayers;
-const lastEp = room.lastSent?.ep || [];
+const lastEp = room.lastSent.ep || [];
   
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
