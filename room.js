@@ -432,8 +432,9 @@ player.bullets.forEach(bullet => {
   const playercountroom = Array.from(room.players.values()).filter(player => player.eliminated === false).length;
   // Create the new message based on room state
 
+  const currentEp = room.eliminatedPlayers;
   const lastEp = room.lastSent?.ep || [];
-const currentEp = room.eliminatedPlayers;
+
 	
   const newMessage = {
     pD: room.state === "playing" ? playerDataChanges : playerData,
@@ -446,6 +447,7 @@ const currentEp = room.eliminatedPlayers;
     ep: arraysEqual(lastEp, currentEp) ? room.eliminatedPlayers : undefined,
   };
 
+	console.log(lastEp, currentEp);
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
 
   const jsonString = JSON.stringify(newMessage);
