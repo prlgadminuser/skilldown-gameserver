@@ -518,7 +518,7 @@ player.bullets.forEach(bullet => {
     if (shouldUpdateEp) {
       room.lastEpUpdate = now; // Update the last timestamp for ep
     }
-
+ }
 
   batchedMessages.set(roomId, []); // Clear the batch after sending
 }
