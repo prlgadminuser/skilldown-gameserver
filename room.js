@@ -345,6 +345,16 @@ function sendBatchedMessages(roomId) {
 
 */
 
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+        if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
+    }
+
+    return true;
+}
+
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
@@ -431,7 +441,7 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ep: room.lastSent?.ep.length !== room.eliminatedPlayers.length ? room.eliminatedPlayers : undefined,
+    ep: arraysEqual(lastEp, currentEp) ? room.eliminatedPlayers : undefined,
   };
 
 	console.log(room.lastSent?.ep.length, room.eliminatedPlayers.length);
