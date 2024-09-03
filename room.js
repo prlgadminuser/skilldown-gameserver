@@ -459,8 +459,16 @@ player.bullets.forEach(bullet => {
         // Add more fields that need to be sent privately
       };
 
+	    const playerSpecificMessage = {
+      ...newMessage,
+      selfPlayerData, // Include selfPlayerData in the message
+    };
+
+    const playerMessageString = JSON.stringify(playerSpecificMessage);
+    const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString)
+
       if (player.ws) {
-        player.ws.send(compressedString, { binary: true });
+        player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
 
