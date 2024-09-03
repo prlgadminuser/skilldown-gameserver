@@ -347,36 +347,6 @@ function sendBatchedMessages(roomId) {
 
 
 
-function arraysHaveEqualObjects(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
-
-  // Create a comparison function to check if two objects are the same
-  const areObjectsEqual = (obj1, obj2) => {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    if (keys1.length !== keys2.length) return false;
-
-    for (const key of keys1) {
-      if (obj1[key] !== obj2[key]) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  for (let i = 0; i < a.length; ++i) {
-    const foundMatchingObject = b.some((obj) => areObjectsEqual(a[i], obj));
-    if (!foundMatchingObject) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
@@ -462,9 +432,7 @@ player.bullets.forEach(bullet => {
     // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
-    ep: arraysHaveEqualObjects(room.lastSent?.ep || [], room.eliminatedPlayers)
-      ? undefined
-      : room.eliminatedPlayers,  // Send eliminatedPlayers only if they have changed
+    ep: room.eliminatedPlayers, //room.lastSent?.ep !== room.eliminatedPlayers ? room.eliminatedPlayers : undefined,  // Send eliminatedPlayers only if they have changed
   };
 
 	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
@@ -502,23 +470,15 @@ player.bullets.forEach(bullet => {
     room.lastSentPlayerData = playerData;
   
 
-   const now = Date.now();
-    const delay = 100; // 5 seconds delay
-    const shouldUpdateEp = !room.lastEpUpdate || now - room.lastEpUpdate > delay;
-
     room.lastSent = {
       zone: room.zone,
       maxplayers: room.maxplayers,
       playersize: room.players.size,
       state: room.state,
       id: room.map,
-      ep: shouldUpdateEp ? room.eliminatedPlayers : room.lastSent?.ep,
+      ep: room.eliminatedPlayers,
     };
 
-    if (shouldUpdateEp) {
-      room.lastEpUpdate = now; // Update the last timestamp for ep
-    }
- }
 
   batchedMessages.set(roomId, []); // Clear the batch after sending
 }
