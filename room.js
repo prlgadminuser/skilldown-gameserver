@@ -353,8 +353,13 @@ function arraysEqual(a, b) {
   if (a.length !== b.length) return false;
 
   for (let i = 0; i < a.length; ++i) {
-    if (a[i].username !== b[i].username || a[i].place !== b[i].place) {
+    if (Object.keys(a[i]).length !== Object.keys(b[i]).length) {
       return false;
+    }
+    for (const key in a[i]) {
+      if (a[i][key] !== b[i][key]) {
+        return false;
+      }
     }
   }
   return true;
