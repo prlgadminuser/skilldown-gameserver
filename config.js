@@ -114,14 +114,14 @@ const gunsconfig = {
     height: 5,
     useplayerangle: false,
     bullets: [
-      { angle: 90, speed: 19, delay: 0, offset: 0 },
-      { angle: 0, speed: 19, delay: 0, offset: 0 },
-      { angle: 180, speed: 19, delay: 0, offset: 0 },
-      { angle: -90, speed: 19, delay: 0, offset: 0 },
-      { angle: 45, speed: 19, delay: 0, offset: 0 },
-      { angle: -45, speed: 19, delay: 0, offset: 0 },
-      { angle: -135, speed: 19, delay: 0, offset: 0 },
-      { angle: 135, speed: 19, delay: 0, offset: 0 }
+      { angle: 90, speed: 13, delay: 0, offset: 0 },
+      { angle: 0, speed: 13, delay: 0, offset: 0 },
+      { angle: 180, speed: 13, delay: 0, offset: 0 },
+      { angle: -90, speed: 13, delay: 0, offset: 0 },
+      { angle: 45, speed: 13, delay: 0, offset: 0 },
+      { angle: -45, speed: 13, delay: 0, offset: 0 },
+      { angle: -135, speed: 13, delay: 0, offset: 0 },
+      { angle: 135, speed: 13, delay: 0, offset: 0 }
     ]
   },
   2: {
@@ -134,11 +134,11 @@ const gunsconfig = {
     height: 5,
     useplayerangle: true,
     bullets: [
-      { angle: 0, speed: 25, delay: 0, offset: -10 },
-      { angle: 0, speed: 25, delay: 100, offset: 10 },
-      { angle: 0, speed: 25, delay: 200, offset: -10 },
-      { angle: 0, speed: 25, delay: 300, offset: 10 },
-      { angle: 0, speed: 25, delay: 400, offset: -10 }
+      { angle: 0, speed: 45, delay: 0, offset: -10 },
+      { angle: 0, speed: 45, delay: 100, offset: 10 },
+      { angle: 0, speed: 45, delay: 200, offset: -10 },
+      { angle: 0, speed: 45, delay: 300, offset: 10 },
+      { angle: 0, speed: 45, delay: 400, offset: -10 }
      // { angle: 0, speed: 25, distance: 300, delay: 500, offset: -10 }
      
     ]
