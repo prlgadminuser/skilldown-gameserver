@@ -479,6 +479,7 @@ player.bullets.forEach(bullet => {
       ep: room.eliminatedPlayers,
     };
 
+	  }
 
   batchedMessages.set(roomId, []); // Clear the batch after sending
 }
