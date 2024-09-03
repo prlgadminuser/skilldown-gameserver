@@ -134,7 +134,7 @@ const gunsconfig = {
     height: 5,
     useplayerangle: true,
     bullets: [
-      { angle: 0, speed: 5, delay: 0, offset: -10 },
+      { angle: 0, speed: 35, delay: 0, offset: 0 },
      // { angle: 0, speed: 25, distance: 300, delay: 500, offset: -10 }
      
     ]
