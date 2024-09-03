@@ -444,8 +444,6 @@ player.bullets.forEach(bullet => {
     ep: arraysEqual(lastEp, currentEp) ? room.eliminatedPlayers : undefined,
   };
 
-	console.log(room.lastSent?.ep.length, room.eliminatedPlayers.length);
-
   //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
 
   const jsonString = JSON.stringify(newMessage);
