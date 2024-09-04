@@ -594,7 +594,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   };
 
   if (gmconfig.can_hit_dummies) {
-  room.dummies = deepCopy(mapsconfig[mapid].dummies),  gmconfig.can_hit_dummies //dummy crash fix
+  room.dummies = deepCopy(mapsconfig[mapid].dummies)  //dummy crash fix
 }
 
   const roomConfig = {
