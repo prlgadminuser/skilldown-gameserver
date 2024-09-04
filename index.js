@@ -238,7 +238,7 @@ wss.on("connection", (ws, req) => {
 
         // Check for maximum clients limit
         if (connectedClientsCount > maxClients) {
-            ws.close(4004, "code:full");
+            ws.close(4034, "code:full");
             return;
         }
 
@@ -253,7 +253,7 @@ wss.on("connection", (ws, req) => {
         }
 
           if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
-            ws.close(4004, "Unauthorized");
+            ws.close(4094, "Unauthorized");
             console.log("Invalid token or gamemode");
             return;
         }

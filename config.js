@@ -3,11 +3,12 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const server_tick_rate = 17;
-const matchmaking_timeout = 300000;
-const player_idle_timeout = 60000;
-const game_start_time = 5000;
-const game_win_rest_time = 8000;
+const server_tick_rate = 9
+const matchmaking_timeout = 300000
+const player_idle_timeout = 60000
+const game_start_time = 500
+const game_win_rest_time = 8000
+const room_max_open_time = 600000  //600000
 const maxClients = 20;
 
 const playerHitboxWidth = 60; 
@@ -49,6 +50,8 @@ function matchmakingsp(target) {
 
 const gamemodeconfig = {
   1: {
+    can_hit_dummies: false,
+    can_hit_players: true,
     maxplayers: 1,
     respawns_allowed: 0,
     playerhealth: 77,
@@ -58,9 +61,13 @@ const gamemodeconfig = {
     health_restore: true,
     placereward: [16, 7, 1, -2, -4],
     seasoncoinsreward: [25, 17, 12, 10, 7],
+    show_timer: false,
+   // custom_map: 1
   //  health_autodamage: true,
   },
   2: {
+    can_hit_dummies: false,
+    can_hit_players: true,
     maxplayers: 2,
     respawns_allowed: 2,
     playerhealth: 150,
@@ -70,6 +77,23 @@ const gamemodeconfig = {
     health_restore: true,
     placereward: [16, -8],
     seasoncoinsreward: [25, 12],
+    show_timer: false,
+   //health_autodamage: true,
+  },
+  3: {
+    can_hit_dummies: true,
+    can_hit_players: false,
+    maxplayers: 1,
+    respawns_allowed: Infinity,
+    playerhealth: 150,
+    playerspeed: 0.26,
+    zonespeed: 1.4,
+    usezone: false,
+    health_restore: true,
+    placereward: [0],
+    seasoncoinsreward: [0],
+    show_timer: true,
+    custom_map: 3,
    //health_autodamage: true,
   },
 };
@@ -100,12 +124,26 @@ const mapsconfig = {
       { x: 800, y: 0 },
     ]  
   },
+  3: {
+    walls: [{"x":-125,"y":325},{"x":-125,"y":275},{"x":-125,"y":225},{"x":-275,"y":175},{"x":-225,"y":175},{"x":-175,"y":175},{"x":-125,"y":175},{"x":525,"y":75},{"x":525,"y":25},{"x":525,"y":-25},{"x":525,"y":-75},{"x":525,"y":-125},{"x":-325,"y":-175},{"x":-275,"y":-175},{"x":-225,"y":-175},{"x":-175,"y":-175},{"x":525,"y":-175},{"x":-175,"y":-225},{"x":-125,"y":-225},{"x":-75,"y":-225},{"x":-25,"y":-225}],
+    width: 400,
+    height: 500,
+    spawns: [
+      { x: 0, y: 0 },
+    ],
+    dummies: {
+      a1: { x: 100, y: 0, h: 100, sh: 100, t: 1 },
+      a2: { x: 300, y: 0, h: 100, sh: 100, t: 1 },
+      b3: { x: -100, y: 0, h: 500, sh: 500, t: 2 },
+      b4: { x: -200, y: -400, h: 500, sh: 500, t: 2 },
+    },
+  },
 };
 
 
 const gunsconfig = {
   1: {
-    cooldown: 500,
+    cooldown: 300,
     distance: 300,
     maxexistingtime: 500,
     maxbounces: 5,
@@ -125,7 +163,7 @@ const gunsconfig = {
     ]
   },
   2: {
-    cooldown: 700,
+    cooldown: 200,
     distance: 300,
     maxexistingtime: 5000,
     maxbounces: 5,
@@ -183,4 +221,5 @@ module.exports = {
   matchmakingsp,
   gamemodeconfig,
   rooms,
+  room_max_open_time,
 };

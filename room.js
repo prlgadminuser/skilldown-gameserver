@@ -1,7 +1,7 @@
 "use strict";
 
 const { LZString, axios, Limiter } = require('./index.js');
-const { matchmaking_timeout, server_tick_rate, WORLD_WIDTH, WORLD_HEIGHT, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout } = require('./config.js');
+const { matchmaking_timeout, server_tick_rate, WORLD_WIDTH, WORLD_HEIGHT, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
@@ -29,6 +29,7 @@ function createRateLimiter() {
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
+
     clearTimeout(room.matchmaketimeout);
     clearTimeout(room.fixtimeout);
     clearTimeout(room.fixtimeout2);
@@ -44,6 +45,13 @@ function closeRoom(roomId) {
     clearInterval(room.cleanupinterval);
     clearInterval(room.decreasehealth);
     clearInterval(room.regeneratehealth);
+    clearInterval(room.countdownInterval);
+
+    Object.keys(room).forEach(key => {
+      if (key !== 'players') { // Skip deleting 'players' as it's handled separately
+        delete room[key];
+      }
+    });
 
     // Clean up resources associated with players in the room
     room.players.forEach(player => {
@@ -54,6 +62,17 @@ function closeRoom(roomId) {
       clearInterval(player.moveInterval);
 
       player.ws.close();
+
+      Object.keys(player).forEach(key => {
+        delete player[key];
+      });
+
+    });
+
+      // Delete player properties if needed
+    // Delete all properties of the room
+    Object.keys(room).forEach(key => {
+      delete room[key];
     });
 
     rooms.delete(roomId);
@@ -345,7 +364,19 @@ function sendBatchedMessages(roomId) {
 
 */
 
-
+function arraysAreEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  for (let i = 0; i < arr1.length; i++) {
+    if (
+      arr1[i].x !== arr2[i].x ||
+      arr1[i].y !== arr2[i].y ||
+      arr1[i].h !== arr2[i].h
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
 
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
@@ -433,6 +464,8 @@ player.bullets.forEach(bullet => {
     rp: playercountroom,
     id: room.state === "playing" ? undefined : room.map,
     ep: room.eliminatedPlayers, //room.lastSent?.ep !== room.eliminatedPlayers ? room.eliminatedPlayers : undefined,  // Send eliminatedPlayers only if they have changed
+    cud: room.lastSent?.cud !== room.countdown ? room.countdown : undefined,
+    dm: room.dummies ? room.dummies : undefined, // Only send if changed
   };
 
 	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
@@ -477,6 +510,8 @@ player.bullets.forEach(bullet => {
       state: room.state,
       id: room.map,
       ep: room.eliminatedPlayers,
+      cud: room.countdown,
+      dm: room.dummies || {},
     };
 
 	  }
@@ -501,16 +536,43 @@ function getDistance(x1, y1, x2, y2) {
 }
 
 
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 
 function createRoom(roomId, gamemode, gmconfig, splevel) {
-  const mapid = (getRandomInt(1, Object.keys(mapsconfig).length))
+
+  let mapid
+  if (gmconfig.custom_map) {
+    mapid = gmconfig.custom_map
+  } else {
+
+    const keyToExclude = 3;
+
+    // Get the keys of mapsconfig and filter out the excluded key
+    const filteredKeys = Object.keys(mapsconfig).filter(key => key !== keyToExclude);
+    
+    // Ensure there are keys to choose from
+  
+        // Randomly select a key from the filtered list
+        const randomIndex = getRandomInt(0, filteredKeys.length - 1);
+        mapid = filteredKeys[randomIndex];
+  //mapid = (getRandomInt(1, Object.keys(mapsconfig).length))
+
+}
+
+
+
   const room = {
     roomId: roomId,
     maxplayers: gmconfig.maxplayers,
     sp_level: splevel,
     snap: [],
     players: new Map(),
+    dummies: deepCopy(mapsconfig[mapid].dummies),
     state: "waiting", // Possible values: "waiting", "playing", "countdown"
+    showtimer: gmconfig.show_timer,
     gamemode: gamemode,
     winner: 0,
     eliminatedPlayers: [],
@@ -531,6 +593,13 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     regenallowed: gmconfig.health_restore,
     healthdecrease: gmconfig.health_autodamage,
   };
+
+  const roomConfig = {
+    canCollideWithDummies: gmconfig.can_hit_dummies, // Disable collision with dummies
+    canCollideWithPlayers: gmconfig.can_hit_players,// Enable collision with players
+  };
+
+  room.config = roomConfig
   
   rooms.set(roomId, room);
 console.log("room created:", roomId)
@@ -573,8 +642,28 @@ console.log("room created:", roomId)
   const roomopentoolong = setTimeout(() => {
     closeRoom(roomId);
     console.log(`Room ${roomId} closed due to timeout.`);
-  }, 10 * 60 * 1000);
+  }, room_max_open_time);
   room.runtimeout = roomopentoolong;
+
+  // Countdown timer update every second
+  if (room.showtimer === true) {
+  const countdownDuration = room_max_open_time // 10 minutes in milliseconds
+  const countdownStartTime = Date.now();
+  
+  room.countdownInterval = setInterval(() => {
+    const elapsedTime = Date.now() - countdownStartTime;
+    const remainingTime = countdownDuration - elapsedTime;
+  
+    if (remainingTime <= 0) {
+      clearInterval(room.countdownInterval);
+      room.countdown = "0:00";
+    } else {
+      const minutes = Math.floor(remainingTime / 1000 / 60);
+      const seconds = Math.floor((remainingTime / 1000) % 60);
+      room.countdown = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+  }, 1000);
+}
 
   return room;
 }

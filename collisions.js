@@ -3,26 +3,31 @@
 const wallblocksize = 50
 
 
-function isCollisionWithWalls(walls, x, y) {
-  const halfBlockSize = wallblocksize / 2;
-  
-  for (const wall of walls) {
-      const wallLeft = wall.x - halfBlockSize;
-      const wallRight = wall.x + halfBlockSize;
-      const wallTop = wall.y - halfBlockSize;
-      const wallBottom = wall.y + halfBlockSize;
+const halfBlockSize = wallblocksize / 2;
 
-      if (
-      x + 20 > wallLeft &&
-      x - 20 < wallRight &&
-      y + 45 > wallTop &&
-      y - 45 < wallBottom
-      ) {
-          return true;  // Collision detected
-      }
+function isCollisionWithWalls(walls, x, y) {
+  const xMin = x - 20;
+  const xMax = x + 20;
+  const yMin = y - 45;
+  const yMax = y + 45;
+
+  for (const wall of walls) {
+    const wallLeft = wall.x - halfBlockSize;
+    const wallRight = wall.x + halfBlockSize;
+    const wallTop = wall.y - halfBlockSize;
+    const wallBottom = wall.y + halfBlockSize;
+
+    if (
+      xMax > wallLeft &&
+      xMin < wallRight &&
+      yMax > wallTop &&
+      yMin < wallBottom
+    ) {
+      return true; // Collision detected
+    }
   }
 
-  return false;  // No collision detected
+  return false; // No collision detected
 }
 
 function isCollisionWithBullet(walls, x, y, height, width) {

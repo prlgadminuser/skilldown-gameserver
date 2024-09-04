@@ -12,6 +12,7 @@ const {
     WORLD_HEIGHT,
     playerspeed,
     game_win_rest_time,
+    mapsconfig,
 } = require('./config');
 
 function getDistance(x1, y1, x2, y2) {
@@ -205,6 +206,60 @@ const GUN_BULLET_DAMAGE = damage
   }
 }
 
+function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
+  // Retrieve the dummy from the room using its key
+  const dummy = room.dummies[dummyKey];
+
+  // Check if the dummy exists
+  if (!dummy) {
+    console.error(`Dummy with key ${dummyKey} not found.`);
+    return;
+  }
+
+  // Reduce the dummy's health by the bullet's damage
+  const GUN_BULLET_DAMAGE = damage;
+  dummy.h -= GUN_BULLET_DAMAGE;
+
+  // Update hitdata for the shooting player
+  const hitdata = {
+    bothit: {
+      playerId: { x: dummy.x, y: dummy.y }, // Changed from playerId to position
+      datetime: new Date().getTime(),
+      damage: GUN_BULLET_DAMAGE,
+    },
+  };
+  shootingPlayer.hitdata = JSON.stringify(hitdata);
+
+  // Check if the dummy's health is below 1
+  if (dummy.h < 1) {
+    // Remove the dummy from the room
+    console.log(`Removing dummy with key ${dummyKey}.`);
+    delete room.dummies[dummyKey];
+    // Respawn the dummy after 2 seconds
+    setTimeout(() => {
+      if (room)  {
+      respawnDummy(room, dummyKey, dummy, shootingPlayer);
+    }
+    }, 4000);
+  }
+}
+
+
+function respawnDummy(room, dummyKey, dummy, player) {
+
+  if (room)  {
+  // Check if the room and dummyKey are valid
+  const originalDummy = {
+    //...dummy // Reset health to a full value
+    ...dummy
+  };
+  //originalDummy.h = 100
+  originalDummy.h = dummy.sh
+  // Re-add the dummy to the room with its original key and position
+  console.log(`Respawning dummy with key ${dummyKey}.`);
+  room.dummies[dummyKey] = originalDummy;
+}
+}
 
 
 function respawnplayer(room, player) {
@@ -233,4 +288,5 @@ module.exports = {
   handleMovement,
   handlePlayerCollision,
   respawnplayer,
+  handleDummyCollision,
 }

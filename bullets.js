@@ -1,7 +1,7 @@
 "use strict";
 
 const { isCollisionWithBullet, adjustBulletDirection } = require('./collisions');
-const { handlePlayerCollision } = require('./player');
+const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
 const BULLET_MOVE_INTERVAL = server_tick_rate; // milliseconds
@@ -32,7 +32,7 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 
 // Bullet Movement
 function moveBullet(room, player, bullet) {
-  if (!bullet) return;
+  if (!bullet || !room) return;
 
   const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce } = bullet;
 
@@ -47,26 +47,19 @@ function moveBullet(room, player, bullet) {
   const timenow = Date.now();
 //console.log(t1, bullet.maxtime);
 
-    if (distanceTraveled > distance) {
+    if (distanceTraveled > distance || timenow > maxtime) {
     player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
     return;
 
   }
 
-
-  if (timenow > maxtime) {
-    player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
-    return;
-
-  }
-
-  
  
   if (!isCollisionWithBullet(room.walls, newX, newY, height, width)) {
     bullet.x = newX;
     bullet.y = newY;
 
-    for (const [id, otherPlayer] of room.players) {
+    if (room.config.canCollideWithPlayers) {
+    for (const [otherPlayer] of room.players) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
         handlePlayerCollision(room, player, otherPlayer, distance, bullet.damage);
@@ -74,6 +67,28 @@ function moveBullet(room, player, bullet) {
         return;
       }
     }
+  }
+
+  if (room.config.canCollideWithDummies) {
+    for (const key in room.dummies) {
+      if (room.dummies.hasOwnProperty(key)) {
+        const dummy = room.dummies[key];
+        
+        // Check for collision with the dummy
+        if (isCollisionWithPlayer(bullet, dummy, height, width)) { // Reuse the same collision function
+          // Handle the dummy collision
+          handleDummyCollision(room, player, key, bullet.damage); // Pass key instead of dummy object
+          
+          // Remove the bullet from the player's bullets
+          player.bullets.delete(timestamp);
+          
+          // Exit the loop after handling the collision
+          return;
+        }
+      }
+    }
+  }
+
   } else {
     // Check if the bullet can bounce
     if (canbounce === true) {
