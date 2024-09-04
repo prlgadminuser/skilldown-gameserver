@@ -257,7 +257,9 @@ function respawnDummy(room, dummyKey, dummy, player) {
   originalDummy.h = dummy.sh
   // Re-add the dummy to the room with its original key and position
   console.log(`Respawning dummy with key ${dummyKey}.`);
+	   if (room)  {
   room.dummies[dummyKey] = originalDummy;
+  }
 }
 }
 
