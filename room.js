@@ -47,12 +47,6 @@ function closeRoom(roomId) {
     clearInterval(room.regeneratehealth);
     clearInterval(room.countdownInterval);
 
-    Object.keys(room).forEach(key => {
-      if (key !== 'players') { // Skip deleting 'players' as it's handled separately
-        delete room[key];
-      }
-    });
-
     // Clean up resources associated with players in the room
     room.players.forEach(player => {
       clearTimeout(player.timeout);
@@ -63,16 +57,6 @@ function closeRoom(roomId) {
 
       player.ws.close();
 
-      Object.keys(player).forEach(key => {
-        delete player[key];
-      });
-
-    });
-
-      // Delete player properties if needed
-    // Delete all properties of the room
-    Object.keys(room).forEach(key => {
-      delete room[key];
     });
 
     rooms.delete(roomId);
@@ -542,6 +526,8 @@ function deepCopy(obj) {
 
 
 function createRoom(roomId, gamemode, gmconfig, splevel) {
+  
+  console.log(rooms.size)
 
   let mapid
   if (gmconfig.custom_map) {
@@ -594,7 +580,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   };
 
   if (gmconfig.can_hit_dummies) {
-  room.dummies = deepCopy(mapsconfig[mapid].dummies)  //dummy crash fix
+  room.dummies = deepCopy(mapsconfig[mapid].dummies) //dummy crash fix
 }
 
   const roomConfig = {

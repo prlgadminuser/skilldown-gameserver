@@ -31,6 +31,7 @@ function isCollisionWithWalls(walls, x, y) {
 }
 
 function isCollisionWithBullet(walls, x, y, height, width) {
+
   const halfWidth = width / 2;
   const halfHeight = height / 2;
 
@@ -51,8 +52,7 @@ function isCollisionWithBullet(walls, x, y, height, width) {
     ) {
       return true; // Collision detected
     }
-  }
-
+}
   return false; // No collision detected
 }
 
