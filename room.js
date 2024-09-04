@@ -570,7 +570,6 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     sp_level: splevel,
     snap: [],
     players: new Map(),
-    dummies: deepCopy(mapsconfig[mapid].dummies),
     state: "waiting", // Possible values: "waiting", "playing", "countdown"
     showtimer: gmconfig.show_timer,
     gamemode: gamemode,
@@ -593,6 +592,10 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     regenallowed: gmconfig.health_restore,
     healthdecrease: gmconfig.health_autodamage,
   };
+
+  if (gmconfig.can_hit_dummies) {
+  room.dummies = deepCopy(mapsconfig[mapid].dummies),  gmconfig.can_hit_dummies //dummy crash fix
+}
 
   const roomConfig = {
     canCollideWithDummies: gmconfig.can_hit_dummies, // Disable collision with dummies
