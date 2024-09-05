@@ -204,7 +204,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
 	 room.players.forEach((player) => {
 
-            player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
+          //  player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
 
             });
 

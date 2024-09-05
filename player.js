@@ -52,8 +52,8 @@ function handleMovement(player, room) {
   player.x = Math.max(-room.mapWidth, Math.min(room.mapWidth, player.x));
   player.y = Math.max(-room.mapHeight, Math.min(room.mapHeight, player.y));
 
-	  clearTimeout(player.movetimeout);
-  player.movetimeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
+	//  clearTimeout(player.movetimeout);
+ // player.movetimeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout); 
 
 }
  /* const collectedCoins = [];
@@ -94,7 +94,7 @@ function handleMovement(player, room) {
 
 
 
-function handlePlayerCollision(room, shootingPlayer, nearestObject, shootdamagereduce, damage) {
+function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
 
  //const GUN_BULLET_DAMAGE = Math.round(damage / shootdamagereduce);
 
@@ -216,8 +216,8 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
     return;
   }
 
-  // Reduce the dummy's health by the bullet's damage
-  const GUN_BULLET_DAMAGE = damage;
+  const GUN_BULLET_DAMAGE = damage
+
   dummy.h -= GUN_BULLET_DAMAGE;
 
   // Update hitdata for the shooting player

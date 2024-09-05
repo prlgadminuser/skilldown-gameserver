@@ -34,7 +34,7 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 function moveBullet(room, player, bullet) {
   if (!bullet || !room) return;
 
-  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce } = bullet;
+  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig, damage } = bullet;
 
   const radians = toRadians(direction - 90); // Adjust direction to radians
   const xDelta = speed * Math.cos(radians);
@@ -62,7 +62,8 @@ function moveBullet(room, player, bullet) {
     for (const [otherPlayer] of room.players) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
-        handlePlayerCollision(room, player, otherPlayer, distance, bullet.damage);
+        let finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+        handlePlayerCollision(room, player, otherPlayer, finalDamage);
         player.bullets.delete(timestamp);
         return;
       }
@@ -77,7 +78,9 @@ function moveBullet(room, player, bullet) {
         // Check for collision with the dummy
         if (isCollisionWithPlayer(bullet, dummy, height, width)) { // Reuse the same collision function
           // Handle the dummy collision
-          handleDummyCollision(room, player, key, bullet.damage); // Pass key instead of dummy object
+          let finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+        
+          handleDummyCollision(room, player, key, finalDamage); // Pass key instead of dummy object
           
           // Remove the bullet from the player's bullets
           player.bullets.delete(timestamp);
@@ -135,7 +138,7 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 
 // Shoot Bullet
 async function shootBullet(room, player, bulletdata) {
-  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance, canbounce } = bulletdata;
+  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig } = bulletdata;
   const radians = toRadians(angle);
   const radians1 = toRadians(angle - 90);
   const xOffset = offset * Math.cos(radians);
@@ -160,6 +163,7 @@ async function shootBullet(room, player, bulletdata) {
     maxtime,
     distance,
     canbounce,
+    damageconfig,
   };
 
   player.bullets.set(timestamp, bullet);
@@ -201,6 +205,7 @@ async function handleBulletFired(room, player, gunType) {
       maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
       distance: gun.distance,
       canbounce: player.can_bullets_bounce, 
+      damageconfig: gun.damageconfig || {},
     };
 
     shootBulletsWithDelay(room, player, bulletdata);
@@ -210,6 +215,22 @@ async function handleBulletFired(room, player, gunType) {
     player.shooting = false;
   }, shootCooldown);
 }
+
+function calculateFinalDamage(distanceUsed, bulletMaxDistance, normalDamage, layers) {
+
+  if (!Array.isArray(layers) || layers.length === 0) {
+    return normalDamage;
+}
+
+  for (const layer of layers) {
+      const thresholdDistance = (layer.threshold / 100) * bulletMaxDistance;
+      if (distanceUsed <= thresholdDistance) {
+          return Math.ceil(normalDamage * layer.damageMultiplier);
+      }
+  }
+  return 0; // No damage if no condition is met
+}
+
 
 module.exports = {
   handleBulletFired,

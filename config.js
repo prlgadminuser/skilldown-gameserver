@@ -175,7 +175,13 @@ const gunsconfig = {
       { angle: 0, speed: 35, delay: 0, offset: 0 },
      // { angle: 0, speed: 25, distance: 300, delay: 500, offset: -10 }
      
-    ]
+    ],
+    damageconfig: [
+      { threshold: 45, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
+      { threshold: 80, damageMultiplier: 0.75 }, // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 100, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
+      // You can add more layers here
+  ],
   },
   3: {
     cooldown: 1000,
