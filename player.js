@@ -33,9 +33,9 @@ function handleMovement(player, room) {
   const radians = (finalDirection * Math.PI) / 180;
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
-
-  const newX = player.x + xDelta;
-  const newY = player.y + yDelta;
+  
+  const newX = Math.round(player.x + xDelta);
+  const newY = Math.round(player.y + yDelta);
 
   // Check collision with walls before updating player position
   if (!isCollisionWithWalls(room.walls, newX, newY)) {
