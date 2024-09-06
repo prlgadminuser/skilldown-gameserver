@@ -534,7 +534,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     mapid = gmconfig.custom_map
   } else {
 
-    const keyToExclude = 3;
+    const keyToExclude = "3";
 
     // Get the keys of mapsconfig and filter out the excluded key
     const filteredKeys = Object.keys(mapsconfig).filter(key => key !== keyToExclude);
