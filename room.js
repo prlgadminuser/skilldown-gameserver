@@ -161,6 +161,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         canusegadget: true,
         gadgetcooldown: gadgetconfig[gadgetselected].cooldown,
         gadgetuselimit: gadgetconfig[gadgetselected].use_limit,
+        gadgetchangevars: gadgetconfig[gadgetselected].changevariables,
 
         usegadget() {
         
@@ -176,8 +177,18 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       },
       };
   
+      if (newPlayer.gadgetchangevars) {
+      for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
+            // Decrease by percentage
+            newPlayer[variable] += Math.round(newPlayer[variable] * change);
+
+            }
+          }
+        
+        
 
       if (room) {
+
 
 	        newPlayer.timeout = setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
 
@@ -534,7 +545,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     mapid = gmconfig.custom_map
   } else {
 
-    const keyToExclude = "3";
+    const keyToExclude = 3;
 
     // Get the keys of mapsconfig and filter out the excluded key
     const filteredKeys = Object.keys(mapsconfig).filter(key => key !== keyToExclude);

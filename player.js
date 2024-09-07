@@ -25,30 +25,24 @@ function getDistance(x1, y1, x2, y2) {
 
 function handleMovement(player, room) {
 
-  //const { handleCoinCollected2 } = require('./room')
   const deltaTime = 20
-
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
-
   const radians = (finalDirection * Math.PI) / 180;
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
-  
+
   const newX = Math.round(player.x + xDelta);
   const newY = Math.round(player.y + yDelta);
 
-  // Check collision with walls before updating player position
   if (!isCollisionWithWalls(room.walls, newX, newY)) {
     player.x = newX;
     player.y = newY;
     player.lastProcessedPosition = { x: newX, y: newY };
   } else {
-    // Collision resolution: revert to last valid position
     player.x = player.lastProcessedPosition.x;
     player.y = player.lastProcessedPosition.y;
   }
 
-  // Clamp player position within world bounds
   player.x = Math.max(-room.mapWidth, Math.min(room.mapWidth, player.x));
   player.y = Math.max(-room.mapHeight, Math.min(room.mapHeight, player.y));
 

@@ -6,6 +6,10 @@ const gadgetconfig = {
     1: {  // SYRINGE = restores 20% of player health
         use_limit: 5,
         cooldown: 500,
+       // changevariables: {
+      //  starthealth: -0.2,  // Decrease health by 20%
+      //  health: -0.2,
+     // },
         gadget(player) {
             player.health = Math.min(player.health + Math.round(player.starthealth / 5), player.starthealth);
         }
