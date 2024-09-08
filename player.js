@@ -227,7 +227,7 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
   // Check if the dummy's health is below 1
   if (dummy.h < 1) {
     // Remove the dummy from the room
-    console.log(`Removing dummy with key ${dummyKey}.`);
+    //console.log(`Removing dummy with key ${dummyKey}.`);
     delete room.dummies[dummyKey];
     // Respawn the dummy after 2 seconds
     setTimeout(() => {
