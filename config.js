@@ -163,9 +163,9 @@ const gunsconfig = {
     ]
   },
   2: {
-    cooldown: 800,
+    cooldown: 650,
     distance: 300,
-    maxexistingtime: 5000,
+    maxexistingtime: 2000,
     maxbounces: 5,
     damage: 25,
     width: 5,
@@ -178,7 +178,7 @@ const gunsconfig = {
     ],
     damageconfig: [
       { threshold: 45, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
-      { threshold: 80, damageMultiplier: 0.75 }, // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 80, damageMultiplier: 0.50 }, // Layer 2: 3/4 damage if within 50% of max distance
       { threshold: 100, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
       // You can add more layers here
   ],
