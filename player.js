@@ -21,9 +21,53 @@ function getDistance(x1, y1, x2, y2) {
 
 
 
-
-
 function handleMovement(player, room) {
+  const deltaTime = 20;
+  const finalDirection = player.moving ? player.direction - 90 : player.direction;
+  const radians = (finalDirection * Math.PI) / 180;
+  const xDelta = player.speed * deltaTime * Math.cos(radians);
+  const yDelta = player.speed * deltaTime * Math.sin(radians);
+
+  let newX = player.x + xDelta;
+  let newY = player.y + yDelta;
+
+  // Check for collision and slide along walls if necessary
+  if (isCollisionWithWalls(room.walls, newX, newY)) {
+    // Try moving only in X direction
+    if (!isCollisionWithWalls(room.walls, newX, player.y)) {
+      newY = player.y;
+    }
+    // Try moving only in Y direction
+    else if (!isCollisionWithWalls(room.walls, player.x, newY)) {
+      newX = player.x;
+    }
+    // If both X and Y movements cause collision, don't move
+    else {
+      newX = player.x;
+      newY = player.y;
+    }
+  }
+
+  // Round the new position
+  newX = Math.round(newX);
+  newY = Math.round(newY);
+
+  // Ensure the player stays within the map boundaries
+  newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
+  newY = Math.max(-room.mapHeight, Math.min(room.mapHeight, newY));
+
+  // Update player position
+  player.x = newX;
+  player.y = newY;
+  player.lastProcessedPosition = { x: newX, y: newY };
+
+  // Uncomment if you want to use the timeout feature
+  // clearTimeout(player.movetimeout);
+  // player.movetimeout = setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
+}
+
+
+/*function handleMovement(player, room) {
 
   const deltaTime = 20
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
@@ -83,6 +127,7 @@ function handleMovement(player, room) {
   // const closestState = room.snap.reduce((prev, curr) => {
    // return (Math.abs(curr.timestamp - timestamp) < Math.abs(prev.timestamp - timestamp) ? curr : prev);
   //});
+
 
   
 
