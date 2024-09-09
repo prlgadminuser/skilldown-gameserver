@@ -26,47 +26,6 @@ function createRateLimiter() {
       let room;
 
 
-function closeRoom2(roomId) {
-  const room = rooms.get(roomId);
-  if (room) {
-
-    clearTimeout(room.matchmaketimeout);
-    clearTimeout(room.fixtimeout);
-    clearTimeout(room.fixtimeout2);
-    clearTimeout(room.fixtimeout3);
-    clearTimeout(room.fixtimeout4);
-    clearTimeout(room.runtimeout);
-   
-    clearInterval(room.intervalId);
-    clearInterval(room.shrinkInterval);
-    clearInterval(room.zonefulldamage);
-    clearInterval(room.pinger);
-    clearInterval(room.snapInterval);
-    clearInterval(room.cleanupinterval);
-    clearInterval(room.decreasehealth);
-    clearInterval(room.regeneratehealth);
-    clearInterval(room.countdownInterval);
-
-    // Clean up resources associated with players in the room
-    room.players.forEach(player => {
-      clearTimeout(player.timeout);
-      clearTimeout(player.movetimeout);
-      clearTimeout(player.gadget);
-      clearTimeout(player.gadget_timeout);
-      clearInterval(player.moveInterval);
-
-      player.ws.close();
-
-    });
-
-    rooms.delete(roomId);
-
-    console.log(`Room ${roomId} closed.`);
-  } else {
-    console.log(`Room ${roomId} not found.`);
-  }
-}
-
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
@@ -102,16 +61,12 @@ function closeRoom(roomId) {
 
     rooms.delete(roomId);
 
-    room = null;
-
-    Object.keys(room).forEach(key => delete room[key]);
-
-
     console.log(`Room ${roomId} closed.`);
   } else {
     console.log(`Room ${roomId} not found.`);
   }
 }
+
 
 function playerLeave(roomId, playerId) {
     const room = rooms.get(roomId);
