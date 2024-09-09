@@ -718,7 +718,159 @@ const isValidDirection = (direction) => {
   return !isNaN(numericDirection) && validDirections.includes(numericDirection);
 };
 
+
 function handleRequest(result, message) {
+  const player = result.room.players.get(result.playerId);
+  const data = JSON.parse(message);
+
+  if (message.length > 100) {
+      player.ws.close(4000, "ahhh whyyyyy");
+      return;
+  }
+
+  if (!player) return;
+
+  switch (data.type) {
+      case "pong":
+          handlePong(player);
+          break;
+  }
+
+  if (result.room.state !== "playing" || player.visible === false || player.eliminated) return;
+
+  switch (data.type) {
+      case "shoot":
+          handleShoot(data, player, result.room);
+          break;
+      case "switch_gun":
+          handleSwitchGun(data, player);
+          break;
+      case "emote":
+          handleEmote(data, player);
+          break;
+      case "gadget":
+          handleGadget(player);
+          break;
+      case "movement":
+          handleMovementData(data, player, result.room);
+          break;
+  }
+ //handleMovingState(data.moving, player);
+
+  if (data.moving === "false") {
+      clearInterval(player.moveInterval);
+      player.moveInterval = null;
+      player.moving = false;
+  }
+ 
+}
+
+function handleMovingState(movingValue, player) {
+  if (movingValue === false || movingValue === "false") {
+      clearInterval(player.moveInterval);
+      player.moveInterval = null;
+      player.moving = false;
+  }
+}
+
+
+function handlePong(player) {
+  clearTimeout(player.timeout);
+  player.timeout = setTimeout(() => {
+      player.ws.close(4200, "disconnected_inactivity");
+  }, player_idle_timeout);
+}
+
+function handleShoot(data, player, room) {
+  if (data.shoot_direction > -181 && data.shoot_direction < 181) {
+      player.shoot_direction = parseFloat(data.shoot_direction);
+      handleBulletFired(room, player, player.gun);
+  }
+}
+
+function handleSwitchGun(data, player) {
+  const selectedGunNumber = parseFloat(data.gun);
+  const allguns = Object.keys(gunsconfig).length;
+  if (
+      selectedGunNumber !== player.gun &&
+      !player.shooting &&
+      selectedGunNumber >= 1 &&
+      selectedGunNumber <= allguns
+  ) {
+      player.gun = selectedGunNumber;
+  } else if (player.shooting) {
+      console.log("Cannot switch guns while shooting.");
+  } else {
+      console.log("Gun number must be between 1 and 3.");
+  }
+}
+
+function handleEmote(data, player) {
+  if (data.id >= 1 && data.id <= 4 && player.emote === 0) {
+      player.emote = data.id;
+      setTimeout(() => {
+          player.emote = 0;
+      }, 3000);
+  }
+}
+
+function handleGadget(player) {
+  if (player.canusegadget && player.gadgetuselimit > 0) {
+      player.canusegadget = false;
+      player.gadgetuselimit--;
+      player.usegadget();
+      setTimeout(() => {
+          player.canusegadget = true;
+      }, player.gadgetcooldown);
+  }
+}
+
+function handleMovementData(data, player, room) {
+  if (typeof data.direction === "string" && isValidDirection(data.direction)) {
+      const validDirection = parseFloat(data.direction);
+      if (!isNaN(validDirection)) {
+          updatePlayerDirection(player, validDirection);
+          updatePlayerMovement(player, data.moving);
+          handlePlayerMoveInterval(player, room);
+      } else {
+          console.warn("Invalid direction value:", data.direction);
+      }
+  }
+}
+
+function updatePlayerDirection(player, direction) {
+  player.direction = direction;
+  player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction;
+}
+
+function updatePlayerMovement(player, moving) {
+  if (moving === true || moving === "true") {
+      player.moving = true;
+  } else if (moving === false || moving === "false") {
+      player.moving = false;
+  } else {
+      console.warn("Invalid 'moving' value:", moving);
+  }
+}
+
+
+
+function handlePlayerMoveInterval(player, room) {
+  if (!player.moveInterval) {
+      clearInterval(player.moveInterval);
+      player.moveInterval = setInterval(() => {
+          if (player.moving) {
+              handleMovement(player, room);
+              console.log("i")
+          } else {
+              clearInterval(player.moveInterval);
+              player.moveInterval = null;
+          }
+      }, server_tick_rate);
+  }
+}
+
+/*function handleRequest(result, message) {
 	const player = result.room.players.get(result.playerId);
 	const data = JSON.parse(message);
 
@@ -859,6 +1011,7 @@ function handleRequest(result, message) {
 		}
 	}
 }
+*/
 
 module.exports = {
   joinRoom,
