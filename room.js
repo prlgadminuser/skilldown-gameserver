@@ -849,7 +849,7 @@ function updatePlayerMovement(player, moving) {
   } else if (moving === false || moving === "false") {
       player.moving = false;
   } else {
-      console.warn("Invalid 'moving' value:", moving);
+      //console.warn("Invalid 'moving' value:", moving);
   }
 }
 
@@ -861,7 +861,6 @@ function handlePlayerMoveInterval(player, room) {
       player.moveInterval = setInterval(() => {
           if (player.moving) {
               handleMovement(player, room);
-              console.log("i")
           } else {
               clearInterval(player.moveInterval);
               player.moveInterval = null;
