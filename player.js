@@ -257,7 +257,7 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
   const GUN_BULLET_DAMAGE = damage
 
-//  dummy.h -= GUN_BULLET_DAMAGE;
+dummy.h -= GUN_BULLET_DAMAGE;
 
   // Update hitdata for the shooting player
   const hitdata = {
