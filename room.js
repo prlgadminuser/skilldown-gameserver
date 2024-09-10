@@ -461,8 +461,7 @@ player.bullets.forEach(bullet => {
     id: room.state === "playing" ? undefined : room.map,
     ep: room.eliminatedPlayers, //room.lastSent?.ep !== room.eliminatedPlayers ? room.eliminatedPlayers : undefined,  // Send eliminatedPlayers only if they have changed
     cud: room.lastSent?.cud !== room.countdown ? room.countdown : undefined,
-   // dm: room.dummies ? room.dummies : undefined, // Only send if changed
-	   dm: room.state === "playing" ? undefined : room.dummies,
+    dm: room.dummies ? room.dummies : undefined, // Only send if changed
   };
 
 	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
