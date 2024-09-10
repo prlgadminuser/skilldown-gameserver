@@ -61,8 +61,6 @@ function closeRoom(roomId) {
 
     rooms.delete(roomId);
 
-	   Object.keys(room).forEach(key => delete room[key]);
-
     console.log(`Room ${roomId} closed.`);
   } else {
     console.log(`Room ${roomId} not found.`);
