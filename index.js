@@ -40,7 +40,7 @@ async function logServerUsage() {
 
 const ConnectionOptionsRateLimit = {
   points: 1, // Number of points
-  duration: 5, // Per second
+  duration: 1, // Per second
 };
 
 let connectedClientsCount = 0;
