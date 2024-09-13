@@ -51,10 +51,10 @@ async function decreaseHealthForAllPlayers(room) {
 
 // Start decreasing health at intervals
 function startDecreasingHealth(room, intervalInSeconds) {
-  room.decreasehealth = setInterval(() => {
+  room.intervalIds.push(setInterval(() => {
 
     decreaseHealthForAllPlayers(room);
-  }, intervalInSeconds * 1000);
+  }, intervalInSeconds * 1000));
 }
 
 
@@ -64,7 +64,7 @@ function waitForHealthBelow100(player, room) {
       if (player.health < player.starthealth) {
         resolve(); 
       } else {
-        room.fixtimeout3 = setTimeout(checkHealth, player.starthealth);
+        room.timeoutIds.push(setTimeout(checkHealth, player.starthealth));
       }
     };
     checkHealth(); 
@@ -94,9 +94,9 @@ async function regenerateHealthForAllPlayers(room) {
 }
 
 function startRegeneratingHealth(room, intervalInSeconds) {
-  room.regeneratehealth = setInterval(() => {
+  room.intervalIds.push(setInterval(() => {
     regenerateHealthForAllPlayers(room);
-  }, intervalInSeconds * 1000); 
+  }, intervalInSeconds * 1000)); 
 }
 
 module.exports = {

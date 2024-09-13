@@ -63,7 +63,7 @@ function shrinkZone(room) {
     } else {
        // console.log("Zone cannot shrink further.");
         clearInterval(room.shrinkInterval);
-         room.zonefulldamage = setInterval(() => dealDamage(room), 250);
+        room.intervalIds.push(setInterval(() => dealDamage(room), 250));
     }
 }
 
@@ -99,19 +99,19 @@ function pingPlayers(room) {
   // First setTimeout
 
  
- setTimeout(() => {
+ room.timeoutIds.push(setTimeout(() => {
     room.players.forEach((player) => {
         if (player.visible !== false) {
             player.lastping = new Date().getTime();
         }
     });
     room.sendping = 1;
-}, 200);
+}, 200));
 
   // Second setTimeout
-  setTimeout(() => {
+  room.timeoutIds.push(setTimeout(() => {
       room.sendping = undefined;
-  }, 500);
+  }, 500));
 
   //pingPlayers(room);
 }
@@ -125,7 +125,7 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2
   room.zoneEndY += room.mapHeight / 2
  
-    room.shrinkInterval = setInterval(() => shrinkZone(room), 250);
+  room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
    /* pingPlayers(room);
  
     room.snapInterval = setInterval(() => {
@@ -196,9 +196,9 @@ function handleElimination(room, player) {
         (player) => player.visible !== false
       ).length === 0
     ) {
-      setTimeout(() => {
+      room.timeoutIds.push(setTimeout(() => {
         endGame(room);
-      }, game_win_rest_time);
+      }, game_win_rest_time));
     }
         
 
@@ -223,9 +223,9 @@ function handleElimination(room, player) {
               place: 1,
             });
 
-            setTimeout(() => {
+            room.timeoutIds.push(setTimeout(() => {
               endGame(room);
-            }, game_win_rest_time);
+            }, game_win_rest_time));
           }
     }
   }

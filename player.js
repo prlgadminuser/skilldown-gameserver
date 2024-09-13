@@ -199,9 +199,9 @@ const GUN_BULLET_DAMAGE = damage
     shootingPlayer.kills++;
     shootingPlayer.elimlast = nearestObject.playerId;
 
-    setTimeout(() => {
+   shootingPlayer.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
-    }, 100);
+    }, 100));
 
     // Check for game end conditions
     if (
@@ -224,9 +224,9 @@ const GUN_BULLET_DAMAGE = damage
         place: 1,
       });
 
-      setTimeout(() => {
+      room.timeoutIds.push(setTimeout(() => {
         endGame(room);
-      }, game_win_rest_time);
+      }, game_win_rest_time));
     }
   } else {
 
@@ -235,9 +235,9 @@ const GUN_BULLET_DAMAGE = damage
       // Player is eliminated
       shootingPlayer.elimlast = nearestObject.playerId;
 
-      setTimeout(() => {
+      shootingPlayer.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;
-      }, 100);
+      }, 100));
 
       nearestObject.visible = false;
       respawnplayer(room, nearestObject)
@@ -257,7 +257,7 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
   const GUN_BULLET_DAMAGE = damage
 
-//dummy.h -= GUN_BULLET_DAMAGE;
+dummy.h -= GUN_BULLET_DAMAGE;
 
   // Update hitdata for the shooting player
   const hitdata = {
@@ -275,11 +275,11 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
     //console.log(`Removing dummy with key ${dummyKey}.`);
     delete room.dummies[dummyKey];
     // Respawn the dummy after 2 seconds
-    setTimeout(() => {
+    room.timeoutIds.push(setTimeout(() => {
       if (room)  {
       respawnDummy(room, dummyKey, dummy, shootingPlayer);
     }
-    }, 4000);
+    }, 4000));
   }
 }
 
@@ -315,10 +315,10 @@ function respawnplayer(room, player) {
   player.health = player.starthealth
   player.x = player.startspawn.x
   player.y = player.startspawn.y
-  setTimeout(() =>{
+  player.timeoutIds.push(setTimeout(() =>{
     player.visible = true
 
-    }, 5000);
+    }, 5000));
 
  }
  

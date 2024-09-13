@@ -35,7 +35,7 @@ async function logServerUsage() {
 }
 
 // Log server usage every 5 seconds
-//setInterval(logServerUsage, 60000);
+setInterval(logServerUsage, 60000);
 
 
 const ConnectionOptionsRateLimit = {
@@ -364,7 +364,7 @@ wss.on("connection", (ws, req) => {
                                 increasePlayerPlace(winner.playerId, 1, result.room);
                                 result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
 
-                                setTimeout(() => endGame(result.room), game_win_rest_time);
+                                result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
                           }
                            
                         }
