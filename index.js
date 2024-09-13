@@ -35,7 +35,7 @@ async function logServerUsage() {
 }
 
 // Log server usage every 5 seconds
-//setInterval(logServerUsage, 5000);
+setInterval(logServerUsage, 60000);
 
 
 const ConnectionOptionsRateLimit = {
