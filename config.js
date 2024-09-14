@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const server_tick_rate = 13
+const server_tick_rate = 16.7
 const matchmaking_timeout = 300000
 const player_idle_timeout = 60000
 const game_start_time = 5000
