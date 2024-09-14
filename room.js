@@ -25,6 +25,17 @@ function createRateLimiter() {
       let roomId;
       let room;
 
+      function clearAndRemoveInactiveTimers(timerArray, clearFn) {
+        return timerArray.filter(timer => {
+          if (timer._destroyed || timer._idleTimeout === -1) { 
+            // Timer is already destroyed or no longer active
+            clearFn(timer); // Clear the timeout or interval
+            return false; // Remove from the array
+          }
+          return true; // Keep active timers
+        });
+      }
+      
 
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
@@ -38,7 +49,8 @@ function closeRoom(roomId) {
     clearTimeout(room.fixtimeout3);
     clearTimeout(room.fixtimeout4);
     clearTimeout(room.runtimeout);
-   
+
+    clearInterval(room.xcleaninterval)
     clearInterval(room.intervalId);
     clearInterval(room.shrinkInterval);
     clearInterval(room.zonefulldamage);
@@ -599,6 +611,28 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     regenallowed: gmconfig.health_restore,
     healthdecrease: gmconfig.health_autodamage,
   };
+
+  room.xcleaninterval = setInterval(() => {
+    if (room) {
+      // Clear room's timeout and interval arrays
+      if (room.timeoutIds) {
+        room.timeoutIds = clearAndRemoveInactiveTimers(room.timeoutIds, clearTimeout);
+      }
+      if (room.intervalIds) {
+        room.intervalIds = clearAndRemoveInactiveTimers(room.intervalIds, clearInterval);
+      }
+  
+      // Clear player-specific timeouts and intervals
+      room.players.forEach(player => {
+        if (player.timeoutIds) {
+          player.timeoutIds = clearAndRemoveInactiveTimers(player.timeoutIds, clearTimeout);
+        }
+        if (player.intervalIds) {
+          player.intervalIds = clearAndRemoveInactiveTimers(player.intervalIds, clearInterval);
+        }
+      });
+    }
+  }, 1000); // Run every 1 second
 
   if (gmconfig.can_hit_dummies) {
   room.dummies = deepCopy(mapsconfig[mapid].dummies) //dummy crash fix
