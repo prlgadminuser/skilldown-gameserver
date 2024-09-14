@@ -820,7 +820,7 @@ function handleMovingState(movingValue, player) {
 
 function handlePong(player) {
   clearTimeout(player.timeout);
-  player.timeout = player.timeoutIds.push(setTimeout(() => {
+  player.timeoutIds.push(player.timeout = setTimeout(() => {
       player.ws.close(4200, "disconnected_inactivity");
   }, player_idle_timeout));
 }
