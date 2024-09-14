@@ -37,6 +37,17 @@ function createRateLimiter() {
       }
       
 
+      function clearAndRemoveCompletedTimeouts(timeoutArray) {
+        return timeoutArray.filter(timeout => {
+          if (timeout._destroyed || timeout._idleTimeout === -1 || timeout._called) {
+            // _called indicates that the timeout has already been executed (Node.js)
+            return false; // Remove from the array as it's completed or inactive
+          }
+          return true; // Keep active timeouts
+        });
+      }
+      
+
 function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
@@ -224,13 +235,13 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       if (room.state === "waiting" && room.players.size > room.maxplayers - 1) {
         room.state = "await";
         clearTimeout(room.matchmaketimeout);
-        room.timeoutIds.push(setTimeout(() => {
+        setTimeout(() => {
           
       
 
         room.state = "countdown";
 
-        room.timeoutIds.push(setTimeout(() => {
+        setTimeout(() => {
           room.state = "playing";
 
 	 room.players.forEach((player) => {
@@ -251,9 +262,9 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
             startDecreasingHealth(room, 1)
             }
            
-          }, game_start_time));
+          }, game_start_time);
          // generateRandomCoins(room);
-        }, 1000));
+        }, 1000);
       }
    
      if (ws.readyState === ws.CLOSED) {
@@ -616,19 +627,21 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     if (room) {
       // Clear room's timeout and interval arrays
       if (room.timeoutIds) {
-        room.timeoutIds = clearAndRemoveInactiveTimers(room.timeoutIds, clearTimeout);
+        room.timeoutIds = clearAndRemoveCompletedTimeouts(room.timeoutIds, clearTimeout);
       }
       if (room.intervalIds) {
+        
         room.intervalIds = clearAndRemoveInactiveTimers(room.intervalIds, clearInterval);
       }
   
       // Clear player-specific timeouts and intervals
       room.players.forEach(player => {
         if (player.timeoutIds) {
-          player.timeoutIds = clearAndRemoveInactiveTimers(player.timeoutIds, clearTimeout);
+          player.timeoutIds = clearAndRemoveCompletedTimeouts(player.timeoutIds, clearTimeout);
         }
         if (player.intervalIds) {
           player.intervalIds = clearAndRemoveInactiveTimers(player.intervalIds, clearInterval);
+          console.log(room.timeoutIds.length, room.intervalIds.length)
         }
       });
     }
@@ -648,7 +661,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   rooms.set(roomId, room);
 console.log("room created:", roomId)
 
-room.timeoutIds.push(setTimeout(() => {
+setTimeout(() => {
 
   
   room.players.forEach((player) => {
@@ -661,7 +674,7 @@ room.timeoutIds.push(setTimeout(() => {
       }
     });
   closeRoom(roomId);
-}, matchmaking_timeout));
+}, matchmaking_timeout);
 
 
   // Start sending batched messages at regular intervals
@@ -671,7 +684,7 @@ room.timeoutIds.push(setTimeout(() => {
   }, server_tick_rate));
 
  // room.intervalId = intervalId;
- room.timeoutIds.push(setTimeout(() => {
+ setTimeout(() => {
 
 
   room.intervalIds.push(setInterval(() => {
@@ -680,13 +693,13 @@ room.timeoutIds.push(setTimeout(() => {
  cleanupRoom(room);
 }
    }, 1000));
- }, 10000));
+ }, 10000);
 
 
-  const roomopentoolong = room.timeoutIds.push(setTimeout(() => {
+  const roomopentoolong = setTimeout(() => {
     closeRoom(roomId);
     console.log(`Room ${roomId} closed due to timeout.`);
-  }, room_max_open_time));
+  }, room_max_open_time);
   room.runtimeout = roomopentoolong;
 
   // Countdown timer update every second
@@ -852,9 +865,9 @@ function handleSwitchGun(data, player) {
 function handleEmote(data, player) {
   if (data.id >= 1 && data.id <= 4 && player.emote === 0) {
       player.emote = data.id;
-      player.timeoutIds.push(setTimeout(() => {
+      setTimeout(() => {
           player.emote = 0;
-      }, 3000));
+      }, 3000);
   }
 }
 
@@ -863,9 +876,9 @@ function handleGadget(player) {
       player.canusegadget = false;
       player.gadgetuselimit--;
       player.usegadget();
-      player.timeoutIds.push(setTimeout(() => {
+      setTimeout(() => {
           player.canusegadget = true;
-      }, player.gadgetcooldown));
+      }, player.gadgetcooldown);
   }
 }
 
