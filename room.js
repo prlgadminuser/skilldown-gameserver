@@ -641,7 +641,6 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
         }
         if (player.intervalIds) {
           player.intervalIds = clearAndRemoveInactiveTimers(player.intervalIds, clearInterval);
-          console.log(room.timeoutIds.length, room.intervalIds.length)
         }
       });
     }
