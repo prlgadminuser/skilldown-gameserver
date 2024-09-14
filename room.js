@@ -210,7 +210,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       if (room) {
 
 
-        newPlayer.timeoutIds.push(setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout)),
+       newPlayer.timeout = newPlayer.timeoutIds.push(setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout)),
 
       room.players.set(playerId, newPlayer);
 
@@ -820,7 +820,7 @@ function handleMovingState(movingValue, player) {
 
 function handlePong(player) {
   clearTimeout(player.timeout);
-  player.timeoutIds.push(setTimeout(() => {
+  player.timeout = player.timeoutIds.push(setTimeout(() => {
       player.ws.close(4200, "disconnected_inactivity");
   }, player_idle_timeout));
 }
