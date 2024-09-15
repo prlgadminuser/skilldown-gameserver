@@ -99,19 +99,19 @@ function pingPlayers(room) {
   // First setTimeout
 
  
- setTimeout(() => {
+  room.timeoutIds.push(setTimeout(() => {
     room.players.forEach((player) => {
         if (player.visible !== false) {
             player.lastping = new Date().getTime();
         }
     });
     room.sendping = 1;
-}, 200);
+}, 200));
 
   // Second setTimeout
- setTimeout(() => {
+  room.timeoutIds.push(setTimeout(() => {
       room.sendping = undefined;
-  }, 500);
+  }, 500));
 
   //pingPlayers(room);
 }

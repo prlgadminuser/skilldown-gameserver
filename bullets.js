@@ -130,10 +130,10 @@ function findCollidedWall(walls, x, y, height, width) {
 // Bullet Shooting with Delay
 function shootBulletsWithDelay(room, player, bulletdata) {
   return new Promise(resolve => {
-    setTimeout(async () => {
+    room.timeoutIds.push(setTimeout(async () => {
       await shootBullet(room, player, bulletdata);
       resolve();
-    }, bulletdata.delay);
+    }, bulletdata.delay));
   });
 }
 
@@ -172,7 +172,7 @@ async function shootBullet(room, player, bulletdata) {
   while (player.bullets.has(timestamp)) {
     moveBullet(room, player, bullet);
     if (!player.bullets.has(timestamp)) break;
-    await new Promise(resolve =>  setTimeout(resolve, BULLET_MOVE_INTERVAL));
+    await new Promise(resolve =>   room.timeoutIds.push(setTimeout(resolve, BULLET_MOVE_INTERVAL)));
   }
 }
 
@@ -212,9 +212,9 @@ async function handleBulletFired(room, player, gunType) {
     shootBulletsWithDelay(room, player, bulletdata);
   }
 
- setTimeout(() => {
+  room.timeoutIds.push(setTimeout(() => {
     player.shooting = false;
-  }, shootCooldown);
+  }, shootCooldown));
 }
 
 function calculateFinalDamage(distanceUsed, bulletMaxDistance, normalDamage, layers) {

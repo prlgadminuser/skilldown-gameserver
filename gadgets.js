@@ -21,10 +21,10 @@ const gadgetconfig = {
         gadget(player) {
             player.speed = player.speed + player.speed / 2;
 
-            setTimeout(() => {
+            player.timeoutIds.push(setTimeout(() => {
             player.speed = player.startspeed
 
-        }, 5000);
+        }, 5000));
               
         }
     },
@@ -34,10 +34,10 @@ const gadgetconfig = {
         cooldown: 30000,
         gadget(player) {
             player.can_bullets_bounce = true
-            setTimeout(() => {
+            player.timeoutIds.push(setTimeout(() => {
                player.can_bullets_bounce = false
     
-            }, 20000);
+            }, 20000));
                   
             }
         },
