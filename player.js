@@ -278,6 +278,7 @@ dummy.h -= GUN_BULLET_DAMAGE;
    setTimeout(() => {
       if (room)  {
       respawnDummy(room, dummyKey, dummy, shootingPlayer);
+	      console.log("set respawn")
     }
     }, 4000);
   }
