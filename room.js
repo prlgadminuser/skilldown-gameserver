@@ -52,8 +52,6 @@ function closeRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
     if (room.timeoutIds) room.timeoutIds.forEach(timeoutId => clearTimeout(timeoutId));
-    if (room.intervalIds) room.intervalIds.forEach(intervalId => clearInterval(intervalId));
-
     clearTimeout(room.matchmaketimeout);
     clearTimeout(room.fixtimeout);
     clearTimeout(room.fixtimeout2);
@@ -61,6 +59,8 @@ function closeRoom(roomId) {
     clearTimeout(room.fixtimeout4);
     clearTimeout(room.runtimeout);
 
+
+	  
     clearInterval(room.xcleaninterval)
     clearInterval(room.intervalId);
     clearInterval(room.shrinkInterval);
@@ -71,6 +71,9 @@ function closeRoom(roomId) {
     clearInterval(room.decreasehealth);
     clearInterval(room.regeneratehealth);
     clearInterval(room.countdownInterval);
+  if (room.intervalIds) room.intervalIds.forEach(intervalId => clearInterval(intervalId));
+
+	  
 
     // Clean up resources associated with players in the room
     room.players.forEach(player => {
