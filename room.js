@@ -629,7 +629,6 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
 
   room.xcleaninterval = setInterval(() => {
     if (room) {
-      console.log(room.intervalIds.length, room.timeoutIds.length)
       // Clear room's timeout and interval arrays
       if (room.timeoutIds) {
         room.timeoutIds = clearAndRemoveCompletedTimeouts(room.timeoutIds, clearTimeout);
