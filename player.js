@@ -278,7 +278,7 @@ dummy.h -= GUN_BULLET_DAMAGE;
    setTimeout(() => {
       if (room)  {
       respawnDummy(room, dummyKey, dummy, shootingPlayer);
-	      console.log("set respawn")
+	 
     }
     }, 4000);
   }
@@ -288,6 +288,7 @@ dummy.h -= GUN_BULLET_DAMAGE;
 function respawnDummy(room, dummyKey, dummy, player) {
 
   if (room)  {
+	       console.log("set respawn")
   // Check if the room and dummyKey are valid
   const originalDummy = {
     //...dummy // Reset health to a full value
