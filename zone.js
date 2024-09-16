@@ -1,10 +1,7 @@
-"use strict";
-
-const { game_win_rest_time } = require('./config');
+const { WORLD_HEIGHT, WORLD_WIDTH, game_win_rest_time, server_tick_rate } = require('./config');
 
 const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
 const { endGame } = require('./game')
-const { respawnplayer } = require('./player')
 
 // Function to check if player is within the zone
 //function isWithinZone(room, playerX, playerY) {
@@ -33,15 +30,11 @@ function isWithinZone(room, playerX, playerY) {
     return playerX - 40 >= room.zoneStartX && playerX + 40 <= room.zoneEndX &&
            playerY - 60  >= room.zoneStartY && playerY + 60 <= room.zoneEndY;
 }
-
+shrinkspeed = 1.7 / 1000
 // Function to shrink the game zone
 function shrinkZone(room) {
    dealDamage(room);
-
-
     if (room.zoneEndX > 2 && room.zoneEndY > 2) {
-
-     const shrinkspeed = room.zonespeed / 1000
         
       room.zoneStartX += shrinkspeed * room.mapWidth;
       room.zoneStartY += shrinkspeed * room.mapHeight;
@@ -61,9 +54,9 @@ function shrinkZone(room) {
 
       //  console.log(room.zoneEndX, room.zoneEndY);
     } else {
-       // console.log("Zone cannot shrink further.");
+        console.log("Zone cannot shrink further.");
         clearInterval(room.shrinkInterval);
-        room.intervalIds.push(setInterval(() => dealDamage(room), 250));
+         room.zonefulldamage = setInterval(() => dealDamage(room), 250);
     }
 }
 
@@ -76,19 +69,11 @@ function dealDamage(room) {
             player.health -= 5;
             player.last_hit_time = new Date().getTime();
             if (1 > player.health) {
-
-                if (1 > player.respawns) {
-
-                 
-
-                  handleElimination(room, player);
-                } else {
-                  
-
-                    respawnplayer(room, player);
-                  } 
+              handleElimination(room, player);
+            
+          
             }
-            }
+          }
       }
   });
 }
@@ -99,19 +84,19 @@ function pingPlayers(room) {
   // First setTimeout
 
  
-  room.timeoutIds.push(setTimeout(() => {
+ setTimeout(() => {
     room.players.forEach((player) => {
         if (player.visible !== false) {
             player.lastping = new Date().getTime();
         }
     });
     room.sendping = 1;
-}, 200));
+}, 200);
 
   // Second setTimeout
-  room.timeoutIds.push(setTimeout(() => {
+  setTimeout(() => {
       room.sendping = undefined;
-  }, 500));
+  }, 500);
 
   //pingPlayers(room);
 }
@@ -125,7 +110,7 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2
   room.zoneEndY += room.mapHeight / 2
  
-  room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
+    room.shrinkInterval = setInterval(() => shrinkZone(room), 250);
    /* pingPlayers(room);
  
     room.snapInterval = setInterval(() => {
@@ -146,18 +131,13 @@ function UseZone(room) {
 
 
 function handleElimination(room, player) {
-     
+     const eliminatedPlayers = [];
 
- if (player.eliminated === false && room.state === "playing" && room.winner === 0) { 
-       player.eliminated = true;
        player.visible = false;
-
-       clearInterval(player.moveInterval);
-       clearTimeout(player.timeout);
 
           if (
             Array.from(room.players.values()).filter(
-              (player) => player.eliminated === false,
+              (player) => player.visible !== false,
             ).length === 1 &&
             room.winner === 0
           ) {
@@ -165,10 +145,10 @@ function handleElimination(room, player) {
             player.place = 2;
           } else {
             // More than one player remains, assign place based on remaining players
-            player.place = room.players.size - room.eliminatedPlayers.length;
+            player.place = room.players.size - eliminatedPlayers.length;
           }
 
-          const existingPlace = room.eliminatedPlayers.find(
+          const existingPlace = eliminatedPlayers.find(
             (player) => player.place === player.place,
           );
 
@@ -186,7 +166,7 @@ function handleElimination(room, player) {
             place: player.place,
                });
 
-          increasePlayerPlace(player.playerId, player.place, room);
+          increasePlayerPlace(player.playerId, player.place);
 
           player.visible = false;
 
@@ -196,9 +176,9 @@ function handleElimination(room, player) {
         (player) => player.visible !== false
       ).length === 0
     ) {
-      room.timeoutIds.push(setTimeout(() => {
+      setTimeout(() => {
         endGame(room);
-      }, game_win_rest_time));
+      }, game_win_rest_time);
     }
         
 
@@ -209,29 +189,27 @@ function handleElimination(room, player) {
         room.winner === 0
           ) {
             const remainingPlayer = Array.from(room.players.values()).find(
-              (player) => player.eliminated === false,
+              (player) => player.visible !== false,
             );
 
             room.winner = remainingPlayer.playerId;
-         //   console.log(`Last player standing! ${room.winner} wins!`);
+            console.log(`Last player standing! ${room.winner} wins!`);
 
             increasePlayerWins(room.winner, 1);
-            increasePlayerPlace(room.winner, 1, room);
+            increasePlayerPlace(room.winner, 1);
 
             room.eliminatedPlayers.push({
               username: room.winner,
               place: 1,
             });
 
-            room.timeoutIds.push(setTimeout(() => {
+            setTimeout(() => {
               endGame(room);
-            }, game_win_rest_time));
+            }, game_win_rest_time);
           }
     }
-  }
 
 module.exports = {
     UseZone,
-    handleElimination,
 };
 
