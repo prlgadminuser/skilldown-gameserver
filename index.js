@@ -1,29 +1,71 @@
-//"use strict";
+"use strict";
+
 const WebSocket = require("ws");
-const http = require("http");
+const http = require('http');
 const cors = require("cors");
 const axios = require("axios");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const jwt = require("jsonwebtoken");
-const { sanitize } = require("validator");
 const rateLimit = require("express-rate-limit");
 const LZString = require("lz-string");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
+const osu = require('node-os-utils');
+const express = require("express");
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 1,
+  message: "lg_server_limit_reached",
+});
+
+//app.use(limiter);
+
+const cpu = osu.cpu;
+const mem = osu.mem;
+
+
+// Function to log the server's RAM and CPU usage
+async function logServerUsage() {
+  const cpuUsage = await cpu.usage();
+  const memoryInfo = await mem.info();
+
+  console.log('CPU Usage:', cpuUsage + '%');
+  console.log('Memory Usage:', memoryInfo.usedMemMb + ' MB used of ' + memoryInfo.totalMemMb + ' MB');
+  console.log('Memory Usage:', memoryInfo.usedMemPercentage + '%');
+}
+
+// Log server usage every 5 seconds
+//setInterval(logServerUsage, 60000);
+
 
 const ConnectionOptionsRateLimit = {
   points: 1, // Number of points
-  duration: 5, // Per second
+  duration: 1, // Per second
 };
 
-const express = require("express");
-const app = express();
+let connectedClientsCount = 0;
+let connectedUsernames = [];
+
+
 
 const rateLimiterConnection = new RateLimiterMemory(ConnectionOptionsRateLimit);
 
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+  // Set security headers
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'interest-cohort=()');
+
+  // Handle request and send a response
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('qs\n');
+});
+
 
 const wss = new WebSocket.Server({
   noServer: true,
+  clientTracking: false, 
   perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,
@@ -41,16 +83,14 @@ const wss = new WebSocket.Server({
   },
   //perMessageDeflate: true,
   proxy: true,
-  maxPayload: 104,
+  maxPayload: 1004,
+  //maxPayload: 10 * 1024 * 1024 
 });
 
-app.set("trust proxy", true);
 
-let connectedClientsCount = 0;
-let connectedUsernames = [];
+
 
 const Limiter = require("limiter").RateLimiter;
-
 
 process.on("SIGINT", function () {
   mongoose.connection.close(function () {
@@ -63,7 +103,6 @@ const password = process.env.DB_KEY || "8RLj5Vr3F6DRBAYc"
 const encodedPassword = encodeURIComponent(password);
 
 const uri = `mongodb+srv://Liquem:${encodedPassword}@cluster0.ed4zami.mongodb.net/?retryWrites=true&w=majority`;
-
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -80,12 +119,10 @@ const client = new MongoClient(uri, {
 
 async function startServer() {
   try {
-    // Connect to the MongoDB server
+  
     await client.connect();
     console.log("Connected to MongoDB");
 
-    // Start the express server
- 
   } catch (err) {
     console.error("Error connecting to MongoDB:", err);
   }
@@ -96,7 +133,7 @@ startServer();
 const db = client.db("Cluster0");
 const userCollection = db.collection("users");
 const battlePassCollection = db.collection("battlepass_users");
-
+const shopcollection = db.collection("serverconfig");
 
 module.exports = {
   LZString,
@@ -104,20 +141,18 @@ module.exports = {
   Limiter,
   WebSocket,
   http,
-  connectedUsernames,
+  connectedClientsCount,
   MongoClient, 
   ServerApiVersion,
   db,
   userCollection,
   battlePassCollection,
+  shopcollection,
   jwt,
 };
 
 
-
-const bodyParser = require("body-parser");
 const {
-  sendBatchedMessages,
   joinRoom,
   closeRoom,
   handleRequest,
@@ -127,38 +162,33 @@ const {
   increasePlayerKills,
   increasePlayerPlace,
   increasePlayerWins,
+  verifyPlayer,
+  checkForMaintenance,
 } = require("./dbrequests");
 
-const { game_win_rest_time, maxClients, all_gamemodes } = require("./config");
-const { strict } = require("assert");
+const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./config");
 
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 1,
-  message: "lg_server_limit_reached",
-});
 
-app.use(limiter);
-
-app.use(cors());
-app.use(bodyParser.json());
 
 function endGame(room) {
-  console.log("Game ended! Closing the room.");
 
+  if (room) {
   room.players.forEach((player) => {
-    const placelist = JSON.stringify(room.eliminatedPlayers);
 
     if (room.eliminatedPlayers) {
       player.ws.close(4300, "places");
     } else {
       player.ws.close(4301, "game_ended");
+   
     }
+  
   });
 }
+}
 
-// Remove the room
-// rooms.delete(room.roomId);
+
+
+
 
 const allowedOrigins = [
   "https://slcount.netlify.app",
@@ -169,15 +199,14 @@ const allowedOrigins = [
   "https://html-classic.itch.zone",
   "null",
   "https://turbowarp.org",
+    "https://liquemgames.itch.io/sr",
   "https://s-r.netlify.app",
   "https://uploads.ungrounded.net",
   "https://prod-dpgames.crazygames.com",
   "https://crazygames.com",
   "https://crazygames.com/game/skilled-royale",
+     "https://s-ri0p-delgae.netlify.app",
 ];
-
-
-
 
 function isValidOrigin(origin) {
   const trimmedOrigin = origin.trim().replace(/(^,)|(,$)/g, "");
@@ -189,195 +218,201 @@ function isvalidmode(gmd) {
 }
 
 
+async function handlePlayerVerification(token) {
+  const playerVerified = await verifyPlayer(token);
+  if (!playerVerified) {
+    return false;  // Optional: To indicate verification failure
+  }
+  return playerVerified;  // Optional: To indicate successful verification
+}
+
 wss.on("connection", (ws, req) => {
-
- const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-
     try {
-        rateLimiterConnection.consume(ip);
-    } catch (err) {
-        ws.close(4003, "Rate limit exceeded");
-        return;
-    }
-
-  
-
-
-    if (connectedClientsCount > maxClients) {
-      ws.close(4004, "code:full");
-      return;
-    }
-
-  const urlParts = req.url.split('/');
-  const token = (urlParts[1]);
-  const gamemode = (urlParts[2]);
-   // const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        // Check for maintenance mode
+          checkForMaintenance()
+        .then(isMaintenance => {
+            if (isMaintenance) {
+                ws.close(4008, "maintenance");
+                return;
+            }
 
 
-    const origin = req.headers["sec-websocket-origin"] || req.headers.origin;
-
-    if (req.length > 2000 || origin.length > 50 || !isValidOrigin(origin)) {
-      ws.close(4004, "Unauthorized");
-      return;
-    }
-
-    console.log(gamemode, token)
-     
-
-    if (!token || token.length > 300 || !isvalidmode(gamemode)) {
-      ws.close(4004, "Unauthorized");
-      return;
-    }
-
-    joinRoom(ws, token, gamemode)
-      .then((result) => {
-        if (!result) {
-          ws.close(4001, "Invalid token");
-          return;
+        // Check for maximum clients limit
+        if (connectedClientsCount > maxClients) {
+            ws.close(4034, "code:full");
+            return;
         }
-        console.log("before closed", connectedUsernames);
-        // if (connectedUsernames.includes(result.playerId)) {
-        //  ws.close(4006, "code:double");
-        //  return;
-        //  }
 
-        connectedClientsCount++;
-        connectedUsernames.push(result.playerId);
-        console.log(connectedUsernames);
+        // Parse URL and headers
+        const [_, token, gamemode] = req.url.split('/');
+        const origin = req.headers["sec-websocket-origin"] || req.headers.origin;
 
-        // console.log("Joined room:", result);
+        // Validate request
+        if (req.length > 2000 || (origin && origin.length > 50) || !isValidOrigin(origin)) {
+            ws.close(4004, "Unauthorized");
+            return;
+        }
 
-        ws.on("message", (message) => {
+          if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
+            ws.close(4094, "Unauthorized");
+            console.log("Invalid token or gamemode");
+            return;
+        }
+
+        // Verify player token
+        handlePlayerVerification(token).then(playerVerified => {
+            if (!playerVerified) {
+                ws.close(4001, "Invalid token");
+                return;
+            }
+
+            if (connectedUsernames.includes(playerVerified.playerId)) {
+                ws.close(4006, "code:double");
+                return;
+            }
+
+            // Join room and handle connection
+            joinRoom(ws, token, gamemode, playerVerified).then(result => {
+                if (!result) {
+                    ws.close(4001, "Invalid token");
+                    return;
+                }
+
+                connectedClientsCount++;
+                connectedUsernames.push(result.playerId);
+              //  console.log(connectedUsernames);
+
+             ws.on("message", (message) => {
+
+ 
+    const compressedBinary = message.toString("utf-8"); // Convert Buffer to string
+
+
+                    try {
+                        const parsedMessage = compressedBinary;
+                        const player = result.room.players.get(result.playerId);
+
+                        if (player && compressedBinary.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {
+                            handleRequest(result, parsedMessage);
+                        }
+                    } catch (error) {
+                        console.error("Failed to parse JSON:", error.message);
+                    }
+                  
+                });
+
+
+ /*            ws.on("message", (message) => {
          // const sanitizedMessage = sanitize(message);
          const player = result.room.players.get(result.playerId);
           if (result.room.players.has(result.playerId) && message.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {    
               handleRequest(result, message);
+
+
             
           } else {
+
             console.log("Player not found in the room.");
+            player.ws.close(4004, "Unauthorized");
           }
         });
+*/
+          
 
-        ws.on("close", () => {
-          const player = result.room.players.get(result.playerId);
-          connectedClientsCount--;
-          if (player && player.playerId) {
-            const index = connectedUsernames.indexOf(result.playerId);
-            if (index !== -1) {
-              connectedUsernames.splice(index, 1);
-            }
-          }
+                ws.on('close', (code, reason) => {
+                    const player = result.room.players.get(result.playerId);
+                    if (player) {
+                        clearInterval(player.moveInterval);
+                        if (player.timeout) clearTimeout(player.timeout);
 
-          console.log(connectedUsernames);
+                        if (player.damage > 0) increasePlayerDamage(player.playerId, player.damage);
+                        if (player.kills > 0) increasePlayerKills(player.playerId, player.kills);
 
-          if (player) {
-            clearInterval(player.moveInterval);
-          }
+                        connectedClientsCount--;
+                        connectedUsernames = connectedUsernames.filter(username => username !== player.playerId);
+                        result.room.players.delete(result.playerId);
 
-          if (player && player.timeout) {
-            clearTimeout(player.timeout);
-          }
+                        if (result.room.players.size < 1) {
+                            closeRoom(result.roomId);
+                            console.log('Room closed');
+                            return;
+                        }
 
-          if (player) {
-            if (player.damage > 0) {
-              increasePlayerDamage(player.playerId, player.damage);
-            }
+                        if (result.room.state === "playing" && result.room.winner === 0) {
+                            let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
 
-            if (player.kills > 0) {
-              increasePlayerKills(player.playerId, player.kills);
-            }
-          }
+                            if (remainingPlayers.length === 1) {
+                                const winner = remainingPlayers[0];
+                                result.room.winner = winner.playerId;
 
-          result.room.players.delete(result.playerId);
+                                increasePlayerWins(winner.playerId, 1);
+                                increasePlayerPlace(winner.playerId, 1, result.room);
+                                result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
 
-          if (result.room.players.size < 1) {
-            closeRoom(result.roomId);
-            console.log(`Room closed`);
-            return; // Exit early if the room is empty
-          }
-
-          if (result.room.state === "playing" && result.room.winner === 0) {
-            let remainingPlayers1 = Array.from(
-              result.room.players.values(),
-            ).filter((player) => player.visible !== false);
-
-            if (remainingPlayers1.length === 1 && result.room.winner === 0) {
-              const winner = remainingPlayers1[0];
-              result.room.winner = winner.playerId;
-
-              increasePlayerWins(winner.playerId, 1);
-              increasePlayerPlace(winner.playerId, 1);
-              result.room.eliminatedPlayers.push({
-                username: winner.playerId,
-                place: 1,
-              });
-              // }
-
-              setTimeout(() => {
-                endGame(result.room);
-              }, game_win_rest_time);
-
-              return;
-            }
-          }
+                                result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
+                          }
+                           
+                        }
+                        
+                    }
+                   
+            
+                })
+                });
+            }).catch(err => {
+                console.error("Error joining room:", err);
+                ws.close(1011, "Internal server error");
+            });
+        }).catch(err => {
+            console.error("Error verifying player:", err);
+            ws.close(1011, "Internal server error");
         });
-      })
-
-      .catch((error) => {
-        console.error("Error during joinRoom:", error);
-        ws.close(4001, "Token verification error");
-      });
-     });
-
+    } catch (error) {
+        console.error("Error during WebSocket connection handling:", error);
+        ws.close(1011, "Internal server error");
+    }
+});
+    
+    
  
 
-server.on("upgrade", (request, socket, head) => {
-  const ip = request.headers["x-forwarded-for"] || request.socket.remoteAddress;
-
-  rateLimiterConnection.consume(ip).then(() => {
-  // Consume the rate limiter
-
-
-  const origin =
-    request.headers["sec-websocket-origin"] || request.headers.origin;
-
-  if (!isValidOrigin(origin)) {
-    socket.destroy();
-    return;
-  }
-
-  if (connectedClientsCount < maxClients) {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit("connection", ws, request);
+     server.on("upgrade", (request, socket, head) => {
+      const ip = request.socket["true-client-ip"] || request.socket["x-forwarded-for"] || request.socket.remoteAddress;
+    
+      rateLimiterConnection.consume(ip)
+        .then(() => {
+          const origin = request.headers["sec-websocket-origin"] || request.headers.origin;
+    
+          if (!isValidOrigin(origin)) {
+            socket.destroy();
+            return;
+          }
+    
+          if (connectedClientsCount < maxClients) {
+            wss.handleUpgrade(request, socket, head, (ws) => {
+              wss.emit("connection", ws, request);
+            });
+          } else {
+            
+            socket.destroy();
+          }
+        })
+        .catch(() => {
+          socket.write('HTTP/1.1 429 Too Many Requests\r\n\r\n');
+          socket.destroy();
+        });
     });
-  } else {
-    // Reject the connection if the max number of clients is reached
-    socket.destroy();
+    
+    process.on("uncaughtException", (error) => {
+      console.error("Uncaught Exception:", error);
+    });
+    
+    process.on("unhandledRejection", (reason, promise) => {
+      console.error("Unhandled Rejection:", reason, promise);
+    });
+    
 
-  
-  }
-}).catch(() => {
-  socket.write('HTTP/1.1 429 Too Many Requests\r\n\r\n');
-  socket.destroy();
-});
-});
-
-process.on("uncaughtException", (error) => {
-console.error("Uncaught Exception:", error);
-});
-
-// Global error handler for unhandled promise rejections
-process.on("unhandledRejection", (reason, promise) => {
-console.error("Unhandled Rejection:", reason, promise);
-});
-
-module.exports = {
-  handleGlobalErrors: () => {},
-};
-
-
-const PORT = process.env.PORT || 8080;
-
-server.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
-});
+    const PORT = process.env.PORT || 3090;
+    server.listen(PORT, () => {
+      console.log(`Server is listening on port ${PORT}`);
+    });

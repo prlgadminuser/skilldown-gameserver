@@ -1,6 +1,10 @@
-const { axios, userCollection, battlePassCollection, jwt } = require('./index');
+"use strict";
+
+const { shopcollection, userCollection, battlePassCollection, jwt } = require('./index');
 
 const tokenkey = "d8ce40604d359eeb9f2bff31beca4b4b"
+
+const maintenanceId = "maintenance"; 
 
 async function verifyPlayer(token) {
   if (!token) {
@@ -24,6 +28,8 @@ async function verifyPlayer(token) {
           equipped_color: 1,
           equipped_hat_color: 1,
           equipped_body_color: 1,
+          sp: 1,
+          equipped_gadget: 1,
         },
       }
     );
@@ -38,6 +44,8 @@ async function verifyPlayer(token) {
       equipped_color,
       equipped_hat_color,
       equipped_body_color,
+      sp,
+      equipped_gadget,
     } = userInformation;
 
     return {
@@ -47,10 +55,13 @@ async function verifyPlayer(token) {
       player_color: equipped_color,
       hat_color: equipped_hat_color,
       top_color: equipped_body_color,
+      skillpoints: sp,
+      selected_gadget: equipped_gadget,
     };
+
+   
   } catch (error) {
-    console.error("Error verifying player:", error);
-    throw new Error("Internal Server Error");
+    return false;
   }
 }
 
@@ -58,13 +69,12 @@ async function increasePlayerDamage(playerId, damage) {
   const username = playerId;
   const damagecount = +damage; 
   
-    // Check if damagecount is a valid number
     if (isNaN(damagecount)) {
       return res.status(400).json({ error: "Invalid damage count provided" });
     }
   
     try {
-      // Try to increment damage, ignore upsert if the user doesn't exist
+   
       const incrementResult = await userCollection.updateOne(
         { username },
         {
@@ -84,9 +94,7 @@ async function increasePlayerDamage(playerId, damage) {
           upsert: true,
         },
       );
-  
-  
-      // If the user doesn't exist, perform an upsert to create the document with the specified damage
+
       if (incrementResult.matchedCount === 0) {
         const upsertResult = await userCollection.updateOne(
           { username },
@@ -110,15 +118,14 @@ async function increasePlayerDamage(playerId, damage) {
 
 async function increasePlayerKills(playerId, kills) {
   const username = playerId;
-  const killcount = +kills; // Convert to a number using the unary plus operator
+  const killcount = +kills; 
 
-  // Check if damagecount is a valid number
   if (isNaN(killcount)) {
     return res.status(400).json({ error: "Invalid damage count provided" });
   }
 
   try {
-    // Try to increment damage, ignore upsert if the user doesn't exist
+  
     const incrementResult = await userCollection.updateOne(
       { username },
       {
@@ -126,7 +133,6 @@ async function increasePlayerKills(playerId, kills) {
       }
     );
 
-    // If the user doesn't exist, perform an upsert to create the document with the specified damage
     if (incrementResult.matchedCount === 0) {
       const upsertResult = await userCollection.updateOne(
         { username },
@@ -149,15 +155,14 @@ async function increasePlayerKills(playerId, kills) {
 
 async function increasePlayerWins(playerId, wins2) {
   const username = playerId;
-  const wins = +wins2; // Convert to a number using the unary plus operator
+  const wins = +wins2; 
 
-  // Check if damagecount is a valid number
   if (isNaN(wins)) {
     return res.status(400).json({ error: "Invalid damage count provided" });
   }
 
   try {
-    // Try to increment damage, ignore upsert if the user doesn't exist
+
     const incrementResult = await userCollection.updateOne(
       { username },
       {
@@ -165,7 +170,6 @@ async function increasePlayerWins(playerId, wins2) {
       }
     );
 
-    // If the user doesn't exist, perform an upsert to create the document with the specified damage
     if (incrementResult.matchedCount === 0) {
       const upsertResult = await userCollection.updateOne(
         { username },
@@ -186,23 +190,20 @@ async function increasePlayerWins(playerId, wins2) {
   }
 }
 
-async function increasePlayerPlace(playerId, place2) {
+async function increasePlayerPlace(playerId, place2, room) {
   const username = playerId;
-  const place = +place2; // Convert to a number using the unary plus operator
+  const place = +place2; 
 
-  // Check if place is a valid number
   if (isNaN(place) || place < 1 || place > 5) {
     return res.status(400).json({ error: "Invalid place provided. Place should be a number between 1 and 5." });
   }
   
-  const place_counts = [16, 7, 1, -2, -4];
-  const ss_counts = [25, 17, 12, 10, 7];
 
   try {
-    const skillpoints = place_counts[place - 1];
-    const season_coins = ss_counts[place - 1];
+    const skillpoints = room.place_counts[place - 1];
+    const season_coins = room.ss_counts[place - 1];
     
-    // Update skill points, ensuring it doesn't drop below 0
+
     const updateResult = await userCollection.updateOne(
       { username },
       [
@@ -210,8 +211,8 @@ async function increasePlayerPlace(playerId, place2) {
           $set: {
             sp: {
               $add: [
-                { $ifNull: ["$sp", 0] }, // If sp doesn't exist, default to 0
-                skillpoints // Add the skill points adjustment directly
+                { $ifNull: ["$sp", 0] },
+                skillpoints
               ]
             }
           }
@@ -219,7 +220,7 @@ async function increasePlayerPlace(playerId, place2) {
         {
           $set: {
             sp: {
-              $max: [ "$sp", 0 ] // Ensure sp doesn't drop below 0
+              $max: [ "$sp", 0 ] 
             }
           }
         }
@@ -238,14 +239,14 @@ async function increasePlayerPlace(playerId, place2) {
       },
     );
 
-    // Check if the user exists
+   
     if (updateResult.matchedCount === 0 && updateResult.modifiedCount === 0) {
-      // If not, perform an upsert to create the document with the specified skill points
+    
       const upsertResult = await userCollection.updateOne(
         { username },
         {
           $setOnInsert: {
-            sp: { $max: [ skillpoints, 0 ] } // Ensure sp doesn't drop below 0
+            sp: { $max: [ skillpoints, 0 ] } 
           },
         },
         { upsert: true }
@@ -260,6 +261,30 @@ async function increasePlayerPlace(playerId, place2) {
   }
 }
 
+async function checkForMaintenance() {
+  let maintenanceMode = false;
+
+  try {
+    // Find the maintenanceStatus directly from the document
+    const result = await shopcollection.findOne(
+      { _id: maintenanceId },
+      { projection: { status: 1 } } // Only retrieve the maintenanceStatus field
+    );
+
+    if (result.status === "await" || result.status === "true" ) {
+maintenanceMode = true;
+    } else {
+      maintenanceMode = false;
+    }
+  } catch (error) {
+    console.error("Error checking maintenance status:", error);
+    maintenanceMode = true;
+  }
+
+  return maintenanceMode;
+}
+
+
 
 module.exports = {
   increasePlayerDamage,
@@ -267,5 +292,5 @@ module.exports = {
   increasePlayerPlace,
   increasePlayerWins,
   verifyPlayer,
-
+  checkForMaintenance,
 };
