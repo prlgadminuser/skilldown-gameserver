@@ -225,9 +225,9 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       if (room) {
 
 
-       newPlayer.timeout = room.timeoutIds.push(setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
+       newPlayer.timeout = setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
 
-      room.players.set(playerId, newPlayer));
+      room.players.set(playerId, newPlayer);
 
  if (ws.readyState === ws.CLOSED) {
     playerLeave(roomId, playerId);
@@ -648,7 +648,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
         }
       });
     }
-  }, 1000); // Run every 1 second
+  }, 100); // Run every 1 second
 
   if (gmconfig.can_hit_dummies) {
   room.dummies = deepCopy(mapsconfig[mapid].dummies) //dummy crash fix
@@ -836,9 +836,9 @@ function handleMovingState(movingValue, player) {
 
 function handlePong(player) {
   clearTimeout(player.timeout);
-  player.timeout = player.timeoutIds.push(setTimeout(() => {
+  player.timeout = setTimeout(() => {
       player.ws.close(4200, "disconnected_inactivity");
-  }, player_idle_timeout));
+  }, player_idle_timeout);
 }
 
 function handleShoot(data, player, room) {
