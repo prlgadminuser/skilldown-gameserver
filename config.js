@@ -167,12 +167,17 @@ const gunsconfig = {
     distance: 300,
     maxexistingtime: 2000,
     maxbounces: 5,
-    damage: 25,
+    damage: 3,
     width: 5,
     height: 5,
     useplayerangle: true,
     bullets: [
       { angle: 0, speed: 35, delay: 0, offset: 0 },
+       { angle: 0, speed: 35, delay: 200, offset: -10 },
+        { angle: 0, speed: 35, delay: 400, offset: 10 },
+         { angle: 0, speed: 35, delay: 600, offset: 0 },
+       { angle: 0, speed: 35, delay: 800, offset: -10 },
+        { angle: 0, speed: 35, delay: 1000, offset: 10 },
      // { angle: 0, speed: 25, distance: 300, delay: 500, offset: -10 }
      
     ],
