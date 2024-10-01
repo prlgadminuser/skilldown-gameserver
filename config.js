@@ -176,8 +176,8 @@ const gunsconfig = {
       { angle: 0, speed: 35, delay: 100, offset: -10 }
          { angle: 0, speed: 35, delay: 200, offset: 10 }
     { angle: 0, speed: 35, delay: 300, offset: 0 },
-      { angle: 0, speed: 35, delay: 400, offset: -10 }
-         { angle: 0, speed: 35, delay: 500, offset: 10 }
+      { angle: 0, speed: 35, delay: 400, offset: -10 },
+         { angle: 0, speed: 35, delay: 500, offset: 10 },
       
 
     ],
