@@ -163,7 +163,7 @@ const gunsconfig = {
     ]
   },
   2: {
-    cooldown: 650,
+    cooldown: 250,
     distance: 300,
     maxexistingtime: 200,
     maxbounces: 5,
@@ -172,9 +172,9 @@ const gunsconfig = {
     height: 5,
     useplayerangle: true,
     bullets: [
-      { angle: 0, speed: 25, delay: 0, offset: 0 },
-      { angle: 0, speed: 25, delay: 50, offset: -10 },
-         { angle: 0, speed: 25, delay: 100, offset: 10 },
+      { angle: 0, speed: 25, delay: 0, offset: 10 },
+      { angle: 0, speed: 25, delay: 100, offset: 0 },
+         { angle: 0, speed: 25, delay: 200, offset: -10 },
       
 
     ],
