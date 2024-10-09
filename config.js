@@ -86,7 +86,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: Infinity,
     playerhealth: 150,
-    playerspeed: 0.26,
+    playerspeed: 0.2,
     zonespeed: 1.4,
     usezone: false,
     health_restore: true,
