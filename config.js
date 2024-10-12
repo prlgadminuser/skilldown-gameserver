@@ -141,8 +141,7 @@ const mapsconfig = {
 };
 
 
-const gunsconfig = {
-  1: {
+/* 1: {
     cooldown: 800,
     distance: 300,
     maxexistingtime: 2000,
@@ -152,7 +151,13 @@ const gunsconfig = {
     height: 5,
     useplayerangle: false,
     bullets: [
-      { angle: 90, speed: 13, delay: 0, offset: 0 },
+             { angle: 0, speed: 30, delay: 0, offset: 0 },
+       { angle: 0, speed: 30, delay: 50, offset: 10 },
+       { angle: 0, speed: 30, delay: 100, offset: -10 },
+         { angle: 0, speed: 30, delay: 150, offset: 0 },
+       { angle: 0, speed: 30, delay: 200, offset: 10 },
+       { angle: 0, speed: 30, delay: 250, offset: -10 },
+     /* { angle: 90, speed: 13, delay: 0, offset: 0 },
       { angle: 0, speed: 13, delay: 0, offset: 0 },
       { angle: 180, speed: 13, delay: 0, offset: 0 },
       { angle: -90, speed: 13, delay: 0, offset: 0 },
@@ -160,6 +165,42 @@ const gunsconfig = {
       { angle: -45, speed: 13, delay: 0, offset: 0 },
       { angle: -135, speed: 13, delay: 0, offset: 0 },
       { angle: 135, speed: 13, delay: 0, offset: 0 }
+
+  ]
+  },
+      */
+  
+
+
+
+
+const gunsconfig = {
+  1: {
+    cooldown: 400,
+    distance: 300,
+    maxexistingtime: 1000,
+    maxbounces: 5,
+    damage: 5,
+    width: 5,
+    height: 5,
+    useplayerangle: true,
+    bullets: [
+             { angle: 0, speed: 30, delay: 0, offset: 0 },
+       { angle: 0, speed: 30, delay: 50, offset: 10 },
+       { angle: 0, speed: 30, delay: 100, offset: -10 },
+         { angle: 0, speed: 30, delay: 150, offset: 0 },
+       { angle: 0, speed: 30, delay: 200, offset: 10 },
+       { angle: 0, speed: 30, delay: 250, offset: -10 },
+     /* { angle: 90, speed: 13, delay: 0, offset: 0 },
+      { angle: 0, speed: 13, delay: 0, offset: 0 },
+      { angle: 180, speed: 13, delay: 0, offset: 0 },
+      { angle: -90, speed: 13, delay: 0, offset: 0 },
+      { angle: 45, speed: 13, delay: 0, offset: 0 },
+      { angle: -45, speed: 13, delay: 0, offset: 0 },
+      { angle: -135, speed: 13, delay: 0, offset: 0 },
+      { angle: 135, speed: 13, delay: 0, offset: 0 }
+
+      */
     ]
   },
   2: {
