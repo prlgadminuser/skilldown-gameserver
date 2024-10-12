@@ -176,7 +176,7 @@ const mapsconfig = {
 
 const gunsconfig = {
   1: {
-    cooldown: 800,
+    cooldown: 600,
     distance: 300,
     maxexistingtime: 500,
     maxbounces: 5,
@@ -186,8 +186,7 @@ const gunsconfig = {
     useplayerangle: true,
     bullets: [
              { angle: 0, speed: 30, delay: 0, offset: 0 },
-       { angle: 0, speed: 30, delay: 200, offset: 10 },
-       { angle: 0, speed: 30, delay: 400, offset: -10 },
+       { angle: 0, speed: 30, delay: 300, offset: 10 },
 
      /* { angle: 90, speed: 13, delay: 0, offset: 0 },
       { angle: 0, speed: 13, delay: 0, offset: 0 },
@@ -202,8 +201,8 @@ const gunsconfig = {
     ],
     damageconfig: [
       { threshold: 35, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
-      { threshold: 60, damageMultiplier: 0.50 }, // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 80, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
+      { threshold: 60, damageMultiplier: 0.70 }, // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 100, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
       // You can add more layers here
   ],
   },
