@@ -222,8 +222,8 @@ const gunsconfig = {
     ],
     damageconfig: [
       { threshold: 45, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
-      { threshold: 80, damageMultiplier: 0.50 }, // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
+      { threshold: 80, damageMultiplier: 0.80 }, // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 100, damageMultiplier: 0.70 } // Layer 4: 1/4 damage if within 100% of max distance
       // You can add more layers here
   ],
   },
