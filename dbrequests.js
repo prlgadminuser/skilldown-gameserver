@@ -136,7 +136,7 @@ async function increasePlayerKills(playerId, kills) {
 
     if (incrementResult.modifiedCount > 0 || incrementResult.upsertedCount > 0) {
       // If player's kill count was updated or a new player document was inserted
-      const eventKillUpdate = await shopCollection.updateOne(
+      const eventKillUpdate = await shopcollection.updateOne(
         { _id: "eventKillsCounter" },
         { $inc: { eventKills: killcount } } // Increment the eventKills by the number of kills
       );
