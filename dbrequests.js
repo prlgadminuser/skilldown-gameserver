@@ -144,6 +144,11 @@ async function increasePlayerKills(playerId, kills) {
         { upsert: true }
       );
 
+    shopcollection.updateOne(
+  { _id: "eventKillsCounter" },
+  { $inc: { eventKills: 1 } }
+);
+
       if (upsertResult.matchedCount === 0 && upsertResult.upsertedCount === 0) {
         return res.status(404).json({ error: "User not found" });
       }
