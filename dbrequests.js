@@ -121,40 +121,37 @@ async function increasePlayerKills(playerId, kills) {
   const killcount = +kills; 
 
   if (isNaN(killcount)) {
-    return res.status(400).json({ error: "Invalid damage count provided" });
+    return { error: "Invalid kill count provided" }; // Assuming we return an object instead of using res
   }
 
   try {
-  
+    // Attempt to increment the player's kill count or insert a new player document if not found
     const incrementResult = await userCollection.updateOne(
       { username },
       {
         $inc: { kills: killcount },
-      }
+      },
+      { upsert: true }
     );
 
-    if (incrementResult.matchedCount === 0) {
-      const upsertResult = await userCollection.updateOne(
-        { username },
-        {
-          $setOnInsert: {
-            kills: killcount,
-          },
-        },
-        { upsert: true }
+    if (incrementResult.modifiedCount > 0 || incrementResult.upsertedCount > 0) {
+      // If player's kill count was updated or a new player document was inserted
+      const eventKillUpdate = await shopCollection.updateOne(
+        { _id: "eventKillsCounter" },
+        { $inc: { eventKills: killcount } } // Increment the eventKills by the number of kills
       );
 
-    shopcollection.updateOne(
-  { _id: "eventKillsCounter" },
-  { $inc: { eventKills: 1 } }
-);
-
-      if (upsertResult.matchedCount === 0 && upsertResult.upsertedCount === 0) {
-        return res.status(404).json({ error: "User not found" });
+      if (eventKillUpdate.modifiedCount === 0) {
+        return { error: "Failed to update event kill counter" };
       }
+
+      return { success: true, message: "Player kills and event counter updated successfully" };
+    } else {
+      return { error: "User not found or kill count not updated" };
     }
   } catch (error) {
-    console.error("Error updating damage in the database:", error);
+    console.error("Error updating kills in the database:", error);
+    return { error: "Database error" };
   }
 }
 
