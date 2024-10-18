@@ -4,7 +4,7 @@ const { isCollisionWithBullet, adjustBulletDirection } = require('./collisions')
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
-const BULLET_MOVE_INTERVAL = (17 * server_tick_rate) / 17, // milliseconds
+const BULLET_MOVE_INTERVAL = (34 * server_tick_rate) / 17, // milliseconds
 
 // Helper functions
 const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
