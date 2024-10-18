@@ -49,8 +49,11 @@ function handleMovement(player, room) {
   }
 
   // Round the new position
-  newX = Math.round(newX);
-  newY = Math.round(newY);
+ // newX = Math.round(newX);
+//  newY = Math.round(newY);
+
+newX = parseFloat(newX.toFixed(2));
+newY = parseFloat(newY.toFixed(2));
 
   // Ensure the player stays within the map boundaries
   newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
