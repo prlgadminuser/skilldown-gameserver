@@ -123,7 +123,7 @@ function playerLeave(roomId, playerId) {
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
 
-      const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints } = playerVerified;
+      const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints, nickname } = playerVerified;
 
      const gadgetselected = selected_gadget || 1;
      const finalskillpoints = skillpoints || 0;
@@ -165,6 +165,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
         startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
         playerId: playerId,
+        nickname: nickname,
         rateLimiter: playerRateLimiter,
         hat: hat,
         top: top,
@@ -452,7 +453,8 @@ player.bullets.forEach(bullet => {
         currentPlayerData.hc = player.hat_color;
         currentPlayerData.tc = player.top_color;
         currentPlayerData.sh = player.starthealth;
-        currentPlayerData.gid = player.gadgetid
+        currentPlayerData.gid = player.gadgetid;
+	currentPlayerData.nn = player.nickname;
       }
 
       playerData[player.playerId] = currentPlayerData;
