@@ -150,7 +150,7 @@ const GUN_BULLET_DAMAGE = damage
   // Update hitdata for shooting player
   const hitdata = {
     last_playerhit: {
-      playerId: nearestObject.playerId,
+      playerId: nearestObject.nickname,
       datetime: new Date().getTime(),
       damage: GUN_BULLET_DAMAGE,
     },
