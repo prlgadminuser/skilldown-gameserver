@@ -125,7 +125,7 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2
   room.zoneEndY += room.mapHeight / 2
  
-  room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
+  room.intervalIds.push(setInterval(() => shrinkZone(room), 25));
    /* pingPlayers(room);
  
     room.snapInterval = setInterval(() => {
