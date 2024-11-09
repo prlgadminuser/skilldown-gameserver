@@ -311,7 +311,7 @@ function respawnplayer(room, player) {
 
   player.visible = false
   player.respawns--
-  player.moving = false;
+  player.moving = false
 	clearInterval(player.moveInterval)
 	player.moveInterval = null;
 
