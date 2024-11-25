@@ -149,14 +149,15 @@ const GUN_BULLET_DAMAGE = damage
   nearestObject.last_hit_time = new Date().getTime();
 
   // Update hitdata for shooting player
-  const hitdata = {
-    last_playerhit: {
-      playerId: nearestObject.nickname,
-      datetime: new Date().getTime(),
-      damage: GUN_BULLET_DAMAGE,
+  const hit = {
+    hit: {
+      p: nearestObject.x + "," + nearestObject.y,
+      //p: nearestObject.nickname,
+      dt: new Date().getTime(),
+      d: GUN_BULLET_DAMAGE,
     },
   };
-  shootingPlayer.hitdata = JSON.stringify(hitdata);
+  shootingPlayer.hitdata = JSON.stringify(hit);
 
   // Check if the player is eliminated
   if (1 > nearestObject.health && 1 > nearestObject.respawns) {
@@ -270,14 +271,14 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 dummy.h -= GUN_BULLET_DAMAGE;
 
   // Update hitdata for the shooting player
-  const hitdata = {
-    bothit: {
-      playerId: { x: dummy.x, y: dummy.y }, // Changed from playerId to position
-      datetime: new Date().getTime(),
-      damage: GUN_BULLET_DAMAGE,
+  const hit = {
+    bhit: {
+      p: dummy.x + "," + dummy.y, // Changed from playerId to position
+      dt: new Date().getTime(),
+      d: GUN_BULLET_DAMAGE,
     },
   };
-  shootingPlayer.hitdata = JSON.stringify(hitdata);
+  shootingPlayer.hitdata = JSON.stringify(hit);
 
   // Check if the dummy's health is below 1
   if (dummy.h < 1) {

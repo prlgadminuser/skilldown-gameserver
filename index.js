@@ -1,6 +1,6 @@
 "use strict";
 
-const testmode = false
+const testmode = true
 
 const WebSocket = require("ws");
 const http = require('http');

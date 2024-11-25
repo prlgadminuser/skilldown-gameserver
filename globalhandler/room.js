@@ -170,6 +170,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         prevY: 0,
         lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
         startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
+        nmb: playerCount,
         playerId: playerId,
         nickname: nickname,
         rateLimiter: playerRateLimiter,
@@ -442,12 +443,12 @@ player.bullets.forEach(bullet => {
         h: player.health,
         s: player.shooting,
         g: player.gun,
-        p: player.ping,
-        w: player.hitdata,
-        e: player.elimlast,
+       // p: player.ping,
+       // w: player.hitdata,
+       // e: player.elimlast,
         b: formattedBullets, // Always include bullets
         em: player.emote,
-        ell: player.elimlast,
+       // ell: player.elimlast,
       };
 
       // Include additional properties only when room state is not "playing"
@@ -462,11 +463,11 @@ player.bullets.forEach(bullet => {
 	currentPlayerData.nn = player.nickname;
       }
 
-      playerData[player.playerId] = currentPlayerData;
+      playerData[player.nmb] = currentPlayerData;
 
       if (room.state === "playing") {
         // Track changes if state is "playing"
-        const previousPlayerData = room.lastSentPlayerData?.[player.playerId] || {};
+        const previousPlayerData = room.lastSentPlayerData?.[player.nmb] || {};
         const changes = {};
 
         // Only check for changes in non-bullets data
@@ -483,7 +484,7 @@ player.bullets.forEach(bullet => {
           changes.b = currentPlayerData.b;
 
         if (Object.keys(changes).length > 0) {
-          playerDataChanges[player.playerId] = changes;
+          playerDataChanges[player.nmb] = changes;
         }
       }
     }
@@ -528,8 +529,15 @@ player.bullets.forEach(bullet => {
        elpl: player.eliminator,
        cg: player.canusegadget,
        lg: player.gadgetuselimit,
-       re_x: player.x,
-       re_y: player.y
+       x: player.x,
+       y: player.y,
+       s: player.shooting,
+       g: player.gun,
+       id: player.nmb,
+        w: player.hitdata,
+       // b: formattedBullets, // Always include bullets
+        ell: player.elimlast,
+        em: player.emote,
        
       };
 
