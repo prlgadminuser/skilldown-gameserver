@@ -74,7 +74,10 @@ function handleElimination(room, player) {
                 (player) => player.eliminated === false,
             );
 
-            room.winner = remainingPlayer.playerId;
+            room.winner = {
+                wn: remainingPlayer.playerId,
+                wid: remainingPlayer.nmb,                                    
+               };
             //   console.log(Last player standing! ${room.winner} wins!);
 
             increasePlayerWins(room.winner, 1);

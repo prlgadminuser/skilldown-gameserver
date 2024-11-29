@@ -459,7 +459,7 @@ player.bullets.forEach(bullet => {
         currentPlayerData.hc = player.hat_color;
         currentPlayerData.tc = player.top_color;
         currentPlayerData.sh = player.starthealth;
-        currentPlayerData.gid = player.gadgetid;
+       // currentPlayerData.gid = player.gadgetid;
 	currentPlayerData.nn = player.nickname;
       }
 

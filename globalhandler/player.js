@@ -204,7 +204,7 @@ const GUN_BULLET_DAMAGE = damage
     nearestObject.visible = false;
 
     // Update stats for shooting player
-    shootingPlayer.kills++;
+    shootingPlayer.kills++; //
     shootingPlayer.elimlast = nearestObject.playerId;
 
     room.timeoutIds.push(setTimeout(() => {
@@ -221,7 +221,11 @@ const GUN_BULLET_DAMAGE = damage
         (player) => player.visible !== false
       );
 
-      room.winner = remainingPlayer.playerId;
+      room.winner = {
+        wn: remainingPlayer.playerId,
+        wid: remainingPlayer.nmb,
+                                        
+       };
     //  console.log(`Last player standing! ${room.winner} wins!`);
 
       increasePlayerWins(room.winner, 1);

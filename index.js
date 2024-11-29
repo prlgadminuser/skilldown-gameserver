@@ -347,7 +347,12 @@ wss.on("connection", (ws, req) => {
 
                             if (remainingPlayers.length === 1) {
                                 const winner = remainingPlayers[0];
-                                result.room.winner = winner.playerId;
+
+                                result.room.winner = {
+                                  wn: winner.playerId,
+                                  wid: winner.nmb,
+                                                                  
+                                 };
 
                                 increasePlayerWins(winner.playerId, 1);
                                 increasePlayerPlace(winner.playerId, 1, result.room);
