@@ -222,14 +222,14 @@ const GUN_BULLET_DAMAGE = damage
       );
 
       room.winner = {
-        wn: remainingPlayer.playerId,
+        wn: remainingPlayer.nickname,
         wid: remainingPlayer.nmb,
                                         
        };
     //  console.log(`Last player standing! ${room.winner} wins!`);
 
-      increasePlayerWins(room.winner.wn, 1);
-      increasePlayerPlace(room.winner.wn, 1, room);
+      increasePlayerWins(remainingPlayer.playerId, 1);
+      increasePlayerPlace(remainingPlayer.playerId, 1, room);
 
       room.eliminatedPlayers.push({
         username: room.winner,

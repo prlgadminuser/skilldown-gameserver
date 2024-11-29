@@ -349,7 +349,7 @@ wss.on("connection", (ws, req) => {
                                 const winner = remainingPlayers[0];
 
                                 result.room.winner = {
-                                  wn: winner.playerId,
+                                  wn: winner.nickname,
                                   wid: winner.nmb,
                                                                   
                                  };

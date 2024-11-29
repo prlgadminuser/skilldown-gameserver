@@ -673,7 +673,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
         }
       });
     }
-  }, 3000); // Run every 1 second
+  }, 100); // Run every 1 second
 
   if (gmconfig.can_hit_dummies) {
   room.dummies = deepCopy(mapsconfig[mapid].dummies) //dummy crash fix
