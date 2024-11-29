@@ -80,8 +80,8 @@ function handleElimination(room, player) {
                };
             //   console.log(Last player standing! ${room.winner} wins!);
 
-            increasePlayerWins(room.winner, 1);
-            increasePlayerPlace(room.winner, 1, room);
+            increasePlayerWins(room.winner.wn, 1);
+            increasePlayerPlace(room.winner.wn, 1, room);
 
             room.eliminatedPlayers.push({
                 username: room.winner,
