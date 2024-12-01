@@ -61,7 +61,7 @@ function moveBullet(room, player, bullet) {
     if (room.config.canCollideWithPlayers) {
       
     for (const [id, otherPlayer] of room.players) {
-      if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
+      if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === 0)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
         let finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
         handlePlayerCollision(room, player, otherPlayer, finalDamage);
@@ -198,7 +198,7 @@ async function handleBulletFired(room, player, gunType) {
       speed: bullet.speed / 2,
       delay: bullet.delay,
       offset: bullet.offset,
-      damage: gun.damage,
+      damage: gun.damage * 2,
       angle: gun.useplayerangle ? bullet.angle + definedAngle : bullet.angle,
       height: gun.height,
       width: gun.width,

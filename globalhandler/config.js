@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const server_tick_rate = 18 //17
+const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
 const player_idle_timeout = 60000
 const game_start_time = 5000
@@ -88,7 +88,7 @@ const gamemodeconfig = {
     playerhealth: 150,
     playerspeed: (0.26 * server_tick_rate) / 17,
     usezone: true,
-    zonespeed: 1.4,
+    zonespeed: 4.4,
     health_restore: false,
     placereward: [0],
     seasoncoinsreward: [0],
