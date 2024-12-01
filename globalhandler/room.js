@@ -257,11 +257,11 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         room.timeoutIds.push(setTimeout(() => {
           room.state = "playing";
 
-	 room.players.forEach((player) => {
+	// room.players.forEach((player) => {
 
           //  player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
 
-            });
+         //   });
 
          if (room.zoneallowed === true) {
             UseZone(room);
@@ -673,7 +673,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
         }
       });
     }
-  }, 100); // Run every 1 second
+  }, 1000); // Run every 1 second
 
   if (gmconfig.can_hit_dummies) {
   room.dummies = deepCopy(mapsconfig[mapid].dummies) //dummy crash fix

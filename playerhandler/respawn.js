@@ -13,12 +13,12 @@ function respawnplayer(room, player) {
   
     player.health = player.starthealth
 
-    room.timeoutIds.push(setTimeout(() =>{
+    player.timeoutIds.push(setTimeout(() =>{
       player.x = player.startspawn.x
       player.y = player.startspawn.y
       }, 3000));
 
-    room.timeoutIds.push(setTimeout(() =>{
+    player.timeoutIds.push(setTimeout(() =>{
       player.visible = true
       player.state = 1
       }, 5000));

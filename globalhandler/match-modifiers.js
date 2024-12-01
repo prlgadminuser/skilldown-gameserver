@@ -64,7 +64,7 @@ function waitForHealthBelow100(player, room) {
       if (player.health < player.starthealth) {
         resolve(); 
       } else {
-        room.timeoutIds.push(setTimeout(checkHealth, player.starthealth));
+        player.timeoutIds.push(setTimeout(checkHealth, player.starthealth));
       }
     };
     checkHealth(); 
