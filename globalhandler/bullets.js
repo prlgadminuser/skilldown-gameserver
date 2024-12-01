@@ -198,7 +198,7 @@ async function handleBulletFired(room, player, gunType) {
       speed: bullet.speed / 2,
       delay: bullet.delay,
       offset: bullet.offset,
-      damage: gun.damage,
+      damage: gun.damage * 2,
       angle: gun.useplayerangle ? bullet.angle + definedAngle : bullet.angle,
       height: gun.height,
       width: gun.width,

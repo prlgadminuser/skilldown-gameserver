@@ -1,6 +1,6 @@
 "use strict";
 
-const testmode = false
+const testmode = true
 
 const WebSocket = require("ws");
 const http = require('http');
@@ -328,6 +328,14 @@ wss.on("connection", (ws, req) => {
                     if (player) {
                         clearInterval(player.moveInterval);
                         if (player.timeout) clearTimeout(player.timeout);
+
+                        if (player.timeoutIds) player.timeoutIds.forEach(timeoutId => clearTimeout(timeoutId));
+                        if (player.intervalIds) player.intervalIds.forEach(intervalId => clearInterval(intervalId));
+                              clearTimeout(player.timeout);
+                              clearTimeout(player.movetimeout);
+                              clearTimeout(player.gadget);
+                              clearTimeout(player.gadget_timeout);
+                              clearInterval(player.moveInterval);
 
                         if (player.damage > 0) increasePlayerDamage(player.playerId, player.damage);
                         if (player.kills > 0) increasePlayerKills(player.playerId, player.kills);
