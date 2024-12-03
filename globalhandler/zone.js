@@ -65,8 +65,7 @@ function shrinkZone(room) {
     //  console.log(room.zoneEndX, room.zoneEndY);
   } else {
     // console.log("Zone cannot shrink further.");
-    clearInterval(room.shrinkInterval);
-    room.intervalIds.push(setInterval(() => dealDamage(room), 250));
+    dealDamage(room);
   }
 }
 
@@ -129,7 +128,7 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2
   room.zoneEndY += room.mapHeight / 2
 
-  room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
+  room.shrinkInterval = room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
   /* pingPlayers(room);
  
    room.snapInterval = setInterval(() => {

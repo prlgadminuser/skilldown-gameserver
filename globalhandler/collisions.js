@@ -38,10 +38,10 @@ function isCollisionWithBullet(walls, x, y, height, width) {
   // Iterate through each wall
   for (const wall of walls) {
     // Determine the boundaries of the wall
-    const wallLeft = wall.x - wallblocksize / 2;
-    const wallRight = wall.x + wallblocksize / 2;
-    const wallTop = wall.y - wallblocksize / 2;
-    const wallBottom = wall.y + wallblocksize / 2;
+    const wallLeft = wall.x - halfBlockSize;
+    const wallRight = wall.x + halfBlockSize;
+    const wallTop = wall.y - halfBlockSize;
+    const wallBottom = wall.y + halfBlockSize;
 
     // Check if the bullet's bounding box intersects with the wall's bounding box
     if (

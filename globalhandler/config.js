@@ -86,7 +86,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 150,
-    playerspeed: (0.26 * server_tick_rate) / 17,
+    playerspeed: (0.4 * server_tick_rate) / 17,
     usezone: true,
     zonespeed: 4.4,
     health_restore: false,
@@ -246,12 +246,10 @@ function extractWallCoordinates(mapConfig) {
   return mapConfig.walls.map(({ x, y }) => ({ x, y }));
 }
 
-// Transform all map configurations
 const transformedMaps = Object.keys(mapsconfig).reduce((acc, key) => {
   acc[key] = extractWallCoordinates(mapsconfig[key]);
   return acc;
 }, {});
-
 
 
 module.exports = {
