@@ -420,8 +420,18 @@ function arraysAreEqual(arr1, arr2) {
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
-  // Prepare new player data and changes
-  const playerDataChanges = {};
+  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+  const roomdata = [
+    room.state,
+    room.zone,
+    room.maxplayers,
+    playercountroom,
+    room.map,
+    room.countdown,
+    room.winner,
+  ].join(':');
+
+
   const playerData = {};
 
   Array.from(room.players.values()).forEach(player => {
@@ -431,148 +441,96 @@ player.bullets.forEach(bullet => {
   formattedBullets[bullet.timestamp] = {
     x: bullet.x,
     y: bullet.y,
-    d: bullet.direction,
+    d: Math.round(bullet.direction),
   };
 });
+  
 
       // Create current player data object
-      const currentPlayerData = {
-        x: player.x,
-        y: player.y,
-        dr: player.direction2,
-        h: player.health,
-        s: player.shooting,
-        g: player.gun,
-       // p: player.ping,
-       // w: player.hitdata,
-       // e: player.elimlast,
-        b: formattedBullets, // Always include bullets
-        em: player.emote,
-       // ell: player.elimlast,
-      };
-
-      // Include additional properties only when room state is not "playing"
-      if (room.state !== "playing") {
-        currentPlayerData.ht = player.hat;
-        currentPlayerData.tp = player.top;
-        currentPlayerData.pc = player.player_color;
-        currentPlayerData.hc = player.hat_color;
-        currentPlayerData.tc = player.top_color;
-        currentPlayerData.sh = player.starthealth;
-       // currentPlayerData.gid = player.gadgetid;
-	currentPlayerData.nn = player.nickname;
-      }
+      const currentPlayerData = [
+        player.hat,
+        player.top,
+        player.player_color,
+        player.hat_color,
+        player.top_color,
+        player.starthealth,
+        player.nickname,
+        player.x,
+        player.y,
+        player.direction2,
+        player.health,
+        player.shooting,
+        player.gun,
+        player.emote,   // Compact bullets or undefined
+        "$b" + JSON.stringify(formattedBullets),
+      ].join(':');
 
       playerData[player.nmb] = currentPlayerData;
-
-      if (room.state === "playing") {
-        // Track changes if state is "playing"
-        const previousPlayerData = room.lastSentPlayerData?.[player.nmb] || {};
-        const changes = {};
-
-        // Only check for changes in non-bullets data
-        Object.keys(currentPlayerData).forEach(key => {
-          if (key !== 'bullets') {
-            if (JSON.stringify(currentPlayerData[key]) !== JSON.stringify(previousPlayerData[key])) {
-              changes[key] = currentPlayerData[key];
-            }
-          }
-        });
-
-        // Always include bullets changes
-      
-          changes.b = currentPlayerData.b;
-
-        if (Object.keys(changes).length > 0) {
-          playerDataChanges[player.nmb] = changes;
-        }
-      }
     }
   });
 
-  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
   // Create the new message based on room state
-
   const newMessage = {
-    pD: room.state === "playing" ? playerDataChanges : playerData,
-    st: room.lastSent?.state !== room.state ? room.state : undefined,
-    ...(room.lastSent?.zone !== room.zone ? { z: room.zone } : {}),
-    pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : undefined : room.maxplayers,
-    // ...(room.lastSent?.sendping !== room.sendping ? { pg: room.sendping } : {}),
-    rp: playercountroom,
-    id: room.state === "playing" ? undefined : room.map,
-    //ep: room.eliminatedPlayers, //room.lastSent?.ep !== room.eliminatedPlayers ? room.eliminatedPlayers : undefined,  // Send eliminatedPlayers only if they have changed
-    cud: room.lastSent?.cud !== room.countdown ? room.countdown : undefined,
-    winpl: room.winner,
-    dm: room.dummies ? room.dummies : undefined, // Only send if changed
+    pd: playerData, // Always send full player data
+    rd: roomdata,
+    dm: room.dummies,
   };
 
-	//  ep: arraysEqual(room.lastSent?.ep || [], room.eliminatedPlayers) ? room.eliminatedPlayers : undefined,
-
-
-  //pl: room.state === "playing" ? room.lastSent?.maxplayers !== room.maxplayers ? { pl: room.maxplayers } : {} : room.maxplayers,
-
   const jsonString = JSON.stringify(newMessage);
-  const compressedString = LZString.compressToUint8Array(jsonString);
 
-  // Check if the message has changed
+  // Only compress if the message has changed
   if (room.lastSentMessage !== jsonString) {
-    room.players.forEach(player => {
+    const compressedString = LZString.compressToUint8Array(jsonString);
 
-      const selfPlayerData = {
-        //place: player.place,
-       health: player.health,
-       kl: player.kills,
-       dmg: player.damage,
-       state: player.state,
-       plc: player.place,
-       elpl: player.eliminator,
-       cg: player.canusegadget,
-       lg: player.gadgetuselimit,
-       x: player.x,
-       y: player.y,
-       s: player.shooting,
-       g: player.gun,
-       id: player.nmb,
-        w: player.hitdata,
-       // b: formattedBullets, // Always include bullets
-        ell: player.elimlast,
-        em: player.emote,
-       
+    room.players.forEach(player => {
+      // Create player-specific message with minimal selfPlayerData
+      const selfPlayerData = [
+        player.nmb,
+        player.state,
+        player.health,
+        player.shooting,
+        player.gun,
+        player.kills,
+        player.damage,
+        player.place,
+        player.eliminator,
+        player.canusegadget,
+        player.gadgetuselimit,
+        player.x,
+        player.y,
+        player.hitdata,
+        player.elimlast,
+        player.emote
+      ].join(':');
+
+      const playerSpecificMessage = {
+        ...newMessage,
+        sd: selfPlayerData // Include compact selfPlayerData
       };
 
+      const playerMessageString = JSON.stringify(playerSpecificMessage);
+      const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
-	    const playerSpecificMessage = {
-      ...newMessage,
-      spd: selfPlayerData, // Include selfPlayerData in the message
-    };
-
-    const playerMessageString = JSON.stringify(playerSpecificMessage);
-    const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString)
-
+      // Send the message only if the player has a WebSocket connection
       if (player.ws) {
         player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
 
+    // Update the last sent data
     room.lastSentMessage = jsonString;
-    room.lastSentPlayerData = playerData;
-  
-
     room.lastSent = {
       zone: room.zone,
       maxplayers: room.maxplayers,
       playersize: room.players.size,
       state: room.state,
       id: room.map,
-      ep: room.eliminatedPlayers,
-      cud: room.countdown,
-    //  dm: room.dummies || {},
+      cud: room.countdown
     };
+  }
 
-	  }
-
-  batchedMessages.set(roomId, []); // Clear the batch after sending
+  // Clear the batch after sending
+  batchedMessages.set(roomId, []);
 }
 
 
@@ -741,11 +699,11 @@ room.matchmaketimeout = setTimeout(() => {
   
     if (remainingTime <= 0) {
       clearInterval(room.countdownInterval);
-      room.countdown = "0:00";
+      room.countdown = "0-00";
     } else {
       const minutes = Math.floor(remainingTime / 1000 / 60);
       const seconds = Math.floor((remainingTime / 1000) % 60);
-      room.countdown = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      room.countdown = `${minutes}-${seconds.toString().padStart(2, '0')}`;
     }
   }, 1000));
 }

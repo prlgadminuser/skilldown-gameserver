@@ -1,6 +1,6 @@
 "use strict";
 
-const testmode = true
+const testmode = false
 
 const WebSocket = require("ws");
 const http = require('http');
@@ -356,11 +356,10 @@ wss.on("connection", (ws, req) => {
                             if (remainingPlayers.length === 1) {
                                 const winner = remainingPlayers[0];
 
-                                result.room.winner = {
-                                  wn: winner.nickname,
-                                  wid: winner.nmb,
-                                                                  
-                                 };
+                                result.room.winner = [
+                                  winner.nickname,
+                                  winner.nmb,
+                                ].join('$');
 
                                 increasePlayerWins(winner.playerId, 1);
                                 increasePlayerPlace(winner.playerId, 1, result.room);

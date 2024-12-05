@@ -46,8 +46,8 @@ function handleMovement(player, room) {
     }
   }
 
-  newX = parseFloat(newX.toFixed(2));
-  newY = parseFloat(newY.toFixed(2));
+  newX = Math.round(newX);
+  newY = Math.round(newY);
   newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
   newY = Math.max(-room.mapHeight, Math.min(room.mapHeight, newY));
 
@@ -67,15 +67,14 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
   shootingPlayer.damage += GUN_BULLET_DAMAGE;
   nearestObject.last_hit_time = new Date().getTime();
 
-  const hit = {
-    hit: {
-      p: nearestObject.x + "," + nearestObject.y,
-      //p: nearestObject.nickname,
-      dt: new Date().getTime(),
-      d: GUN_BULLET_DAMAGE,
-    },
-  };
-  shootingPlayer.hitdata = JSON.stringify(hit);
+  const hit = [
+    nearestObject.x,
+    nearestObject.y,
+    new Date().getTime(),
+    GUN_BULLET_DAMAGE,
+  ].join('$');
+
+  shootingPlayer.hitdata = hit;
 
   if (1 > nearestObject.health && 1 > nearestObject.respawns) {
     nearestObject.visible = false;
@@ -134,11 +133,10 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
         (player) => player.visible !== false
       );
 
-      room.winner = {
-        wn: remainingPlayer.nickname,
-        wid: remainingPlayer.nmb,
-
-      };
+      room.winner = [
+        remainingPlayer.nickname,
+        remainingPlayer.nmb,
+      ].join('$');
 
       increasePlayerWins(remainingPlayer.playerId, 1);
       increasePlayerPlace(remainingPlayer.playerId, 1, room);
@@ -183,14 +181,15 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
   dummy.h -= GUN_BULLET_DAMAGE;
 
-  const hit = {
-    bhit: {
-      p: dummy.x + "," + dummy.y,
-      dt: new Date().getTime(),
-      d: GUN_BULLET_DAMAGE,
-    },
-  };
-  shootingPlayer.hitdata = JSON.stringify(hit);
+  const hit = [
+    dummy.x,
+    dummy.y,
+    new Date().getTime(),
+    GUN_BULLET_DAMAGE,
+  ].join('$');
+
+
+  shootingPlayer.hitdata = hit;
 
   if (dummy.h < 1) {
     delete room.dummies[dummyKey];
