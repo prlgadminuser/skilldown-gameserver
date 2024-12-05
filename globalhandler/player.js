@@ -46,8 +46,8 @@ function handleMovement(player, room) {
     }
   }
 
-  newX = Math.round(newX);
-  newY = Math.round(newY);
+  newX = parseFloat(newX.toFixed(2));
+  newY = parseFloat(newY.toFixed(2));
   newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
   newY = Math.max(-room.mapHeight, Math.min(room.mapHeight, newY));
 
