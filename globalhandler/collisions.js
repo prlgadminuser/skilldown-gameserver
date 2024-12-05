@@ -5,13 +5,21 @@ const wallblocksize = 50
 
 const halfBlockSize = wallblocksize / 2;
 
+const radius = 50;
+
 function isCollisionWithWalls(walls, x, y) {
   const xMin = x - 20;
   const xMax = x + 20;
   const yMin = y - 45;
   const yMax = y + 45;
 
+  const radiusSquared = radius * radius;
+
   for (const wall of walls) {
+    // Check if the wall is within the radius
+    const distanceSquared = (wall.x - x) ** 2 + (wall.y - y) ** 2;
+    if (distanceSquared > radiusSquared) continue; // Skip walls outside the radius
+
     const wallLeft = wall.x - halfBlockSize;
     const wallRight = wall.x + halfBlockSize;
     const wallTop = wall.y - halfBlockSize;
@@ -31,19 +39,21 @@ function isCollisionWithWalls(walls, x, y) {
 }
 
 function isCollisionWithBullet(walls, x, y, height, width) {
-
   const halfWidth = width / 2;
   const halfHeight = height / 2;
 
-  // Iterate through each wall
+  const radiusSquared = radius * radius;
+
   for (const wall of walls) {
-    // Determine the boundaries of the wall
+    // Check if the wall is within the radius
+    const distanceSquared = (wall.x - x) ** 2 + (wall.y - y) ** 2;
+    if (distanceSquared > radiusSquared) continue; // Skip walls outside the radius
+
     const wallLeft = wall.x - halfBlockSize;
     const wallRight = wall.x + halfBlockSize;
     const wallTop = wall.y - halfBlockSize;
     const wallBottom = wall.y + halfBlockSize;
 
-    // Check if the bullet's bounding box intersects with the wall's bounding box
     if (
       x - halfWidth < wallRight &&
       x + halfWidth > wallLeft &&
@@ -52,9 +62,11 @@ function isCollisionWithBullet(walls, x, y, height, width) {
     ) {
       return true; // Collision detected
     }
-}
+  }
+
   return false; // No collision detected
 }
+
 
 function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const halfBlockSize = wallBlockSize / 2;
