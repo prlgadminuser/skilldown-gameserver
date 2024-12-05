@@ -5,7 +5,7 @@ const wallblocksize = 50
 
 const halfBlockSize = wallblocksize / 2;
 
-const radius = 50;
+const radius = 200;
 
 function isCollisionWithWalls(walls, x, y) {
   const xMin = x - 20;
