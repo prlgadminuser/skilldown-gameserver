@@ -53,7 +53,7 @@ function isCollisionWithWalls(grid, x, y) {
   const yMax = y + 45
 
   const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
-
+console.log(nearbyWalls)
 
   for (const wall of nearbyWalls) {
     const wallLeft = wall.x - halfBlockSize;
