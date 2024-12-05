@@ -38,9 +38,8 @@ class SpatialGrid {
         }
       }
     }
-    return walls,
-    console.log(Array.from(walls))
-  }
+    return walls;
+  } 
 }
 
 

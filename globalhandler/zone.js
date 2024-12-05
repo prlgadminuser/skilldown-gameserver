@@ -1,39 +1,16 @@
 "use strict";
 
-const { game_win_rest_time } = require('./config');
-
-const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
-const { endGame } = require('./game')
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { handleElimination } = require('./../playerhandler/eliminated.js')
 
 
-// Function to check if player is within the zone
-//function isWithinZone(room, playerX, playerY) {
-//    return playerX >= room.zoneStartX && playerX <= room.zoneEndX &&
-//           playerY >= room.zoneStartY && playerY <= room.zoneEndY;
-//}
-
-
-function saveRoomState(room) {
-  const stateSnapshot = {
-    timestamp: new Date().getTime(),
-    players: room.players,
-    //walls: JSON.parse(JSON.stringify(room.walls))
-  };
-
-  room.snap.push(stateSnapshot);
-
-  // Keep only the last 60 states
-  if (room.snap.length > 30) {
-    room.snap.shift();
-  }
-}
+const PLAYER_WIDTH = 40;
+const PLAYER_HEIGHT = 60;
 
 
 function isWithinZone(room, playerX, playerY) {
-  return playerX - 40 >= room.zoneStartX && playerX + 40 <= room.zoneEndX &&
-    playerY - 60 >= room.zoneStartY && playerY + 60 <= room.zoneEndY;
+  return playerX - PLAYER_WIDTH >= room.zoneStartX && playerX + PLAYER_WIDTH <= room.zoneEndX &&
+    playerY - PLAYER_HEIGHT >= room.zoneStartY && playerY + PLAYER_HEIGHT <= room.zoneEndY;
 }
 
 // Function to shrink the game zone
@@ -57,14 +34,8 @@ function shrinkZone(room) {
     room.zoneEndY = Math.round(room.zoneEndY);
 
     room.zone = room.zoneStartX + "," + room.zoneStartY
-    //  setTimeout(() => {
-    //   room.zone = undefined;
-    // }, 100);
 
-
-    //  console.log(room.zoneEndX, room.zoneEndY);
   } else {
-    // console.log("Zone cannot shrink further.");
     dealDamage(room);
   }
 }
