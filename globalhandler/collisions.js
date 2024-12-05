@@ -110,6 +110,34 @@ function isCollisionWithBullet(walls, x, y, height, width, room) {
   return false; // No collision detected
 }
 
+function findCollidedWall(grid, x, y, height, width) {
+  const xMin = x - width / 2;
+  const xMax = x + width / 2;
+  const yMin = y - height / 2;
+  const yMax = y + height / 2;
+
+  const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
+
+  const halfWidth = 50 / 2;
+  const halfHeight = 50 / 2;
+  return nearbyWalls.find((wall) => {
+   
+
+    const wallLeft = wall.x - halfWidth;
+    const wallRight = wall.x + halfWidth;
+    const wallTop = wall.y - halfHeight;
+    const wallBottom = wall.y + halfHeight;
+
+    return (
+      xMax > wallLeft &&
+      xMin < wallRight &&
+      yMax > wallTop &&
+      yMin < wallBottom
+    );
+  });
+}
+
+
 function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const halfBlockSize = wallBlockSize / 2;
 
@@ -165,4 +193,5 @@ module.exports = {
   isCollisionWithBullet,
   wallblocksize,
   adjustBulletDirection,
+  findCollidedWall,
 };

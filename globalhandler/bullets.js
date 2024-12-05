@@ -1,6 +1,6 @@
 "use strict";
 
-const { isCollisionWithBullet, adjustBulletDirection } = require('./collisions');
+const { isCollisionWithBullet, adjustBulletDirection, findCollidedWall } = require('./collisions');
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
@@ -96,7 +96,7 @@ function moveBullet(room, player, bullet) {
   } else {
     // Check if the bullet can bounce
     if (canbounce === true) {
-      const collidedWall = findCollidedWall(room.walls, newX, newY, height, width); // Find the wall the bullet collided with
+      const collidedWall = findCollidedWall(room.grid, newX, newY, height, width); // Find the wall the bullet collided with
       if (collidedWall) {
         adjustBulletDirection(bullet, collidedWall, 50);
        // bullet.bouncesLeft = bouncesLeft - 1; // Decrease bouncesLeft
@@ -108,24 +108,7 @@ function moveBullet(room, player, bullet) {
   }
 }
 
-function findCollidedWall(walls, x, y, height, width) {
-  return walls.find((wall) => {
-    const halfWidth = 50 / 2;
-    const halfHeight = 50 / 2;
 
-    const wallLeft = wall.x - halfWidth;
-    const wallRight = wall.x + halfWidth;
-    const wallTop = wall.y - halfHeight;
-    const wallBottom = wall.y + halfHeight;
-
-    return (
-      x - width / 2 < wallRight &&
-      x + width / 2 > wallLeft &&
-      y - height / 2 < wallBottom &&
-      y + height / 2 > wallTop
-    );
-  });
-}
 
 // Bullet Shooting with Delay
 function shootBulletsWithDelay(room, player, bulletdata) {
