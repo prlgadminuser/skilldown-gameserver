@@ -54,7 +54,7 @@ function moveBullet(room, player, bullet) {
   }
 
  
-  if (!isCollisionWithBullet(room.walls, newX, newY, height, width)) {
+  if (!isCollisionWithBullet(room.walls, newX, newY, height, width, room)) {
     bullet.x = newX;
     bullet.y = newY;
 

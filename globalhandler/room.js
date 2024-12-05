@@ -516,18 +516,11 @@ player.bullets.forEach(bullet => {
         player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
-
-    // Update the last sent data
-    room.lastSentMessage = jsonString;
-    room.lastSent = {
-      zone: room.zone,
-      maxplayers: room.maxplayers,
-      playersize: room.players.size,
-      state: room.state,
-      id: room.map,
-      cud: room.countdown
-    };
   }
+    // Update the last sent data
+    room.lastSentMessage = jsonString
+
+  
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
@@ -599,6 +592,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     mapHeight: mapsconfig[mapid].height,
     mapWidth: mapsconfig[mapid].width,
     walls: mapsconfig[mapid].walls, //mapsconfig[mapid].walls.map(({ x, y }) => ({ x, y })),
+    grid: mapsconfig[mapid].grid,
     spawns: mapsconfig[mapid].spawns,
     map: mapid,
     place_counts: gmconfig.placereward,

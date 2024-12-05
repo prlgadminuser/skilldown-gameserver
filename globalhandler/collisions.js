@@ -3,23 +3,61 @@
 const wallblocksize = 50
 
 
+class SpatialGrid {
+  constructor(cellSize) {
+    this.cellSize = cellSize;
+    this.grid = new Map();
+  }
+
+  _getCellKey(x, y) {
+    const cellX = Math.floor(x / this.cellSize);
+    const cellY = Math.floor(y / this.cellSize);
+    return `${cellX},${cellY}`;
+  }
+
+  addWall(wall) {
+    const key = this._getCellKey(wall.x, wall.y);
+    if (!this.grid.has(key)) {
+      this.grid.set(key, []);
+    }
+    this.grid.get(key).push(wall);
+  }
+
+  getWallsInArea(xMin, xMax, yMin, yMax) {
+    const walls = [];
+    const startX = Math.floor(xMin / this.cellSize);
+    const endX = Math.floor(xMax / this.cellSize);
+    const startY = Math.floor(yMin / this.cellSize);
+    const endY = Math.floor(yMax / this.cellSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const key = `${x},${y}`;
+        if (this.grid.has(key)) {
+          walls.push(...this.grid.get(key));
+        }
+      }
+    }
+    return walls,
+    console.log(Array.from(walls))
+  }
+}
+
+
+
 const halfBlockSize = wallblocksize / 2;
 
-const radius = 200;
-
-function isCollisionWithWalls(walls, x, y) {
+function isCollisionWithWalls(walls, x, y, room) {
   const xMin = x - 20;
   const xMax = x + 20;
   const yMin = y - 45;
-  const yMax = y + 45;
+  const yMax = y + 45
+  const grid = room.grid
 
-  const radiusSquared = radius * radius;
+  const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
-  for (const wall of walls) {
-    // Check if the wall is within the radius
-    const distanceSquared = (wall.x - x) ** 2 + (wall.y - y) ** 2;
-    if (distanceSquared > radiusSquared) continue; // Skip walls outside the radius
 
+  for (const wall of nearbyWalls) {
     const wallLeft = wall.x - halfBlockSize;
     const wallRight = wall.x + halfBlockSize;
     const wallTop = wall.y - halfBlockSize;
@@ -38,22 +76,28 @@ function isCollisionWithWalls(walls, x, y) {
   return false; // No collision detected
 }
 
-function isCollisionWithBullet(walls, x, y, height, width) {
+function isCollisionWithBullet(walls, x, y, height, width, room) {
+
+  const xMin = x - 20;
+  const xMax = x + 20;
+  const yMin = y - 45;
+  const yMax = y + 45;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
 
-  const radiusSquared = radius * radius;
+  const grid = room.grid
 
-  for (const wall of walls) {
-    // Check if the wall is within the radius
-    const distanceSquared = (wall.x - x) ** 2 + (wall.y - y) ** 2;
-    if (distanceSquared > radiusSquared) continue; // Skip walls outside the radius
+  const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
+  // Iterate through each wall
+  for (const wall of nearbyWalls) {
+    // Determine the boundaries of the wall
     const wallLeft = wall.x - halfBlockSize;
     const wallRight = wall.x + halfBlockSize;
     const wallTop = wall.y - halfBlockSize;
     const wallBottom = wall.y + halfBlockSize;
 
+    // Check if the bullet's bounding box intersects with the wall's bounding box
     if (
       x - halfWidth < wallRight &&
       x + halfWidth > wallLeft &&
@@ -62,11 +106,9 @@ function isCollisionWithBullet(walls, x, y, height, width) {
     ) {
       return true; // Collision detected
     }
-  }
-
+}
   return false; // No collision detected
 }
-
 
 function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const halfBlockSize = wallBlockSize / 2;

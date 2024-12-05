@@ -32,12 +32,12 @@ function handleMovement(player, room) {
   let newX = player.x + xDelta;
   let newY = player.y + yDelta;
 
-  if (isCollisionWithWalls(room.walls, newX, newY)) {
+  if (isCollisionWithWalls(room.walls, newX, newY, room)) {
 
-    if (!isCollisionWithWalls(room.walls, newX, player.y)) {
+    if (!isCollisionWithWalls(room.walls, newX, player.y, room)) {
       newY = player.y;
     }
-    else if (!isCollisionWithWalls(room.walls, player.x, newY)) {
+    else if (!isCollisionWithWalls(room.walls, player.x, newY, room)) {
       newX = player.x;
     }
     else {

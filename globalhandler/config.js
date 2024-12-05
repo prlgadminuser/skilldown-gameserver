@@ -69,12 +69,12 @@ const gamemodeconfig = {
     can_hit_dummies: false,
     can_hit_players: true,
     maxplayers: 2,
-    respawns_allowed: 1,
+    respawns_allowed: 2,
     playerhealth: 150,
-    playerspeed: (0.26 * server_tick_rate) / 17,
+    playerspeed: (0.25 * server_tick_rate) / 17,
     zonespeed: 1.6,
     usezone: true,
-    health_restore: true,
+    health_restore: false,
     placereward: [16, -8],
     seasoncoinsreward: [25, 12],
     show_timer: false,
@@ -240,6 +240,58 @@ const gunsconfig = {
     ]
   },
 };
+
+
+class SpatialGrid {
+  constructor(cellSize) {
+    this.cellSize = cellSize;
+    this.grid = new Map();
+  }
+
+  _getCellKey(x, y) {
+    const cellX = Math.floor(x / this.cellSize);
+    const cellY = Math.floor(y / this.cellSize);
+    return `${cellX},${cellY}`;
+  }
+
+  addWall(wall) {
+    const key = this._getCellKey(wall.x, wall.y);
+    if (!this.grid.has(key)) {
+      this.grid.set(key, []);
+    }
+    this.grid.get(key).push(wall);
+  }
+
+  getWallsInArea(xMin, xMax, yMin, yMax) {
+    const walls = [];
+    const startX = Math.floor(xMin / this.cellSize);
+    const endX = Math.floor(xMax / this.cellSize);
+    const startY = Math.floor(yMin / this.cellSize);
+    const endY = Math.floor(yMax / this.cellSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const key = `${x},${y}`;
+        if (this.grid.has(key)) {
+          walls.push(...this.grid.get(key));
+        }
+      }
+    }
+    return walls;
+  }
+}
+
+// Initialize grids for all maps
+const cellSize = 50; // Adjust as necessary
+Object.keys(mapsconfig).forEach(mapKey => {
+  const map = mapsconfig[mapKey];
+  const grid = new SpatialGrid(cellSize);
+
+  map.walls.forEach(wall => grid.addWall(wall));
+
+  // Save the grid in the map configuration
+  map.grid = grid;
+});
 
 
 function extractWallCoordinates(mapConfig) {
