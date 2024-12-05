@@ -10,12 +10,13 @@ const BULLET_MOVE_INTERVAL = 17 // milliseconds
 const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 const toRadians = degrees => degrees * (Math.PI / 180);
 
+const collisionplayersides = playerHitboxHeight / 2.4;
 // Collision Detection
 function isCollisionWithPlayer(bullet, player, height, width) {
-  const playerLeft = player.x - playerHitboxWidth / 2.4;
-  const playerRight = player.x + playerHitboxWidth / 2.4;
-  const playerTop = player.y - playerHitboxHeight / 2.4;
-  const playerBottom = player.y + playerHitboxHeight / 2.4;
+  const playerLeft = player.x - collisionplayersides
+  const playerRight = player.x + collisionplayersides
+  const playerTop = player.y - collisionplayersides
+  const playerBottom = player.y + collisionplayersides
 
   const bulletLeft = bullet.x - width / 2;
   const bulletRight = bullet.x + width / 2;
@@ -54,7 +55,7 @@ function moveBullet(room, player, bullet) {
   }
 
  
-  if (!isCollisionWithBullet(room.walls, newX, newY, height, width, room)) {
+  if (!isCollisionWithBullet(room.grid, newX, newY, height, width)) {
     bullet.x = newX;
     bullet.y = newY;
 

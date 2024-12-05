@@ -47,12 +47,11 @@ class SpatialGrid {
 
 const halfBlockSize = wallblocksize / 2;
 
-function isCollisionWithWalls(walls, x, y, room) {
+function isCollisionWithWalls(grid, x, y) {
   const xMin = x - 20;
   const xMax = x + 20;
   const yMin = y - 45;
   const yMax = y + 45
-  const grid = room.grid
 
   const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
@@ -76,7 +75,7 @@ function isCollisionWithWalls(walls, x, y, room) {
   return false; // No collision detected
 }
 
-function isCollisionWithBullet(walls, x, y, height, width, room) {
+function isCollisionWithBullet(grid, x, y, height, width) {
 
   const xMin = x - 20;
   const xMax = x + 20;
@@ -84,8 +83,6 @@ function isCollisionWithBullet(walls, x, y, height, width, room) {
   const yMax = y + 45;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
-
-  const grid = room.grid
 
   const nearbyWalls = grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
