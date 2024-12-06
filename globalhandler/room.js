@@ -133,6 +133,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
      const gadgetselected = selected_gadget || 1;
      const finalskillpoints = skillpoints || 0;
+     const finalnickname = nickname.replace(/[:$]/g, '');
 
      const roomjoiningvalue = matchmakingsp(finalskillpoints);
       // Check if there's an existing room with available slots
@@ -172,7 +173,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
         nmb: playerCount,
         playerId: playerId,
-        nickname: nickname,
+        nickname: finalnickname,
         rateLimiter: playerRateLimiter,
         hat: hat,
         top: top,
