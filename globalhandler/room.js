@@ -443,20 +443,20 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
-  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
-  const roomdata = [
+  const playerCountRoom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+  const roomData = [
     room.state,
     room.zone,
     room.maxplayers,
-    playercountroom,
+    playerCountRoom,
     room.map,
     room.countdown,
     room.winner,
   ].join(':');
 
+  room.playerData = {};
 
-  const playerData = {};
-
+  // Prepare player data
   Array.from(room.players.values()).forEach(player => {
     if (player.visible !== false) {
       const formattedBullets = {};
@@ -482,27 +482,28 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote,   // Compact bullets or undefined
+        player.emote,
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
 
-      playerData[player.nmb] = currentPlayerData;
+      room.playerData[player.nmb] = currentPlayerData;
     }
   });
 
   const newMessage = {
-    pd: playerData, // Always send full player data
-    rd: roomdata,
+    pd: room.playerData, // Always send full player data
+    rd: roomData,
     dm: room.dummies,
   };
 
   const jsonString = JSON.stringify(newMessage);
 
+  // Send room-wide message only if changed
   if (room.lastSentMessage !== jsonString) {
     const compressedString = LZString.compressToUint8Array(jsonString);
 
+    // Iterate through players for individual messages
     room.players.forEach(player => {
-      // Create player-specific message with minimal selfPlayerData
       const selfPlayerData = [
         player.nmb,
         player.state,
@@ -522,56 +523,54 @@ function sendBatchedMessages(roomId) {
         player.emote
       ].join(':');
 
-
+      let filteredPlayers = {};
       if (room.state === "playing") {
+        const playersInRange = getPlayersInRange(
+          Array.from(room.players.values()), player.x, player.y, 350
+        );
 
-      const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
-
-      // Filter playerData to include only players in range for the current player
-      let filteredplayers = Object.keys(playerData)
-        .filter(player => playersInRange.includes(Number(player))) // Only include players in range
-        .reduce((result, playerId) => {
-          result[playerId] = playerData[playerId]; // Add filtered player data
-          return result;
-        }, {});
-
-      player.pd = filteredplayers
-    } else {
-
-      player.pd = playerData
-    }
-
-
+        filteredPlayers = Object.keys(room.playerData)
+          .filter(id => playersInRange.includes(Number(id))) // Only players in range
+          .reduce((result, id) => {
+            result[id] = room.playerData[id];
+            return result;
+          }, {});
+      } else {
+        filteredPlayers = room.playerData; // Include all if not in "playing" state
+      }
 
       const playerSpecificMessage = {
-        pd: player.pd,
+        pd: filteredPlayers,
         rd: newMessage.rd,
         dm: newMessage.dm,
-        sd: selfPlayerData // Include compact selfPlayerData
+        sd: selfPlayerData,
       };
 
-      const playerMessageString = JSON.stringify(playerSpecificMessage);
-      const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
+      const currentMessageHash = generateHash(playerSpecificMessage);
 
-      
-
-      // Send the message only if the player has a WebSocket connection
-      if (player.ws && playerSpecificMessage !== player.lastmsg) {
-        player.lastmsg = playerSpecificMessage
+      // Send message only if changed
+      if (player.ws && currentMessageHash !== player.lastMessageHash) {
+        const compressedPlayerMessage = LZString.compressToUint8Array(
+          JSON.stringify(playerSpecificMessage)
+        );
         player.ws.send(compressedPlayerMessage, { binary: true });
+        player.lastMessageHash = currentMessageHash; // Store the new hash
       }
     });
+
+    room.lastSentMessage = jsonString; // Update last sent message
   }
-
-  room.lastSentMessage = jsonString
-
-  
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
-
-
 }
+
+// Hash generator function
+function generateHash(message) {
+  // Simple hash function for demonstration (use a more robust method for production)
+  return JSON.stringify(message).length; // Example: use length as a basic hash
+}
+
 
 
 // Update last sent message and player data
