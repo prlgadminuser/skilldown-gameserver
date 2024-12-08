@@ -553,8 +553,8 @@ player.bullets.forEach(bullet => {
       const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
       // Send the message only if the player has a WebSocket connection
-      if (player.ws && playerSpecificMessage.length !== player.lastmsg.length) {
-        player.lastmsg = playerSpecificMessage.length
+      if (player.ws && playerSpecificMessage !== player.lastmsg) {
+        player.lastmsg = playerSpecificMessage
         player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
