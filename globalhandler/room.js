@@ -442,6 +442,7 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
 
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
+
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
   const roomdata = [
     room.state,
@@ -453,18 +454,20 @@ function sendBatchedMessages(roomId) {
     room.winner,
   ].join(':');
 
+
   const playerData = {};
 
   Array.from(room.players.values()).forEach(player => {
     if (player.visible !== false) {
       const formattedBullets = {};
-      player.bullets.forEach(bullet => {
-        formattedBullets[bullet.timestamp] = {
-          x: bullet.x,
-          y: bullet.y,
-          d: Math.round(bullet.direction),
-        };
-      });
+player.bullets.forEach(bullet => {
+  formattedBullets[bullet.timestamp] = {
+    x: bullet.x,
+    y: bullet.y,
+    d: Math.round(bullet.direction),
+  };
+});
+  
 
       // Create current player data object
       const currentPlayerData = [
@@ -481,7 +484,7 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote,
+        player.emote,   // Compact bullets or undefined
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
 
@@ -523,53 +526,52 @@ function sendBatchedMessages(roomId) {
         player.emote
       ].join(':');
 
-      // Handle player-specific data filtering
+
       if (room.state === "playing") {
-        const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
-        // Filter playerData to include only players in range for the current player
-        const filteredPlayerData = Object.keys(playerData)
-          .filter(playerId => playersInRange.includes(Number(playerId)))
-          .reduce((result, playerId) => {
-            result[playerId] = playerData[playerId];
-            return result;
-          }, {});
+      const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
-        player.pd = filteredPlayerData;
-      } else {
-        player.pd = playerData;
-      }
+      // Filter playerData to include only players in range for the current player
+      const filteredPlayerData = Object.keys(playerData)
+        .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
+        .reduce((result, playerId) => {
+          result[playerId] = playerData[playerId]; // Add filtered player data
+          return result;
+        }, {});
 
-      // Throttle mechanism to avoid sending multiple messages at once
-      if (player) { // Adjust debounce time as needed
-        const playerSpecificMessage = {
-          pd: player.pd,
-          rd: newMessage.rd,
-          dm: newMessage.dm,
-          sd: selfPlayerData // Include compact selfPlayerData
-        };
+      player.pd = filteredPlayerData
+    } else {
 
-        const playerMessageString = JSON.stringify(playerSpecificMessage);
-        const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
+      player.pd = playerData
+    }
 
-        // Send the message only if the player has a WebSocket connection and message is new
-        if (player.ws && playerSpecificMessage !== player.lastmsg) {
-          player.lastmsg = playerSpecificMessage;
-          player.lastMessageTime = Date.now();  // Update the last sent message timestamp
-          player.ws.send(compressedPlayerMessage, { binary: true });
-        }
+
+
+      const playerSpecificMessage = {
+        pd: player.pd,
+        rd: newMessage.rd,
+        dm: newMessage.dm,
+        sd: selfPlayerData // Include compact selfPlayerData
+      };
+
+      const playerMessageString = JSON.stringify(playerSpecificMessage);
+      const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
+
+      // Send the message only if the player has a WebSocket connection
+      if (player.ws && playerSpecificMessage !== player.lastmsg) {
+        player.lastmsg = playerSpecificMessage
+        player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
   }
+    // Update the last sent data
+    room.lastSentMessage = jsonString
 
-  // Update the last sent data
-  room.lastSentMessage = jsonString;
+  
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
 }
-
-
 
 
     // Update last sent message and player data
