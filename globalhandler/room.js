@@ -440,23 +440,23 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
   return playersInRange;
 }
 
+
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
-  const playerCountRoom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
-  const roomData = [
+  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+  const roomdata = [
     room.state,
     room.zone,
     room.maxplayers,
-    playerCountRoom,
+    playercountroom,
     room.map,
     room.countdown,
     room.winner,
   ].join(':');
 
-  room.playerData = {};
+ let playerData = {};
 
-  // Prepare player data
   Array.from(room.players.values()).forEach(player => {
     if (player.visible !== false) {
       const formattedBullets = {};
@@ -482,28 +482,27 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote,
+        player.emote,   // Compact bullets or undefined
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
 
-      room.playerData[player.nmb] = currentPlayerData;
+      playerData[player.nmb] = currentPlayerData;
     }
   });
 
   const newMessage = {
-    pd: room.playerData, // Always send full player data
-    rd: roomData,
+    pd: playerData, // Always send full player data
+    rd: roomdata,
     dm: room.dummies,
   };
 
   const jsonString = JSON.stringify(newMessage);
 
-  // Send room-wide message only if changed
   if (room.lastSentMessage !== jsonString) {
     const compressedString = LZString.compressToUint8Array(jsonString);
 
-    // Iterate through players for individual messages
     room.players.forEach(player => {
+      // Create player-specific message with minimal selfPlayerData
       const selfPlayerData = [
         player.nmb,
         player.state,
@@ -523,32 +522,41 @@ function sendBatchedMessages(roomId) {
         player.emote
       ].join(':');
 
-      let filteredPlayers = {};
-      if (room.state === "playing") {
-        const playersInRange = getPlayersInRange(
-          Array.from(room.players.values()), player.x, player.y, 350
-        );
 
-        filteredPlayers = Object.keys(room.playerData)
-          .filter(id => playersInRange.includes(Number(id))) // Only players in range
-          .reduce((result, id) => {
-            result[id] = room.playerData[id];
-            return result;
-          }, {});
-      } else {
-        filteredPlayers = room.playerData; // Include all if not in "playing" state
-      }
+      let filteredplayers = {};
+      if (room.state === "playing") {
+
+   
+      const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
+
+
+      player.pd = {};
+      // Filter playerData to include only players in range for the current player
+      filteredplayers = Object.keys(playerData)
+        .filter(player => playersInRange.includes(Number(player))) // Only include players in range
+        .reduce((result, playerId) => {
+          result[playerId] = playerData[playerId]; // Add filtered player data
+          return result;
+        }, {});
+
+      player.pd = filteredplayers
+    } else {
+
+      player.pd = playerData
+    }
+
+
 
       const playerSpecificMessage = {
-        pd: filteredPlayers,
+        pd: player.pd,
         rd: newMessage.rd,
         dm: newMessage.dm,
-        sd: selfPlayerData,
+        sd: selfPlayerData // Include compact selfPlayerData
       };
 
       const currentMessageHash = generateHash(playerSpecificMessage);
 
-      // Send message only if changed
+      // Throttle the message sending for performance
       if (player.ws && currentMessageHash !== player.lastMessageHash) {
         const compressedPlayerMessage = LZString.compressToUint8Array(
           JSON.stringify(playerSpecificMessage)
@@ -558,18 +566,28 @@ function sendBatchedMessages(roomId) {
       }
     });
 
-    room.lastSentMessage = jsonString; // Update last sent message
-  }
+  room.lastSentMessage = jsonString
+
+}
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
+
+
 }
 
-// Hash generator function
+
+// Efficient Hashing Function
 function generateHash(message) {
-  // Simple hash function for demonstration (use a more robust method for production)
-  return JSON.stringify(message).length; // Example: use length as a basic hash
+  let hash = 0;
+  const str = JSON.stringify(message);
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
 }
+
 
 
 
