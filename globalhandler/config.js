@@ -76,7 +76,7 @@ const gamemodeconfig = {
     playerspeed: (0.25 * server_tick_rate) / 17,
     zonespeed: 1.6,
     usezone: true,
-    health_restore: false,
+    health_restore: true,
     placereward: [16, -8],
     seasoncoinsreward: [25, 12],
     show_timer: false,
