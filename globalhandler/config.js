@@ -282,7 +282,7 @@ class SpatialGrid {
 }
 
 // Initialize grids for all maps
-const cellSize = 300; // Adjust as necessary
+const cellSize = 100; // Adjust as necessary
 Object.keys(mapsconfig).forEach(mapKey => {
   const map = mapsconfig[mapKey];
   const grid = new SpatialGrid(cellSize);
