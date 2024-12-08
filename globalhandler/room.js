@@ -454,20 +454,20 @@ function sendBatchedMessages(roomId) {
     room.winner,
   ].join(':');
 
+
   const playerData = {};
 
   Array.from(room.players.values()).forEach(player => {
     if (player.visible !== false) {
       const formattedBullets = {};
-      if (player.bullets) {
-        player.bullets.forEach(bullet => {
-          formattedBullets[bullet.timestamp] = {
-            x: bullet.x,
-            y: bullet.y,
-            d: Math.round(bullet.direction),
-          };
-        });
-      }
+player.bullets.forEach(bullet => {
+  formattedBullets[bullet.timestamp] = {
+    x: bullet.x,
+    y: bullet.y,
+    d: Math.round(bullet.direction),
+  };
+});
+  
 
       // Create current player data object
       const currentPlayerData = [
@@ -484,7 +484,7 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote, // Compact bullets or undefined
+        player.emote,   // Compact bullets or undefined
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
 
@@ -526,29 +526,26 @@ function sendBatchedMessages(roomId) {
         player.emote
       ].join(':');
 
+
       if (room.state === "playing") {
-        // Get players in range for the current player
-        const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
-        // If the player is in range, send their filtered player data
-        if (playersInRange.includes(player.nmb)) {
-          const filteredPlayerData = Object.keys(playerData)
-            .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
-            .reduce((result, playerId) => {
-              result[playerId] = playerData[playerId]; // Add filtered player data
-              return result;
-            }, {});
+      const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
-          // Update player-specific message with the filtered data
-          player.pd = filteredPlayerData;
-        } else {
-          // For players not in range, send full player data (or leave out if not needed)
-          player.pd = playerData;
-        }
-      } else {
-        // Handle non-playing state (send full player data)
-        player.pd = playerData;
-      }
+      // Filter playerData to include only players in range for the current player
+      const filteredPlayerData = Object.keys(playerData)
+        .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
+        .reduce((result, playerId) => {
+          result[playerId] = playerData[playerId]; // Add filtered player data
+          return result;
+        }, {});
+
+      player.pd = filteredPlayerData
+    } else {
+
+      player.pd = playerData
+    }
+
+
 
       const playerSpecificMessage = {
         pd: player.pd,
@@ -560,21 +557,21 @@ function sendBatchedMessages(roomId) {
       const playerMessageString = JSON.stringify(playerSpecificMessage);
       const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
-      // Send the message only if the player has a WebSocket connection and the message has changed
+      // Send the message only if the player has a WebSocket connection
       if (player.ws && playerSpecificMessage !== player.lastmsg) {
-        player.lastmsg = playerSpecificMessage;
+        player.lastmsg = playerSpecificMessage
         player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
-
-    // Update the last sent data
-    room.lastSentMessage = jsonString;
-
-    // Clear the batch after sending
-    batchedMessages.set(roomId, []);
   }
-}
+    // Update the last sent data
+    room.lastSentMessage = jsonString
 
+  
+
+  // Clear the batch after sending
+  batchedMessages.set(roomId, []);
+}
 
 
     // Update last sent message and player data
