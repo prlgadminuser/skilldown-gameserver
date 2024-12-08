@@ -540,6 +540,9 @@ player.bullets.forEach(bullet => {
         }, {});
 
       player.pd = filteredPlayerData
+    } else {
+
+      player.pd = playerData
     }
 
 
