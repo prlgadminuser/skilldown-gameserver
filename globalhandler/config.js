@@ -3,6 +3,8 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
+const cellSize = 75; 
+
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
 const player_idle_timeout = 60000
@@ -282,7 +284,7 @@ class SpatialGrid {
 }
 
 // Initialize grids for all maps
-const cellSize = 100; // Adjust as necessary
+// Adjust as necessary
 Object.keys(mapsconfig).forEach(mapKey => {
   const map = mapsconfig[mapKey];
   const grid = new SpatialGrid(cellSize);

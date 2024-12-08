@@ -1,105 +1,78 @@
 "use strict";
 
-const { respawnplayer } = require('./../playerhandler/respawn')
-const { handleElimination } = require('./../playerhandler/eliminated.js')
+const { respawnplayer } = require("./../playerhandler/respawn");
+const { handleElimination } = require("./../playerhandler/eliminated.js");
 
-
-// Helper function to apply the health decrease
+// Helper function to decrease health
 function applyHealthDecrease(player, room) {
-  
-
-  if (1 > player.health) {
-    if (player.respawns > 0) {
-      respawnplayer(room, player);
-    } else {
-      handleElimination(room, player);
-    }
-  } else {
+  if (player.health > 0) {
     player.last_hit_time = new Date().getTime();
     player.health -= 5;
-    
-    if (player.health < 1) {  // double check so player has no - health
-      
 
+    if (player.health <= 0) {
       if (player.respawns > 0) {
         respawnplayer(room, player);
       } else {
         handleElimination(room, player);
       }
     }
-  } 
-  }
-
-
-// Async function to decrease health
-async function decreaseHealth(player, room) {
-  if (player.visible && room.winner === 0) {
-    applyHealthDecrease(player, room);
   }
 }
 
-// Apply health decrease for all players
-async function decreaseHealthForAllPlayers(room) {
-  if (room.state === "playing") {
-    room.players.forEach(async (player) => {
-      if (player.visible !== false && room.winner === 0) {
-      await decreaseHealth(player, room);
-    }
+// Helper function to regenerate health
+function applyHealthRegeneration(player, currentTime) {
+  if (
+    player.health > 0 &&
+    player.health < player.starthealth &&
+    currentTime - player.last_hit_time >= 10000
+  ) {
+    player.health = Math.min(player.health + 6, player.starthealth);
+  }
+}
+
+// Function to decrease health for all players
+function decreaseHealthForAllPlayers(room) {
+  if (room.state === "playing" && room.winner === 0) {
+    room.players.forEach((player) => {
+      if (player.visible !== false) {
+        applyHealthDecrease(player, room);
+      }
     });
   }
 }
 
-// Start decreasing health at intervals
+// Function to regenerate health for all players
+function regenerateHealthForAllPlayers(room) {
+  if (room.state === "playing") {
+    const currentTime = new Date().getTime();
+
+    room.players.forEach((player) => {
+      if (player.visible !== false) {
+        applyHealthRegeneration(player, currentTime);
+      }
+    });
+  }
+}
+
+// Start periodic health decrease
 function startDecreasingHealth(room, intervalInSeconds) {
   room.intervalIds.push(setInterval(() => {
 
     decreaseHealthForAllPlayers(room);
+    
   }, intervalInSeconds * 1000));
 }
 
-
-function waitForHealthBelow100(player, room) {
-  return new Promise((resolve) => {
-    const checkHealth = () => {
-      if (player.health < player.starthealth) {
-        resolve(); 
-      } else {
-        player.timeoutIds.push(setTimeout(checkHealth, player.starthealth));
-      }
-    };
-    checkHealth(); 
-  });
-}
-
-async function regenerateHealth(player, room) {
-  await waitForHealthBelow100(player, room); 
-  const currentTime = new Date().getTime();
-  const timeSinceLastHit = currentTime - player.last_hit_time;
-  if (timeSinceLastHit >= 10000 && player.health < player.starthealth) {
-    player.health += 6;
-    if (player.health > player.starthealth) {
-      player.health = player.starthealth; 
-    }
-  }
-}
-
-async function regenerateHealthForAllPlayers(room) {
-  if (room.state === "playing") {
-    room.players.forEach((player) => {
-      if (player.visible !== false) {
-        regenerateHealth(player, room);
-      }
-    });
-  }
-}
-
+// Start periodic health regeneration
 function startRegeneratingHealth(room, intervalInSeconds) {
   room.intervalIds.push(setInterval(() => {
+
     regenerateHealthForAllPlayers(room);
-  }, intervalInSeconds * 1000)); 
+
+  }, intervalInSeconds * 1000));
 }
 
 module.exports = {
-  startDecreasingHealth, 
+  startDecreasingHealth,
   startRegeneratingHealth,
 };
