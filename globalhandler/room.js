@@ -454,7 +454,6 @@ function sendBatchedMessages(roomId) {
     room.winner,
   ].join(':');
 
-
   const playerData = {};
 
   Array.from(room.players.values()).forEach(player => {
@@ -482,7 +481,7 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote,   // Compact bullets or undefined
+        player.emote,
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
 
@@ -502,7 +501,6 @@ function sendBatchedMessages(roomId) {
     const compressedString = LZString.compressToUint8Array(jsonString);
 
     room.players.forEach(player => {
-      // Create player-specific message with minimal selfPlayerData
       const selfPlayerData = [
         player.nmb,
         player.state,
@@ -519,56 +517,48 @@ function sendBatchedMessages(roomId) {
         player.y,
         player.hitdata,
         player.elimlast,
-        player.emote
+        player.emote,
       ].join(':');
 
-
+      let filteredPlayers = {};
       if (room.state === "playing") {
+        const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
-      const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
+        // Filter playerData to include only players in range for the current player
+        filteredPlayers = Object.keys(playerData)
+          .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
+          .reduce((result, playerId) => {
+            result[playerId] = playerData[playerId];
+            return result;
+          }, {});
+      } else {
+        filteredPlayers = playerData; // Use full player data if not playing
+      }
 
-      // Filter playerData to include only players in range for the current player
-      player.filteredpd = Object.keys(playerData)
-        .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
-        .reduce((result, playerId) => {
-          result[playerId] = playerData[playerId]; // Add filtered player data
-          return result;
-        }, {});
-
-      player.pd = player.filteredpd
-    } else {
-
-      player.pd = playerData
-    }
-
-
-
+      // Prepare player-specific message
       const playerSpecificMessage = {
-        pd: player.pd,
+        pd: filteredPlayers,
         rd: newMessage.rd,
         dm: newMessage.dm,
-        sd: selfPlayerData // Include compact selfPlayerData
+        sd: selfPlayerData,
       };
 
       const playerMessageString = JSON.stringify(playerSpecificMessage);
-      const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
-      // Send the message only if the player has a WebSocket connection
-      if (player.ws && playerSpecificMessage !== player.lastmsg) {
-        player.lastmsg = playerSpecificMessage
+      // Compare with the last sent message
+      if (player.ws && player.lastSentMessage !== playerMessageString) {
+        const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
+
         player.ws.send(compressedPlayerMessage, { binary: true });
+        player.lastSentMessage = playerMessageString; // Update last sent message
       }
     });
   }
 
-  room.lastSentMessage = jsonString
-
-  
+  room.lastSentMessage = jsonString;
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
-
-
 }
 
 
