@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const cellSize = 75; 
+const cellSize = 50; 
 
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
@@ -91,7 +91,7 @@ const gamemodeconfig = {
     playerspeed: (0.26 * server_tick_rate) / 17,
     usezone: false,
     zonespeed: 4.4,
-    //health_restore: false,
+    health_restore: false,
     placereward: [0],
     seasoncoinsreward: [0],
     show_timer: true,

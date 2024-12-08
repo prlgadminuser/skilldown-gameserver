@@ -539,13 +539,15 @@ player.bullets.forEach(bullet => {
           return result;
         }, {});
 
-      newMessage.pd = filteredPlayerData
+      player.pd = filteredPlayerData
     }
 
 
 
       const playerSpecificMessage = {
-        ...newMessage,
+        pd: player.pd,
+        rd: newMessage.rd,
+        dm: newMessage.dm,
         sd: selfPlayerData // Include compact selfPlayerData
       };
 
