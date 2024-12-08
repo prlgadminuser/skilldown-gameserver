@@ -454,6 +454,7 @@ function sendBatchedMessages(roomId) {
     room.winner,
   ].join(':');
 
+
   const playerData = {};
 
   Array.from(room.players.values()).forEach(player => {
@@ -481,132 +482,6 @@ function sendBatchedMessages(roomId) {
         player.health,
         player.shooting,
         player.gun,
-        player.emote,
-        "$b" + JSON.stringify(formattedBullets),
-      ].join(':');
-
-      playerData[player.nmb] = currentPlayerData;
-    }
-  });
-
-  const newMessage = {
-    pd: playerData, // Always send full player data
-    rd: roomdata,
-    dm: room.dummies,
-  };
-
-  const jsonString = JSON.stringify(newMessage);
-
-  if (room.lastSentMessage !== jsonString) {
-    const compressedString = LZString.compressToUint8Array(jsonString);
-
-    room.players.forEach(player => {
-      const selfPlayerData = [
-        player.nmb,
-        player.state,
-        player.health,
-        player.shooting,
-        player.gun,
-        player.kills,
-        player.damage,
-        player.place,
-        player.eliminator,
-        player.canusegadget,
-        player.gadgetuselimit,
-        player.x,
-        player.y,
-        player.hitdata,
-        player.elimlast,
-        player.emote,
-      ].join(':');
-
-      let filteredPlayers = {};
-      if (room.state === "playing") {
-        const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
-
-        // Filter playerData to include only players in range for the current player
-        filteredPlayers = Object.keys(playerData)
-          .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
-          .reduce((result, playerId) => {
-            result[playerId] = playerData[playerId];
-            return result;
-          }, {});
-      } else {
-        filteredPlayers = playerData; // Use full player data if not playing
-      }
-
-      // Prepare player-specific message
-      const playerSpecificMessage = {
-        pd: filteredPlayers,
-        rd: newMessage.rd,
-        dm: newMessage.dm,
-        sd: selfPlayerData,
-      };
-
-      const playerMessageString = JSON.stringify(playerSpecificMessage);
-
-      // Compare with the last sent message
-      if (player.ws && player.lastSentMessage !== playerMessageString) {
-        const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
-
-        player.ws.send(compressedPlayerMessage, { binary: true });
-        player.lastSentMessage = playerMessageString; // Update last sent message
-      }
-    });
-  }
-
-  room.lastSentMessage = jsonString;
-
-  // Clear the batch after sending
-  batchedMessages.set(roomId, []);
-}
-
-
-
-function sendBatchedMessages2(roomId) {
-  const room = rooms.get(roomId);
-
-  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
-  const roomdata = [
-    room.state,
-    room.zone,
-    room.maxplayers,
-    playercountroom,
-    room.map,
-    room.countdown,
-    room.winner,
-  ].join(':');
-
-
-  const playerData = {};
-
-  Array.from(room.players.values()).forEach(player => {
-    if (player.visible !== false) {
-      const formattedBullets = {};
-player.bullets.forEach(bullet => {
-  formattedBullets[bullet.timestamp] = {
-    x: bullet.x,
-    y: bullet.y,
-    d: Math.round(bullet.direction),
-  };
-});
-  
-
-      // Create current player data object
-      const currentPlayerData = [
-        player.hat,
-        player.top,
-        player.player_color,
-        player.hat_color,
-        player.top_color,
-        player.starthealth,
-        player.nickname,
-        player.x,
-        player.y,
-        player.direction2,
-        player.health,
-        player.shooting,
-        player.gun,
         player.emote,   // Compact bullets or undefined
         "$b" + JSON.stringify(formattedBullets),
       ].join(':');
@@ -615,7 +490,6 @@ player.bullets.forEach(bullet => {
     }
   });
 
-  // Create the new message based on room state
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
@@ -624,7 +498,6 @@ player.bullets.forEach(bullet => {
 
   const jsonString = JSON.stringify(newMessage);
 
-  // Only compress if the message has changed
   if (room.lastSentMessage !== jsonString) {
     const compressedString = LZString.compressToUint8Array(jsonString);
 
@@ -655,14 +528,14 @@ player.bullets.forEach(bullet => {
       const playersInRange = getPlayersInRange(Array.from(room.players.values()), player.x, player.y, 350);
 
       // Filter playerData to include only players in range for the current player
-      const filteredPlayerData = Object.keys(playerData)
-        .filter(playerId => playersInRange.includes(Number(playerId))) // Only include players in range
+      let filteredplayers = Object.keys(playerData)
+        .filter(player => playersInRange.includes(Number(player))) // Only include players in range
         .reduce((result, playerId) => {
           result[playerId] = playerData[playerId]; // Add filtered player data
           return result;
         }, {});
 
-      player.pd = filteredPlayerData
+      player.pd = filteredplayers
     } else {
 
       player.pd = playerData
@@ -680,6 +553,8 @@ player.bullets.forEach(bullet => {
       const playerMessageString = JSON.stringify(playerSpecificMessage);
       const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
+      
+
       // Send the message only if the player has a WebSocket connection
       if (player.ws && playerSpecificMessage !== player.lastmsg) {
         player.lastmsg = playerSpecificMessage
@@ -687,15 +562,16 @@ player.bullets.forEach(bullet => {
       }
     });
   }
-    // Update the last sent data
-    room.lastSentMessage = jsonString
+
+  room.lastSentMessage = jsonString
 
   
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
-}
 
+
+}
 
 
 // Update last sent message and player data
