@@ -162,6 +162,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       const newPlayer = {
         ws,
+        lastmsg: 0,
         intervalIds: [],
         timeoutIds: [],
         x: spawnPositions[spawnIndex].x,
@@ -552,7 +553,8 @@ player.bullets.forEach(bullet => {
       const compressedPlayerMessage = LZString.compressToUint8Array(playerMessageString);
 
       // Send the message only if the player has a WebSocket connection
-      if (player.ws) {
+      if (player.ws && playerSpecificMessage.length !== player.lastmsg.length) {
+        player.lastmsg = playerSpecificMessage.length
         player.ws.send(compressedPlayerMessage, { binary: true });
       }
     });
