@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const cellSize = 75; 
+const cellSize = 50; 
 
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
