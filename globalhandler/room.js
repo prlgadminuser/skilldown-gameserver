@@ -519,7 +519,7 @@ function sendBatchedMessages(roomId) {
 
       if (player.eliminated) {
 
-        handleSpectatorMode
+        handleSpectatorMode(player, room);
       }
 
 
