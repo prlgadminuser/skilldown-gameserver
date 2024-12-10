@@ -905,9 +905,8 @@ function handleSwitchGun(data, player) {
   ) {
     player.gun = selectedGunNumber;
   } else if (player.shooting) {
-    console.log("Cannot switch guns while shooting.");
+
   } else {
-    console.log("Gun number must be between 1 and 3.");
   }
 }
 

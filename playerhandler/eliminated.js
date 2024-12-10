@@ -26,6 +26,11 @@ function handleElimination(room, player) {
         clearInterval(player.moveInterval);
         clearTimeout(player.timeout);
 
+        room.eliminatedPlayers.push({
+            username: player.playerId,
+            place: player.place,
+        });
+
         if (
             Array.from(room.players.values()).filter(
                 (player) => player.eliminated === false,
@@ -52,10 +57,7 @@ function handleElimination(room, player) {
             }
         }
 
-        room.eliminatedPlayers.push({
-            username: player.playerId,
-            place: player.place,
-        });
+        
 
         increasePlayerPlace(player.playerId, player.place, room);
 

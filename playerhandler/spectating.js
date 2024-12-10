@@ -7,7 +7,6 @@ function handleSpectatorMode(player, room) {
       // If player already has a spectating target, validate it
       if (player.spectatingTarget) {
         const currentTarget = room.players.get(player.spectatingTarget);
-        console.log(currentTarget)
         if (currentTarget && !currentTarget.eliminated) {
           // Stick with the current target if it's valid
           updateSpectatingPlayer(player, currentTarget);
