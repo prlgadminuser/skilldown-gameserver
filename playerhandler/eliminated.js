@@ -3,6 +3,9 @@ const { endGame } = require('./../globalhandler/game')
 const { game_win_rest_time } = require('./../globalhandler/config')
 
 
+const { startSpectatingLogic } = require('./spectating')
+
+
 // playerstates: 1:alive 2:respawning 3:eliminated
 
 function handleElimination(room, player) {
@@ -12,6 +15,12 @@ function handleElimination(room, player) {
         player.eliminated = true;
         player.visible = false;
         player.state = 3
+
+   
+    room.timeoutIds.push(setTimeout(() => {
+        startSpectatingLogic(player, room)
+    }, 3000));      
+    
 
 
         clearInterval(player.moveInterval);

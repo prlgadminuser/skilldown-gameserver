@@ -9,7 +9,7 @@ const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
 const player_idle_timeout = 60000
 const game_start_time = 5000
-const game_win_rest_time = 8000
+const game_win_rest_time = 10000
 const room_max_open_time = 60000000  //600000
 const maxClients = 20;
 
@@ -71,7 +71,7 @@ const gamemodeconfig = {
     can_hit_dummies: false,
     can_hit_players: true,
     maxplayers: 2,
-    respawns_allowed: 2,
+    respawns_allowed: 0,
     playerhealth: 150,
     playerspeed: (0.25 * server_tick_rate) / 17,
     zonespeed: 1.6,

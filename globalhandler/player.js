@@ -15,6 +15,7 @@ const {
   game_win_rest_time,
   mapsconfig,
 } = require('./config');
+const { handleElimination } = require('../playerhandler/eliminated');
 
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
@@ -77,79 +78,10 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
   shootingPlayer.hitdata = hit;
 
   if (1 > nearestObject.health && 1 > nearestObject.respawns) {
-    nearestObject.visible = false;
-    nearestObject.state = 3
 
-    clearInterval(nearestObject.moveInterval);
-    clearTimeout(nearestObject.timeout);
-
-    if (
-      Array.from(room.players.values()).filter(
-        (player) => player.visible !== false
-      ).length === 1 && room.winner === 0
-    ) {
-      nearestObject.place = 2;
-    } else {
-      nearestObject.place = room.players.size - room.eliminatedPlayers.length;
-    }
-
-    const existingPlace = room.eliminatedPlayers.find(
-      (player) => player.place === nearestObject.place
-    );
-
-    if (existingPlace) {
-      if (nearestObject.place === room.maxplayers) {
-        nearestObject.place--;
-      } else {
-        nearestObject.place++;
-      }
-    }
-
-    room.eliminatedPlayers.push({
-      username: nearestObject.playerId,
-      place: nearestObject.place,
-      eliminator: shootingPlayer.playerId,
-    });
-
+    handleElimination(room, nearestObject)
     nearestObject.eliminator = shootingPlayer.playerId
-
-    increasePlayerPlace(nearestObject.playerId, nearestObject.place, room);
-
-    nearestObject.visible = false;
-
-    shootingPlayer.kills++;
-    shootingPlayer.elimlast = nearestObject.playerId;
-
-    room.timeoutIds.push(setTimeout(() => {
-      shootingPlayer.elimlast = null;
-    }, 100));
-
-    if (
-      Array.from(room.players.values()).filter(
-        (player) => player.visible !== false
-      ).length === 1 && room.winner === 0
-    ) {
-      const remainingPlayer = Array.from(room.players.values()).find(
-        (player) => player.visible !== false
-      );
-
-      room.winner = [
-        remainingPlayer.nickname,
-        remainingPlayer.nmb,
-      ].join('$');
-
-      increasePlayerWins(remainingPlayer.playerId, 1);
-      increasePlayerPlace(remainingPlayer.playerId, 1, room);
-
-      room.eliminatedPlayers.push({
-        username: room.winner,
-        place: 1,
-      });
-
-      room.timeoutIds.push(setTimeout(() => {
-        endGame(room);
-      }, game_win_rest_time));
-    }
+    nearestObject.spectatingTarget = shootingPlayer.playerId;
   } else {
 
 

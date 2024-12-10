@@ -503,26 +503,6 @@ function sendBatchedMessages(roomId) {
 
     room.players.forEach(player => {
 
-      /*if (player.eliminated) {
-        const nearestNonEliminatedPlayer = findNearestPlayer(
-          player,
-          Array.from(room.players.values()).filter(p => p.visible)
-        );
-
-        if (nearestNonEliminatedPlayer) {
-          player.x = nearestNonEliminatedPlayer.x;
-          player.y = nearestNonEliminatedPlayer.y;
-          player.direction2 = nearestNonEliminatedPlayer.direction2;
-        }
-      }
-        */
-
-      if (player.eliminated) {
-
-        handleSpectatorMode(player, room);
-      }
-
-
       // Create player-specific message with minimal selfPlayerData
       const selfPlayerData = [
         player.nmb,
@@ -540,7 +520,7 @@ function sendBatchedMessages(roomId) {
         player.y,
         player.hitdata,
         player.elimlast,
-        player.emote
+        player.emote,
       ].join(':');
 
 
@@ -598,56 +578,7 @@ function sendBatchedMessages(roomId) {
 }
 
 // Function to handle spectating logic for eliminated players
-function handleSpectatorMode(player, room) {
-  if (player.eliminated) {
-    // If player already has a spectating target, verify it's still valid
-    if (player.spectatingTarget) {
-      const currentTarget = room.players.get(player.spectatingTarget);
-      if (currentTarget && !currentTarget.eliminated) {
-        // Stick to the current target if it's still valid
-        player.x = currentTarget.x;
-        player.y = currentTarget.y;
-        player.direction2 = currentTarget.direction2;
-        return; // No need to switch
-      } else {
-        // Target is invalid, clear it
-        player.spectatingTarget = null;
-      }
-    }
 
-    // Find the next nearest non-eliminated player
-    const nearestNonEliminatedPlayer = findNearestPlayer(
-      player,
-      Array.from(room.players.values()).filter(p => p.visible && !p.eliminated)
-    );
-
-    if (nearestNonEliminatedPlayer) {
-      player.spectatingTarget = nearestNonEliminatedPlayer.nmb; // Assign new target
-      player.x = nearestNonEliminatedPlayer.x;
-      player.y = nearestNonEliminatedPlayer.y;
-      player.direction2 = nearestNonEliminatedPlayer.direction2;
-    }
-  }
-}
-
-// Function to find the nearest non-eliminated player
-function findNearestPlayer(eliminatedPlayer, players) {
-  let nearestPlayer = null;
-  let shortestDistance = Infinity;
-
-  players.forEach(player => {
-    const distance = Math.sqrt(
-      Math.pow(player.x - eliminatedPlayer.x, 2) + Math.pow(player.y - eliminatedPlayer.y, 2)
-    );
-
-    if (distance < shortestDistance) {
-      shortestDistance = distance;
-      nearestPlayer = player;
-    }
-  });
-
-  return nearestPlayer;
-}
 
 
 
