@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const cellSize = 300; 
+const cellSize = 200; 
 
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
@@ -54,7 +54,7 @@ const gamemodeconfig = {
   1: {
     can_hit_dummies: false,
     can_hit_players: true,
-    maxplayers: 5,
+    maxplayers: 3,
     respawns_allowed: 0,
     playerhealth: 77,
     playerspeed: (0.26 * server_tick_rate) / 17,          //(0.26 * server_tick_rate) / 17,
