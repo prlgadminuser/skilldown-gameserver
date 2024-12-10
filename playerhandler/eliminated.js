@@ -23,90 +23,66 @@ function handleElimination(room, player) {
     
 
 
-        clearInterval(player.moveInterval);
-        clearTimeout(player.timeout);
+    clearInterval(player.moveInterval);
+    clearTimeout(player.timeout);
+
+    // Calculate player's place based on remaining players at the exact time of elimination
+    const remainingActivePlayers = Array.from(room.players.values()).filter(p => !p.eliminated).length;
+
+    player.place = room.players.size - room.eliminatedPlayers.length;
+
+    if (remainingActivePlayers === 1 && room.winner === 0) {
+        // Last elimination leaves one player standing
+        player.place = 2;
+    }
+
+    // Ensure no duplicate places
+    while (room.eliminatedPlayers.some(p => p.place === player.place)) {
+        player.place++;
+    }
+
+    room.eliminatedPlayers.push({
+        username: player.playerId,
+        place: player.place,
+    });
+
+    increasePlayerPlace(player.playerId, player.place, room);
+
+    // Check if game should end
+    if (
+        Array.from(room.players.values()).filter(p => p.visible).length === 0
+    ) {
+        room.timeoutIds.push(
+            setTimeout(() => {
+                endGame(room);
+            }, game_win_rest_time)
+        );
+    }
+
+    // Check if only one player remains
+    const remainingPlayers = Array.from(room.players.values()).filter(
+        p => !p.eliminated
+    );
+    if (remainingPlayers.length === 1 && room.winner === 0) {
+        const remainingPlayer = remainingPlayers[0];
+        room.winner = [remainingPlayer.nickname, remainingPlayer.nmb].join("$");
+
+        increasePlayerWins(remainingPlayer.playerId, 1);
+        increasePlayerPlace(remainingPlayer.playerId, 1, room);
 
         room.eliminatedPlayers.push({
-            username: player.playerId,
-            place: player.place,
+            username: remainingPlayer.playerId,
+            place: 1,
         });
 
-        if (
-            Array.from(room.players.values()).filter(
-                (player) => player.eliminated === false,
-            ).length === 1 &&
-            room.winner === 0
-        ) {
-            // Only one player remains, the eliminated player gets 2nd place
-            player.place = 2;
-        } else {
-            // More than one player remains, assign place based on remaining players
-            player.place = room.players.size - room.eliminatedPlayers.length;
-        }
-
-        const existingPlace = room.eliminatedPlayers.find(
-            (player) => player.place === player.place,
+        room.timeoutIds.push(
+            setTimeout(() => {
+                endGame(room);
+            }, game_win_rest_time)
         );
-
-
-        if (existingPlace) {
-            if (player.place === room.maxplayers) {
-                player.place--;
-            } else {
-                player.place++;
-            }
-        }
-
-        
-
-        increasePlayerPlace(player.playerId, player.place, room);
-
-        player.visible = false;
-
-
-        if (
-            Array.from(room.players.values()).filter(
-                (player) => player.visible !== false
-            ).length === 0
-        ) {
-            room.timeoutIds.push(setTimeout(() => {
-                endGame(room);
-            }, game_win_rest_time));
-        }
-
-
-        if (
-            Array.from(room.players.values()).filter(
-                (player) => player.visible !== false,
-            ).length === 1 &&
-            room.winner === 0
-        ) {
-            const remainingPlayer = Array.from(room.players.values()).find(
-                (player) => player.eliminated === false,
-            );
-
-
-            room.winner = [
-                remainingPlayer.nickname,
-                remainingPlayer.nmb,
-              ].join('$');
-        
-            //   console.log(Last player standing! ${room.winner} wins!);
-
-            increasePlayerWins(remainingPlayer.playerId, 1);
-            increasePlayerPlace(remainingPlayer.playerId, 1, room);
-
-            room.eliminatedPlayers.push({
-                username: room.winner,
-                place: 1,
-            });
-
-            room.timeoutIds.push(setTimeout(() => {
-                endGame(room);
-            }, game_win_rest_time));
-        }
     }
-} 
+}
+}
 
 
 module.exports = {
