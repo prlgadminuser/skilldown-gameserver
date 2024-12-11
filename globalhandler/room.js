@@ -174,6 +174,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
       nmb: playerCount,
       playerId: playerId,
+      spectateid: 0,
       nickname: finalnickname,
       spectatingTarget: null,
       spectatingplayerid: null,
@@ -523,7 +524,7 @@ function sendBatchedMessages(roomId) {
         player.hitdata,
         player.elimlast,
         player.emote,
-        player.spectatingplayerid
+        player.spectateid,   
       ].join(':');
 
 

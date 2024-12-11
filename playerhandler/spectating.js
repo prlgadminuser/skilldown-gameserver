@@ -25,11 +25,13 @@ function handleSpectatorMode(player, room) {
           player,
           Array.from(room.players.values()).filter(p => !p.eliminated && p !== player)
         );
+
+        console.log(nearestNonEliminatedPlayer)
   
         if (nearestNonEliminatedPlayer) {
-          player.spectatingTarget = nearestNonEliminatedPlayer.playerId;
-          player.spectatingplayerid = nearestNonEliminatedPlayer.nickname // Set new target
+          player.spectatingTarget = nearestNonEliminatedPlayer.playerId;// Set new target
           player.lastSpectateSwitch = now; // Reset cooldown timer
+        
           updateSpectatingPlayer(player, nearestNonEliminatedPlayer);
         }
       }
@@ -45,6 +47,7 @@ function handleSpectatorMode(player, room) {
     spectatingPlayer.x = targetPlayer.x;
     spectatingPlayer.y = targetPlayer.y;
     spectatingPlayer.direction2 = targetPlayer.direction2;
+    spectatingPlayer.spectateid = targetPlayer.nickname;
   }
   
   // Function to find the nearest non-eliminated player
