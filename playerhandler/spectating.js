@@ -27,7 +27,8 @@ function handleSpectatorMode(player, room) {
         );
   
         if (nearestNonEliminatedPlayer) {
-          player.spectatingTarget = nearestNonEliminatedPlayer.playerId; // Set new target
+          player.spectatingTarget = nearestNonEliminatedPlayer.playerId;
+          player.spectatingplayerid = nearestNonEliminatedPlayer.nickname // Set new target
           player.lastSpectateSwitch = now; // Reset cooldown timer
           updateSpectatingPlayer(player, nearestNonEliminatedPlayer);
         }

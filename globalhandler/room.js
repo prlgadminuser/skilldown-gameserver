@@ -175,6 +175,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       nmb: playerCount,
       playerId: playerId,
       nickname: finalnickname,
+      spectatingTarget: null,
+      spectatingplayerid: null,
       rateLimiter: playerRateLimiter,
       hat: hat,
       top: top,
@@ -521,6 +523,7 @@ function sendBatchedMessages(roomId) {
         player.hitdata,
         player.elimlast,
         player.emote,
+        player.spectatingplayerid
       ].join(':');
 
 

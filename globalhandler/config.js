@@ -54,7 +54,7 @@ const gamemodeconfig = {
   1: {
     can_hit_dummies: false,
     can_hit_players: true,
-    maxplayers: 3,
+    maxplayers: 5,
     respawns_allowed: 0,
     playerhealth: 77,
     playerspeed: (0.26 * server_tick_rate) / 17,          //(0.26 * server_tick_rate) / 17,
@@ -64,7 +64,7 @@ const gamemodeconfig = {
     placereward: [16, 7, 1, -2, -4],
     seasoncoinsreward: [25, 17, 12, 10, 7],
     show_timer: false,
-    custom_map: 2
+   // custom_map: 1
   //  health_autodamage: true,
   },
   2: {

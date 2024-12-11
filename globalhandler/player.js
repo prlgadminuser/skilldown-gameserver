@@ -80,14 +80,14 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
   if (1 > nearestObject.health && 1 > nearestObject.respawns) {
 
     handleElimination(room, nearestObject)
-    nearestObject.eliminator = shootingPlayer.playerId
+    nearestObject.eliminator = shootingPlayer.nickname
     nearestObject.spectatingTarget = shootingPlayer.playerId;
   } else {
 
 
     if (nearestObject.health < 1 && nearestObject.respawns > 0) {
 
-      shootingPlayer.elimlast = nearestObject.playerId;
+      shootingPlayer.elimlast = nearestObject.nickname;
 
       room.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;
