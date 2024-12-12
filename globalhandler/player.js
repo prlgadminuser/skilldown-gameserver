@@ -25,7 +25,7 @@ function getDistance(x1, y1, x2, y2) {
 
 function handleMovement(player, room) {
   const deltaTime = 20;
-  const finalDirection = player.direction
+  const finalDirection = player.moving ? player.direction - 90 : player.direction;
   const radians = (finalDirection * Math.PI) / 180;
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
@@ -79,10 +79,11 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
 
   if (1 > nearestObject.health && 1 > nearestObject.respawns) {
 
+    const elimtype = 2
     handleElimination(room, nearestObject)
     nearestObject.eliminator = shootingPlayer.nickname
     nearestObject.spectatingTarget = shootingPlayer.playerId;
-    shootingPlayer.elimlast = nearestObject.nickname;
+    shootingPlayer.elimlast = nearestObject.nickname + "$" + elimtype;
 
     room.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
@@ -93,7 +94,8 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
 
     if (nearestObject.health < 1 && nearestObject.respawns > 0) {
 
-      shootingPlayer.elimlast = nearestObject.nickname;
+      const elimtype = 1
+      shootingPlayer.elimlast = nearestObject.nickname + "$" + elimtype;
 
       room.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;
