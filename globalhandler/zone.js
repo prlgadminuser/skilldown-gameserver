@@ -33,7 +33,14 @@ function shrinkZone(room) {
     room.zoneEndX = Math.round(room.zoneEndX);
     room.zoneEndY = Math.round(room.zoneEndY);
 
-    room.zone = room.zoneStartX + "," + room.zoneStartY
+       const zonedata = [
+      room.zoneStartX,
+      room.zoneStartY,
+      room.zoneEndX,
+      room.zoneEndY,
+    ].join('$');
+
+    room.zone = zonedata;
 
   } else {
     dealDamage(room);
