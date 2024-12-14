@@ -422,6 +422,8 @@ function arraysAreEqual(arr1, arr2) {
   return true;
 }
 
+
+
 function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
   const playersInRange = [];
 
@@ -444,10 +446,13 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
 }
 
 
+
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+
+
   const roomdata = [
     room.state,
     room.zone,
@@ -471,25 +476,56 @@ function sendBatchedMessages(roomId) {
         };
       });
 
-      const currentPlayerData = [
-        player.hat,
-        player.top,
-        player.player_color,
-        player.hat_color,
-        player.top_color,
-        player.starthealth,
-        player.nickname,
-        player.x,
-        player.y,
-        player.direction2,
-        player.health,
-        player.shooting,
-        player.gun,
-        player.emote,   // Compact bullets or undefined
-        "$b" + JSON.stringify(formattedBullets),
-      ].join(':');
+      if (room.state === "playing") {
 
-      playerData[player.nmb] = currentPlayerData;
+        const currentPlayerData = [
+          "",
+          "",
+          "",
+          "",
+          "",
+          player.starthealth,
+          "",
+          player.x,
+          player.y,
+          player.direction2,
+          player.health,
+          player.shooting,
+          player.gun,
+          player.emote,   // Compact bullets or undefined
+          "$b" + JSON.stringify(formattedBullets),
+        ].join(':');
+
+        
+
+        playerData[player.nmb] = currentPlayerData;
+ 
+      } else {
+  
+        const currentPlayerData = [
+          player.hat,
+          player.top,
+          player.player_color,
+          player.hat_color,
+          player.top_color,
+          player.starthealth,
+          player.nickname,
+          player.x,
+          player.y,
+          player.direction2,
+          player.health,
+          player.shooting,
+          player.gun,
+          player.emote,   // Compact bullets or undefined
+          "$b" + JSON.stringify(formattedBullets),
+        ].join(':');
+
+        playerData[player.nmb] = currentPlayerData;
+      
+      }
+  
+
+    
     }
   });
 
@@ -507,25 +543,27 @@ function sendBatchedMessages(roomId) {
     room.players.forEach(player => {
 
       // Create player-specific message with minimal selfPlayerData
-      const selfPlayerData = [
-        player.nmb,
-        player.state,
-        player.health,
-        player.shooting,
-        player.gun,
-        player.kills,
-        player.damage,
-        player.place,
-        player.eliminator,
-        player.canusegadget,
-        player.gadgetuselimit,
-        player.x,
-        player.y,
-        player.hitdata,
-        player.elimlast,
-        player.emote,
-        player.spectateid,   
-      ].join(':');
+
+        const selfPlayerData = [
+          player.nmb,
+          player.state,
+          player.health,
+          player.shooting,
+          player.gun,
+          player.kills,
+          player.damage,
+          player.place,
+          player.eliminator,
+          player.canusegadget,
+          player.gadgetuselimit,
+          player.x,
+          player.y,
+          player.hitdata,
+          player.elimlast,
+          player.emote,
+          player.spectateid,   
+        ].join(':');
+     
 
 
       let filteredplayers = {};

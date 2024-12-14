@@ -47,8 +47,8 @@ function handleMovement(player, room) {
     }
   }
 
-  newX = parseFloat(newX.toFixed(2));
-  newY = parseFloat(newY.toFixed(2));
+  newX = Math.round(newX);
+  newY = Math.round(newY);
   newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
   newY = Math.max(-room.mapHeight, Math.min(room.mapHeight, newY));
 
@@ -71,7 +71,8 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
   const hit = [
     nearestObject.x,
     nearestObject.y,
-    new Date().getTime(),
+    Math.random().toString(36).substring(2, 7),
+    //new Date().getTime(),
     GUN_BULLET_DAMAGE,
   ].join('$');
 
@@ -124,7 +125,8 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
   const hit = [
     dummy.x,
     dummy.y,
-    new Date().getTime(),
+    Math.random().toString(36).substring(2, 7),
+    //new Date().getTime(),
     GUN_BULLET_DAMAGE,
   ].join('$');
 

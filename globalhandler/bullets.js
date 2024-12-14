@@ -30,6 +30,31 @@ function isCollisionWithPlayer(bullet, player, height, width) {
   );
 }
 
+function isHeadHit(bullet, player, height, width) {
+  // Calculate the player's headshot region (top 1/3 of the hitbox)
+  const headshotTop = player.y - playerHitboxHeight / 3;  // Headshot region starts at top of the player hitbox
+  const headshotBottom = player.y - playerHitboxHeight / 6; // Headshot region ends a little below the top
+
+  const playerLeft = player.x - playerHitboxWidth / 2.4;
+  const playerRight = player.x + playerHitboxWidth / 2.4;
+
+  const bulletLeft = bullet.x - width / 2;
+  const bulletRight = bullet.x + width / 2;
+  const bulletTop = bullet.y - height / 2;
+  const bulletBottom = bullet.y + height / 2;
+
+  // Check if the bullet is within the player's headshot region
+  const isHeadshot = (
+    bulletBottom <= headshotBottom &&
+    bulletTop >= headshotTop &&
+    bulletRight >= playerLeft &&
+    bulletLeft <= playerRight
+  );
+
+  return isHeadshot;
+}
+
+
 // Bullet Movement
 function moveBullet(room, player, bullet) {
   if (!bullet || !room) return;
@@ -63,7 +88,10 @@ function moveBullet(room, player, bullet) {
     for (const [id, otherPlayer] of room.players) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === 0)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
-        let finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+        let finalDamage
+        
+          finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+
         handlePlayerCollision(room, player, otherPlayer, finalDamage);
         player.bullets.delete(timestamp);
         return;
@@ -79,7 +107,16 @@ function moveBullet(room, player, bullet) {
         // Check for collision with the dummy
         if (isCollisionWithPlayer(bullet, dummy, height, width)) { // Reuse the same collision function
           // Handle the dummy collision
-          let finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+
+          let finalDamage
+
+          finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+          //if (isHeadHit(bullet, dummy, height, width)) {
+        //    finalDamage = calculateFinalDamage(distanceTraveled, distance, damage * 1.7, damageconfig);
+         // } else {
+         //   finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+  
+         // }
         
           handleDummyCollision(room, player, key, finalDamage); // Pass key instead of dummy object
           

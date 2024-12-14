@@ -19,7 +19,7 @@ function handleSpectatorMode(player, room) {
       }
   
       // Check if the cooldown period has passed before switching
-      if (!player.lastSpectateSwitch || now - player.lastSpectateSwitch >= 3000) {
+      if (!player.lastSpectateSwitch || now - player.lastSpectateSwitch >= 2000) {
         // Find the next nearest non-eliminated player
         const nearestNonEliminatedPlayer = findNearestPlayer(
           player,
@@ -71,13 +71,13 @@ function handleSpectatorMode(player, room) {
   
   // Function to monitor spectating logic continuously for a player
   function startSpectatingLogic(player, room) {
-    room.intervalIds.push(setInterval(() => {
+    const intervalId = room.intervalIds.push(setInterval(() => {
       if (!player.eliminated) {
         clearInterval(intervalId); // Stop spectating logic if player is not eliminated
       } else {
         handleSpectatorMode(player, room); // Continuously handle spectating state
       }
-    }, 17)); // Adjust interval frequency as needed
+    }, 17)); // Adjust intervalfrequency as needed
   }
   
 
