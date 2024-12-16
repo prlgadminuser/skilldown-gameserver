@@ -89,7 +89,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 150,
-    playerspeed: (0.25 * server_tick_rate) / 17,
+    playerspeed: (0.22 * server_tick_rate) / 17,
     usezone: false,
     zonespeed: 3.4,
     health_restore: false,
