@@ -64,7 +64,7 @@ const gamemodeconfig = {
     placereward: [16, 7, 1, -2, -4],
     seasoncoinsreward: [25, 17, 12, 10, 7],
     show_timer: false,
-   // custom_map: 1
+    custom_map: 2
   //  health_autodamage: true,
   },
   2: {
@@ -253,6 +253,30 @@ const gunsconfig = {
       { angle: 40, speed: 10, distance: 500, delay: 300, offset: 0 },
       { angle: -40, speed: 10, distance: 500, delay: 400, offset: 0 }
     ]
+  },
+
+  4: {
+    cooldown: 400,
+    distance: 150,
+    maxexistingtime: 2000,
+    maxbounces: 5,
+    damage: 5,
+    width: 5,
+    height: 5,
+    useplayerangle: true,
+    bullets: [
+      // Shotgun pellets configuration
+      { angle: -8, speed: 17, delay: 0, offset: 0 },
+      { angle: -4, speed: 17, delay: 0, offset: 0 },
+      { angle: 0, speed: 17, delay: 0, offset: 0 },
+      { angle: 4, speed: 17, delay: 0, offset: 0 },
+      { angle: 8, speed: 17, delay: 0, offset: 0 }
+  ],
+    damageconfig: [
+      { threshold: 30, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 100, damageMultiplier: 0.70 } // Layer 4: 1/4 damage if within 100% of max distance
+      // You can add more layers here
+  ],
   },
 };
 
