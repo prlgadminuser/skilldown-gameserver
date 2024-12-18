@@ -64,7 +64,8 @@ const gamemodeconfig = {
     placereward: [16, 7, 1, -2, -4],
     seasoncoinsreward: [25, 17, 12, 10, 7],
     show_timer: false,
-    custom_map: 2
+    custom_map: 2,
+    healspawner: true
   //  health_autodamage: true,
   },
   2: {
@@ -81,6 +82,7 @@ const gamemodeconfig = {
     seasoncoinsreward: [25, 12],
     show_timer: false,
     custom_map: 2,
+    healspawner: true
    //health_autodamage: true,
   },
   3: {

@@ -272,16 +272,19 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           //   });
 
 
-          initializeHealingCircles(room);
-          if (room.zoneallowed === true) {
+          if (room.healspawner) {
+            initializeHealingCircles(room);
+          }
+
+          if (room.zoneallowed) {
             UseZone(room);
           }
 
-          if (room.regenallowed === true) {
+          if (room.regenallowed) {
             startRegeneratingHealth(room, 1);
           }
 
-          if (room.healthdecrease === true) {
+          if (room.healthdecrease) {
             startDecreasingHealth(room, 1)
           }
 

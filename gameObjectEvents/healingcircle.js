@@ -34,7 +34,7 @@ function spawnHealingCircle(room) {
     y: randomY,          // Center y-coordinate
     radius: 0,                  // Initial radius
     expansionRate: 1,           // Radius growth rate per second
-    healAmount: -1,             // Healing amount per tick
+    healAmount: 1,             // Healing amount per tick
     duration: 12000,            // Duration in milliseconds (20 seconds)
     elapsedTime: 0,
     maxradius: 70,              // Max radius the circle will reach
