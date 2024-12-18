@@ -272,19 +272,19 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           //   });
 
 
-          if (room.healspawner) {
+          if (room.healspawner === "true") {
             initializeHealingCircles(room);
           }
 
-          if (room.zoneallowed) {
+          if (room.zoneallowed === "true") {
             UseZone(room);
           }
 
-          if (room.regenallowed) {
+          if (room.regenallowed === "true") {
             startRegeneratingHealth(room, 1);
           }
 
-          if (room.healthdecrease) {
+          if (room.healthdecrease === "true") {
             startDecreasingHealth(room, 1)
           }
 
@@ -764,6 +764,8 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     zoneallowed: gmconfig.usezone,
     regenallowed: gmconfig.health_restore,
     healthdecrease: gmconfig.health_autodamage,
+    healspawner: gmconfig.healspawner
+
   };
 
   room.xcleaninterval = setInterval(() => {
