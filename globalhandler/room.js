@@ -9,10 +9,13 @@ const { gadgetconfig } = require('./gadgets.js')
 
 const { UseZone } = require('./zone');
 
+const { initializeHealingCircles } = require('./../gameObjectEvents/healingcircle.js')
+
 const {
   verifyPlayer,
 } = require("./dbrequests");
 const { MongoCryptKMSRequestNetworkTimeoutError } = require('mongodb');
+const { SpatialGrid } = require('./config.js');
 
 function createRateLimiter() {
   const rate = 50; // Allow one request every 50 milliseconds
@@ -268,6 +271,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
           //   });
 
+
+          initializeHealingCircles(room);
           if (room.zoneallowed === true) {
             UseZone(room);
           }
@@ -447,11 +452,48 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
 
 
 
+function findNearestCircles(player, room) {
+  const grid = room.grid; // Assume `room.grid` is your SpatialGrid
+
+  // Define the search area around the player (radius search area)
+  const searchRadius = 200;  // Search area in pixels around the player
+  const xMin = player.x - searchRadius;
+  const xMax = player.x + searchRadius;
+  const yMin = player.y - searchRadius;
+  const yMax = player.y + searchRadius;
+
+  // Get all objects (circles) in the area
+  const objectsInArea = grid.getObjectsInArea(xMin, xMax, yMin, yMax);
+
+  // Filter and map the circles in the area
+  
+  const eventSender = objectsInArea
+  .filter(obj => obj.id === "circle") // Ensure we're only dealing with circles
+  .map(circle => [
+    circle.type,
+    circle.x,
+    circle.y,
+    circle.radius
+  ].join(':'));
+  return eventSender;
+}
+
+
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
 
+
+const eventsender = room.objects.map((circle) => [
+      circle.type,
+      circle.x,
+      circle.y,
+      circle.radius,
+    ].join(':')); // Join properties using '$'
+
+
+  
 
   const roomdata = [
     room.state,
@@ -533,6 +575,8 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummies,
+    ob: eventsender,
+    
   };
 
   const jsonString = JSON.stringify(newMessage);
@@ -590,10 +634,13 @@ function sendBatchedMessages(roomId) {
 
 
 
+   // const eventSender = findNearestCircles(player, room);
+
       const playerSpecificMessage = {
         pd: player.pd,
         rd: newMessage.rd,
         dm: newMessage.dm,
+        ev: eventsender,
         sd: selfPlayerData // Include compact selfPlayerData
       };
 
@@ -687,6 +734,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     timeoutIds: [],
     intervalIds: [],
     roomId: roomId,
+    objects: [],
     maxplayers: gmconfig.maxplayers,
     sp_level: splevel,
     snap: [],

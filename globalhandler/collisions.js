@@ -1,46 +1,9 @@
 "use strict";
 
 const wallblocksize = 50
+const { SpatialGrid } = require('./config');
 
 
-class SpatialGrid {
-  constructor(cellSize) {
-    this.cellSize = cellSize;
-    this.grid = new Map();
-  }
-
-  _getCellKey(x, y) {
-    const cellX = Math.floor(x / this.cellSize);
-    const cellY = Math.floor(y / this.cellSize);
-    return `${cellX},${cellY}`;
-  }
-
-  addWall(wall) {
-    const key = this._getCellKey(wall.x, wall.y);
-    if (!this.grid.has(key)) {
-      this.grid.set(key, []);
-    }
-    this.grid.get(key).push(wall);
-  }
-
-  getWallsInArea(xMin, xMax, yMin, yMax) {
-    const walls = [];
-    const startX = Math.floor(xMin / this.cellSize);
-    const endX = Math.floor(xMax / this.cellSize);
-    const startY = Math.floor(yMin / this.cellSize);
-    const endY = Math.floor(yMax / this.cellSize);
-
-    for (let x = startX; x <= endX; x++) {
-      for (let y = startY; y <= endY; y++) {
-        const key = `${x},${y}`;
-        if (this.grid.has(key)) {
-          walls.push(...this.grid.get(key));
-        }
-      }
-    }
-    return walls;
-  } 
-}
 
 
 

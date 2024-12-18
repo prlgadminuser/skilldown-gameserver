@@ -89,7 +89,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 150,
-    playerspeed: (0.22 * server_tick_rate) / 17,
+    playerspeed: (0.25 * server_tick_rate) / 17,
     usezone: false,
     zonespeed: 3.4,
     health_restore: false,
@@ -293,6 +293,34 @@ class SpatialGrid {
     return `${cellX},${cellY}`;
   }
 
+  addObject(obj) {
+    const key = this._getCellKey(obj.x, obj.y);
+    if (!this.grid.has(key)) {
+      this.grid.set(key, []);
+    }
+    this.grid.get(key).push(obj);
+  }
+
+  removeObject(obj) {
+    const key = this._getCellKey(obj.x, obj.y);
+    if (this.grid.has(key)) {
+      const cell = this.grid.get(key);
+      // Remove object from the grid cell by matching the id or exact object
+      const index = cell.findIndex(item => item.id === obj.obj_id);
+      if (index !== -1) {
+        cell.splice(index, 1);
+        // If the cell is now empty, we can delete the cell from the grid
+        if (cell.length === 0) {
+          this.grid.delete(key);
+        }
+      }
+    }
+  }
+
+
+
+
+
   addWall(wall) {
     const key = this._getCellKey(wall.x, wall.y);
     if (!this.grid.has(key)) {
@@ -300,6 +328,46 @@ class SpatialGrid {
     }
     this.grid.get(key).push(wall);
   }
+
+  getObjectsInAreaWithId(xMin, xMax, yMin, yMax, id) {
+    const objects = [];
+    const startX = Math.floor(xMin / this.cellSize);
+    const endX = Math.floor(xMax / this.cellSize);
+    const startY = Math.floor(yMin / this.cellSize);
+    const endY = Math.floor(yMax / this.cellSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const key = `${x},${y}`;
+        if (this.grid.has(key)) {
+          const cellObjects = this.grid.get(key);
+          // Filter by ID if provided
+          const filteredObjects = cellObjects.filter(obj => obj.id === id);
+          objects.push(...filteredObjects);
+        }
+      }
+    }
+    return objects;
+  }
+
+  getObjectsInArea(xMin, xMax, yMin, yMax) {
+    const objects = [];
+    const startX = Math.floor(xMin / this.cellSize);
+    const endX = Math.floor(xMax / this.cellSize);
+    const startY = Math.floor(yMin / this.cellSize);
+    const endY = Math.floor(yMax / this.cellSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const key = `${x},${y}`;
+        if (this.grid.has(key)) {
+          objects.push(...this.grid.get(key));
+        }
+      }
+    }
+    return objects;
+  }
+
 
   getWallsInArea(xMin, xMax, yMin, yMax) {
     const walls = [];
@@ -343,6 +411,10 @@ const transformedMaps = Object.keys(mapsconfig).reduce((acc, key) => {
 }, {});
 
 
+
+
+//helper functions for grid retrival
+
 module.exports = {
   batchedMessages,
   server_tick_rate,
@@ -361,4 +433,5 @@ module.exports = {
   gamemodeconfig,
   rooms,
   room_max_open_time,
+  SpatialGrid,
 };
