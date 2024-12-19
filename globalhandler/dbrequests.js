@@ -12,6 +12,13 @@ async function verifyPlayer(token) {
   }
 
   try {
+
+     const tokenExists = await userCollection.findOne({ token });
+
+    if (!tokenExists) {
+      throw new Error("Invalid token");
+    }
+    
     const decodedToken = jwt.verify(token, tokenkey);
     const username = decodedToken.username;
 
