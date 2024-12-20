@@ -32,7 +32,7 @@ function applyHealthRegeneration(player, currentTime) {
 
 // Function to decrease health for all players
 function decreaseHealthForAllPlayers(room) {
-  if (room.state === "playing" && room.winner === 0) {
+  if (room.state === "playing" && room.winner === -1) {
     room.players.forEach((player) => {
       if (player.visible !== false) {
         applyHealthDecrease(player, room);

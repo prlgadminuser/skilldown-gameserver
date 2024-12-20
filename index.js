@@ -350,14 +350,13 @@ wss.on("connection", (ws, req) => {
                             return;
                         }
 
-                        if (result.room.state === "playing" && result.room.winner === 0) {
+                        if (result.room.state === "playing" && result.room.winner === -1) {
                             let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
 
                             if (remainingPlayers.length === 1) {
                                 const winner = remainingPlayers[0];
 
                                 result.room.winner = [
-                                  winner.nickname,
                                   winner.nmb,
                                 ].join('$');
 

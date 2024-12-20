@@ -52,7 +52,7 @@ function dealDamage(room) {
 
     if (player.state === 1 && !isWithinZone(room, player.x, player.y)) {
 
-      if (room.winner === 0) {
+      if (room.winner === -1) {
         player.health -= 5;
         
         player.last_hit_time = new Date().getTime();

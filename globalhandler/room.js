@@ -745,7 +745,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     state: "waiting", // Possible values: "waiting", "playing", "countdown"
     showtimer: gmconfig.show_timer,
     gamemode: gamemode,
-    winner: 0,
+    winner: -1,
     eliminatedPlayers: [],
     zoneStartX: -mapsconfig[mapid].width, // Example start X coordinate (100 units left of the center)
     zoneStartY: -mapsconfig[mapid].height, // Example start Y coordinate (100 units above the center)

@@ -11,7 +11,7 @@ const { startSpectatingLogic } = require('./spectating')
 function handleElimination(room, player) {
 
 
-    if (player.eliminated === false && room.state === "playing" && room.winner === 0) {
+    if (player.eliminated === false && room.state === "playing" && room.winner === -1) {
         player.eliminated = true;
         player.visible = false;
         player.state = 3
@@ -31,7 +31,7 @@ function handleElimination(room, player) {
 
     player.place = room.players.size - room.eliminatedPlayers.length;
 
-    if (remainingActivePlayers === 1 && room.winner === 0) {
+    if (remainingActivePlayers === 1 && room.winner === -1) {
         // Last elimination leaves one player standing
         player.place = 2;
     }
@@ -63,9 +63,9 @@ function handleElimination(room, player) {
     const remainingPlayers = Array.from(room.players.values()).filter(
         p => !p.eliminated
     );
-    if (remainingPlayers.length === 1 && room.winner === 0) {
+    if (remainingPlayers.length === 1 && room.winner === -1) {
         const remainingPlayer = remainingPlayers[0];
-        room.winner = [remainingPlayer.nickname, remainingPlayer.nmb].join("$");
+        room.winner = [remainingPlayer.nmb].join("$");
 
         increasePlayerWins(remainingPlayer.playerId, 1);
         increasePlayerPlace(remainingPlayer.playerId, 1, room);
