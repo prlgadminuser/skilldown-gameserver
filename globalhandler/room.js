@@ -632,7 +632,11 @@ const eventsender = room.objects.map((circle) => [
       player.pd = filteredplayers
     } else {
 
-      player.pd = playerData
+      if (room.state === "countdown") {
+        player.pd = playerData
+      } else {
+        player.pd = {}
+      }
     }
 
 
