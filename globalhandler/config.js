@@ -97,7 +97,7 @@ const gamemodeconfig = {
     health_restore: false,
     placereward: [0],
     seasoncoinsreward: [0],
-    show_timer: true,
+    show_timer: false,
     custom_map: 3,
    //health_autodamage: true,
   },
