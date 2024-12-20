@@ -495,6 +495,23 @@ const eventsender = room.objects.map((circle) => [
       circle.radius,
     ].join(':')); // Join properties using '$'
 
+   
+   if (room.dummies) {
+    const transformData = (data) => {
+      const transformed = {};
+      for (const [key, value] of Object.entries(data)) {
+          transformed[key] = `${value.x}:${value.y}:${value.h}:${value.sh}:${value.t}`;
+      }
+      return transformed;
+  };
+
+ 
+  
+    room.dummiesfiltered = JSON.stringify(transformData(room.dummies), null, 2)
+
+  }
+    
+    
 
   
 
@@ -577,7 +594,7 @@ const eventsender = room.objects.map((circle) => [
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
-    dm: room.dummies,
+    dm: room.dummiesfiltered,
     ob: eventsender,
     
   };
