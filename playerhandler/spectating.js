@@ -47,7 +47,7 @@ function handleSpectatorMode(player, room) {
     spectatingPlayer.x = targetPlayer.x;
     spectatingPlayer.y = targetPlayer.y;
     spectatingPlayer.direction2 = targetPlayer.direction2;
-    spectatingPlayer.spectateid = targetPlayer.nickname;
+    spectatingPlayer.spectateid = targetPlayer.nmb;
   }
   
   // Function to find the nearest non-eliminated player
