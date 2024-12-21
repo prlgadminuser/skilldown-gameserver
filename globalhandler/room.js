@@ -265,6 +265,12 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
         playerchunkrenderer(room);
 
+        if (room.maxplayers > 1 && 2 > room.players.size) {
+
+          endGame(room);
+
+        }
+
         room.timeoutIds.push(setTimeout(() => {
           room.state = "playing";
 
