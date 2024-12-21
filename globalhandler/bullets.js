@@ -95,7 +95,7 @@ const filteredPlayers = Object.keys(room.players)
     return result;
   }, {});
       
-  for (const [id, otherPlayer] of Object.entries(filteredPlayers)) {
+  for (const [id, otherPlayer] of filteredPlayers) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === -1)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
         let finalDamage
