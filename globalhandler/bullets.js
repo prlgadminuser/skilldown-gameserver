@@ -85,8 +85,7 @@ function moveBullet(room, player, bullet) {
 
     if (room.config.canCollideWithPlayers) {
 
-      for (const playerId of player.nearbyplayers) {  // Loop over nearby players' IDs
-        const otherPlayer = player.pd.get(playerId); // Retrieve the player object from room.players using the ID
+      for (const [id, otherPlayer] of room.players) {  // Loop over nearby players' IDs // Retrieve the player object from room.players using the ID
         
         if (otherPlayer && otherPlayer !== player && otherPlayer.visible &&
             isCollisionWithPlayer(bullet, otherPlayer, height, width) && room.winner === -1) {
