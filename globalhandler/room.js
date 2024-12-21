@@ -6,6 +6,7 @@ const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
 const { gadgetconfig } = require('./gadgets.js')
+const { getKillfeed, StartremoveOldKillfeedEntries } = require('./killfeed.js')
 
 const { UseZone } = require('./zone');
 
@@ -281,6 +282,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           //   });
 
 
+          StartremoveOldKillfeedEntries(room);
+
           if (room.healspawner) {
             initializeHealingCircles(room);
           }
@@ -550,7 +553,6 @@ function sendBatchedMessages(roomId) {
     }
   });
 
-  room.playerdata = playerData
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
@@ -628,6 +630,7 @@ function sendBatchedMessages(roomId) {
       const playerSpecificMessage = {
         pd: player.pd,
         rd: newMessage.rd,
+        kf: getKillfeed(room),
         dm: newMessage.dm,
         ev: player.nearbyitems,
         sd: selfPlayerData // Include compact selfPlayerData
@@ -720,7 +723,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   const itemgrid = new SpatialGrid(gridcellsize); // grid system for items
 
   const room = {
-
+    killfeed: [],
     itemgrid: itemgrid,
     timeoutIds: [],
     intervalIds: [],

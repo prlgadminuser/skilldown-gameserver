@@ -5,6 +5,7 @@ const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
 const { endGame } = require('./game')
 const { player_idle_timeout } = require('./config')
 const { respawnplayer } = require('./../playerhandler/respawn')
+const { addKillToKillfeed } = require('./killfeed.js')
 //const { handleCoinCollected2 } = require('./room')
 
 
@@ -58,7 +59,7 @@ function handleMovement(player, room) {
   player.lastProcessedPosition = { x: newX, y: newY };
 }
 
-function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
+function handlePlayerCollision(room, shootingPlayer, nearestObject, damage, gunid) {
 
   //const GUN_BULLET_DAMAGE = Math.round(damage / shootdamagereduce);
 
@@ -85,6 +86,7 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
     nearestObject.eliminator = shootingPlayer.nmb
     nearestObject.spectatingTarget = shootingPlayer.playerId;
     shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
+    addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 2, gunid);
 
     room.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
@@ -97,6 +99,7 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage) {
 
       const elimtype = 1
       shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
+      addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 1, gunid);
 
       room.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;

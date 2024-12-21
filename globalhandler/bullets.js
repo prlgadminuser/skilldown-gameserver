@@ -59,7 +59,7 @@ function isHeadHit(bullet, player, height, width) {
 function moveBullet(room, player, bullet) {
   if (!bullet || !room) return;
 
-  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig, damage } = bullet;
+  const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig, damage, gunid } = bullet;
 
   const radians = toRadians(direction - 90); // Adjust direction to radians
   const xDelta = speed * Math.cos(radians);
@@ -92,7 +92,7 @@ function moveBullet(room, player, bullet) {
           
             finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
   
-          handlePlayerCollision(room, player, otherPlayer, finalDamage);
+          handlePlayerCollision(room, player, otherPlayer, finalDamage, gunid);
           player.bullets.delete(timestamp);
           return;
         }
@@ -159,7 +159,7 @@ function shootBulletsWithDelay(room, player, bulletdata) {
 
 // Shoot Bullet
 async function shootBullet(room, player, bulletdata) {
-  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig } = bulletdata;
+  const { angle, offset, damage, speed, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig, gunid } = bulletdata;
   const radians = toRadians(angle);
   const radians1 = toRadians(angle - 90);
   const xOffset = offset * Math.cos(radians);
@@ -185,6 +185,7 @@ async function shootBullet(room, player, bulletdata) {
     distance,
     canbounce,
     damageconfig,
+    gunid,
   };
 
   player.bullets.set(timestamp, bullet);
@@ -227,6 +228,7 @@ async function handleBulletFired(room, player, gunType) {
       distance: gun.distance,
       canbounce: player.can_bullets_bounce, 
       damageconfig: gun.damageconfig || {},
+      gunid: gunType
     };
 
     shootBulletsWithDelay(room, player, bulletdata);

@@ -7,7 +7,7 @@ function findNearestCircles(player, room) {
   const grid = room.itemgrid; // Assume room.grid is your SpatialGrid
 
   // Define the search area around the player (radius search area)
-  const searchRadius = chunkradius // Search area in pixels around the player
+  const searchRadius = 400 // Search area in pixels around the player
   const xMin = player.x - searchRadius;
   const xMax = player.x + searchRadius;
   const yMin = player.y - searchRadius;
