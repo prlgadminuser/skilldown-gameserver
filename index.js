@@ -343,6 +343,7 @@ wss.on("connection", (ws, req) => {
 
                         connectedClientsCount--;
                         connectedUsernames = connectedUsernames.filter(username => username !== player.playerId);
+                        addKillToKillfeed(result.room, "ext", player.nmb, 0, 0);
                         result.room.players.delete(result.playerId);
 
                         if (result.room.players.size < 1) {
@@ -351,7 +352,7 @@ wss.on("connection", (ws, req) => {
                             return;
                         }
 
-                        addKillToKillfeed(result.room, "ext", nearestObject.nmb, 0, 0);
+                      
 
                         if (result.room.state === "playing" && result.room.winner === -1) {
                             let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
