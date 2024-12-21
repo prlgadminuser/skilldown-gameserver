@@ -84,8 +84,18 @@ function moveBullet(room, player, bullet) {
     bullet.y = newY;
 
     if (room.config.canCollideWithPlayers) {
+
+      const playersInRange = player.nearbyplayers;
+
+// Filter players to include only those in range
+const filteredPlayers = Object.keys(room.players)
+  .filter(playerId => playersInRange.includes(Number(playerId))) // Include only players in range
+  .reduce((result, playerId) => {
+    result[playerId] = room.players[playerId]; // Add filtered player objects
+    return result;
+  }, {});
       
-    for (const [id, otherPlayer] of player.nearbyplayers) {
+  for (const [id, otherPlayer] of Object.entries(filteredPlayers)) {
       if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === -1)) {
         const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
         let finalDamage
