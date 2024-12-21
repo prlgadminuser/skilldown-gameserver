@@ -593,7 +593,7 @@ function sendBatchedMessages(roomId) {
       const playersInRange = player.nearbyplayers
 
 
-      player.pd = {};
+    //  player.pd = {};
       // Filter playerData to include only players in range for the current player
       filteredplayers = Object.keys(playerData)
         .filter(player => playersInRange.includes(Number(player))) // Only include players in range
