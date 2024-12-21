@@ -596,7 +596,7 @@ function sendBatchedMessages(roomId) {
 
     //  player.pd = {};
       // Filter playerData to include only players in range for the current player
-      if (room.players.size > 1)
+   
       filteredplayers = Object.keys(playerData)
         .filter(player => playersInRange.includes(Number(player))) // Only include players in range
         .reduce((result, playerId) => {
