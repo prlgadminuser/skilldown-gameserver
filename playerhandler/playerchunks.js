@@ -1,11 +1,13 @@
 const { SpatialGrid } = require('./../globalhandler/config');
 
 
+const chunkradius = 100
+
 function findNearestCircles(player, room) {
   const grid = room.itemgrid; // Assume room.grid is your SpatialGrid
 
   // Define the search area around the player (radius search area)
-  const searchRadius = 200;  // Search area in pixels around the player
+  const searchRadius = chunkradius // Search area in pixels around the player
   const xMin = player.x - searchRadius;
   const xMax = player.x + searchRadius;
   const yMin = player.y - searchRadius;
@@ -69,7 +71,7 @@ function getCircleDetailsForIds(circleIds, room) {
 
 function UpdatePlayerChunks(room, player) {
 
-  const searchRadius = 200;  // Search area in pixels around the player
+  const searchRadius = chunkradius  // Search area in pixels around the player
   const xMin = player.x - searchRadius;
   const xMax = player.x + searchRadius;
   const yMin = player.y - searchRadius;
