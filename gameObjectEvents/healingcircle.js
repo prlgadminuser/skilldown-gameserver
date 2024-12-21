@@ -27,7 +27,7 @@ function spawnHealingCircle(room) {
   const gridkey = Math.random().toString(36).substring(2, 7)
 
   const newCircle = {
-   // obj_id: gridkey,
+    obj_id: gridkey,
     id: "circle",
     type: `1`,
     x: randomX,      // Center x-coordinate
@@ -35,7 +35,7 @@ function spawnHealingCircle(room) {
     radius: 0,                  // Initial radius
     expansionRate: 1,           // Radius growth rate per second
     healAmount: 1,             // Healing amount per tick
-    duration: 12000,            // Duration in milliseconds (20 seconds)
+    duration: 5000,            // Duration in milliseconds (20 seconds)
     elapsedTime: 0,
     maxradius: 70,              // Max radius the circle will reach
     shrinkRate: 0.5,            // Shrink rate after maxradius is reached          // Flag to track if shrinking is active
@@ -45,13 +45,16 @@ function spawnHealingCircle(room) {
 
  
 
-// room.grid.addObject(newCircle)
+  room.itemgrid.addObject(newCircle)
 
   // Add the new circle to the room's healing circles
   room.objects.push(newCircle);
 
  // console.log(`Healing circle spawned at (${newCircle.x}, ${newCircle.y})`);
 }
+
+
+
 
 function updateHealingCircles(deltaTime, room) {
   for (let i = room.objects.length - 1; i >= 0; i--) {
@@ -77,6 +80,7 @@ function updateHealingCircles(deltaTime, room) {
     // Remove circle if it has expired
   if (circle.elapsedTime >= circle.duration) {
     if (1 > circle.radius) {
+      room.itemgrid.removeObject(circle)
       room.objects.splice(i, 1);
    //  room.grid.removeObject(circle)
    //  console.log(circle)
@@ -117,7 +121,7 @@ function initializeHealingCircles(room) {
   // Spawn a new healing circle every 30 seconds
   room.intervalIds.push(setInterval(() => {
     spawnHealingCircle(room);
-  }, 30000));
+  }, 15000));
 
   // Update healing circles at a regular interval (e.g., 250ms)
   room.intervalIds.push(setInterval(() => {

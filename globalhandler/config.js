@@ -3,7 +3,7 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const cellSize = 100; 
+const gridcellsize = 100; 
 
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
@@ -98,6 +98,7 @@ const gamemodeconfig = {
     placereward: [0],
     seasoncoinsreward: [0],
     show_timer: false,
+    healspawner: false,
     custom_map: 3,
    //health_autodamage: true,
   },
@@ -284,8 +285,8 @@ const gunsconfig = {
 
 
 class SpatialGrid {
-  constructor(cellSize) {
-    this.cellSize = cellSize;
+  constructor(gridcellsize) {
+    this.cellSize = gridcellsize;
     this.grid = new Map();
   }
 
@@ -304,20 +305,25 @@ class SpatialGrid {
   }
 
   removeObject(obj) {
+    if (!obj.obj_id) {
+      throw new Error("Object must have an 'obj_id' property to be removed.");
+    }
+  
     const key = this._getCellKey(obj.x, obj.y);
     if (this.grid.has(key)) {
       const cell = this.grid.get(key);
-      // Remove object from the grid cell by matching the id or exact object
-      const index = cell.findIndex(item => item.id === obj.obj_id);
+      // Find the index of the object to be removed using obj_id
+      const index = cell.findIndex(item => item.obj_id === obj.obj_id);
       if (index !== -1) {
         cell.splice(index, 1);
-        // If the cell is now empty, we can delete the cell from the grid
+        // If the cell becomes empty, delete it from the grid
         if (cell.length === 0) {
           this.grid.delete(key);
         }
       }
     }
   }
+  
 
 
 
@@ -394,7 +400,7 @@ class SpatialGrid {
 // Adjust as necessary
 Object.keys(mapsconfig).forEach(mapKey => {
   const map = mapsconfig[mapKey];
-  const grid = new SpatialGrid(cellSize);
+  const grid = new SpatialGrid(gridcellsize);
 
   map.walls.forEach(wall => grid.addWall(wall));
 
@@ -436,4 +442,5 @@ module.exports = {
   rooms,
   room_max_open_time,
   SpatialGrid,
+  gridcellsize
 };

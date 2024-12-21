@@ -10,12 +10,13 @@ const { gadgetconfig } = require('./gadgets.js')
 const { UseZone } = require('./zone');
 
 const { initializeHealingCircles } = require('./../gameObjectEvents/healingcircle.js')
+const { playerchunkrenderer } = require('./../playerhandler/playerchunks')
 
 const {
   verifyPlayer,
 } = require("./dbrequests");
 const { MongoCryptKMSRequestNetworkTimeoutError } = require('mongodb');
-const { SpatialGrid } = require('./config.js');
+const { SpatialGrid, gridcellsize } = require('./config.js');
 
 function createRateLimiter() {
   const rate = 50; // Allow one request every 50 milliseconds
@@ -262,6 +263,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
         room.state = "countdown";
 
+        playerchunkrenderer(room);
+
         room.timeoutIds.push(setTimeout(() => {
           room.state = "playing";
 
@@ -432,54 +435,9 @@ function arraysAreEqual(arr1, arr2) {
 
 
 
-function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
-  const playersInRange = [];
-
-  // Loop through the players and check their distance to the (centerX, centerY)
-  players.forEach(player => {
-    // Exclude the current player (based on player.nmb)
-    if (player.nmb !== excludePlayerId) {
-      const distance = Math.sqrt(
-        Math.pow(player.x - centerX, 2) + Math.pow(player.y - centerY, 2)
-      );
-
-      // If the player is within the radius, add them to the result list
-      if (distance <= radius) {
-        playersInRange.push(player.nmb); // Include the player's ID
-      }
-    }
-  });
-
-  return playersInRange;
-}
 
 
 
-function findNearestCircles(player, room) {
-  const grid = room.grid; // Assume `room.grid` is your SpatialGrid
-
-  // Define the search area around the player (radius search area)
-  const searchRadius = 200;  // Search area in pixels around the player
-  const xMin = player.x - searchRadius;
-  const xMax = player.x + searchRadius;
-  const yMin = player.y - searchRadius;
-  const yMax = player.y + searchRadius;
-
-  // Get all objects (circles) in the area
-  const objectsInArea = grid.getObjectsInArea(xMin, xMax, yMin, yMax);
-
-  // Filter and map the circles in the area
-  
-  const eventSender = objectsInArea
-  .filter(obj => obj.id === "circle") // Ensure we're only dealing with circles
-  .map(circle => [
-    circle.type,
-    circle.x,
-    circle.y,
-    circle.radius
-  ].join(':'));
-  return eventSender;
-}
 
 
 function sendBatchedMessages(roomId) {
@@ -488,12 +446,7 @@ function sendBatchedMessages(roomId) {
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
 
 
-const eventsender = room.objects.map((circle) => [
-      circle.type,
-      circle.x,
-      circle.y,
-      circle.radius,
-    ].join(':')); // Join properties using '$'
+
 
    
    if (room.dummies) {
@@ -595,16 +548,19 @@ const eventsender = room.objects.map((circle) => [
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
-    ob: eventsender,
+   // ob: eventsender,
     
   };
 
   const jsonString = JSON.stringify(newMessage);
 
-  if (room.lastSentMessage !== jsonString) {
+  if (room/*.lastSentMessage !== jsonString
+    */) {
     const compressedString = LZString.compressToUint8Array(jsonString);
 
     room.players.forEach(player => {
+
+    
 
       // Create player-specific message with minimal selfPlayerData
 
@@ -634,7 +590,7 @@ const eventsender = room.objects.map((circle) => [
       if (room.state === "playing") {
 
    
-      const playersInRange = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 350);
+      const playersInRange = player.nearbyplayers
 
 
       player.pd = {};
@@ -660,11 +616,12 @@ const eventsender = room.objects.map((circle) => [
 
    // const eventSender = findNearestCircles(player, room);
 
+  
       const playerSpecificMessage = {
         pd: player.pd,
         rd: newMessage.rd,
         dm: newMessage.dm,
-        ev: eventsender,
+        ev: player.nearbyitems,
         sd: selfPlayerData // Include compact selfPlayerData
       };
 
@@ -752,9 +709,11 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
 
   }
 
-
+  const itemgrid = new SpatialGrid(gridcellsize); // grid system for items
 
   const room = {
+
+    itemgrid: itemgrid,
     timeoutIds: [],
     intervalIds: [],
     roomId: roomId,

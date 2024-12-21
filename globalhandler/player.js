@@ -1,6 +1,6 @@
 "use strict";
 
-const { isCollisionWithWalls } = require('./collisions');
+const { isCollisionWithWalls, isCollisionWithCachedWalls } = require('./collisions');
 const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
 const { endGame } = require('./game')
 const { player_idle_timeout } = require('./config')
@@ -33,12 +33,12 @@ function handleMovement(player, room) {
   let newX = player.x + xDelta;
   let newY = player.y + yDelta;
 
-  if (isCollisionWithWalls(room.grid, newX, newY)) {
+  if (isCollisionWithCachedWalls(player.nearbywalls, newX, newY)) {
 
-    if (!isCollisionWithWalls(room.grid, newX, player.y)) {
+    if (!isCollisionWithCachedWalls(player.nearbywalls, newX, player.y)) {
       newY = player.y;
     }
-    else if (!isCollisionWithWalls(room.grid, player.x, newY)) {
+    else if (!isCollisionWithCachedWalls(player.nearbywalls, player.x, newY)) {
       newX = player.x;
     }
     else {

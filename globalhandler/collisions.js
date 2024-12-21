@@ -36,6 +36,33 @@ function isCollisionWithWalls(grid, x, y) {
   return false; // No collision detected
 }
 
+function isCollisionWithCachedWalls(walls, x, y) {
+  const xMin = x - 20;
+  const xMax = x + 20;
+  const yMin = y - 45;
+  const yMax = y + 45
+
+  const nearbyWalls = walls
+
+  for (const wall of nearbyWalls) {
+    const wallLeft = wall.x - halfBlockSize;
+    const wallRight = wall.x + halfBlockSize;
+    const wallTop = wall.y - halfBlockSize;
+    const wallBottom = wall.y + halfBlockSize;
+
+    if (
+      xMax > wallLeft &&
+      xMin < wallRight &&
+      yMax > wallTop &&
+      yMin < wallBottom
+    ) {
+      return true; // Collision detected
+    }
+  }
+
+  return false; // No collision detected
+}
+
 function isCollisionWithBullet(grid, x, y, height, width) {
 
   const xMin = x - 20;
@@ -149,6 +176,7 @@ function adjustBulletDirection(bullet, wall, wallBlockSize) {
 module.exports = {
   isCollisionWithWalls,
   isCollisionWithBullet,
+  isCollisionWithCachedWalls,
   wallblocksize,
   adjustBulletDirection,
   findCollidedWall,
