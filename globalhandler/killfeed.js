@@ -1,11 +1,11 @@
 
   // Function to add a kill to the killfeed in the room
-  function addKillToKillfeed(room, killer, target, type, gunid) {
+  function addKillToKillfeed(room, killer, target, type, gunid, messagetype) {
     const timestamp = Date.now(); // Get current timestamp (in milliseconds)
     
     // Create the killfeed entry with a timestamp
     const killEntry = {
-      entry: `${killer}$${target}$${type}$${gunid}`,
+      entry: `${killer}$${target}$${type}$${gunid}$${messagetype}`,
       timestamp: timestamp
     };
   

@@ -171,6 +171,7 @@ const {
 } = require("./globalhandler/dbrequests");
 
 const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./globalhandler/config");
+const { addKillToKillfeed } = require('./globalhandler/killfeed')
 
 
 
@@ -349,6 +350,8 @@ wss.on("connection", (ws, req) => {
                             console.log('Room closed');
                             return;
                         }
+
+                        addKillToKillfeed(result.room, "ext", nearestObject.nmb, 0, 0);
 
                         if (result.room.state === "playing" && result.room.winner === -1) {
                             let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
