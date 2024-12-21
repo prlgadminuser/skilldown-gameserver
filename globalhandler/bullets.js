@@ -85,19 +85,22 @@ function moveBullet(room, player, bullet) {
 
     if (room.config.canCollideWithPlayers) {
 
-  for (const otherPlayer of room.players) {
-      if (otherPlayer !== player && otherPlayer.visible && isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === -1)) {
-        const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
-        let finalDamage
+      for (const playerId of player.nearbyplayers) {  // Loop over nearby players' IDs
+        const otherPlayer = room.players.get(playerId); // Retrieve the player object from room.players using the ID
         
-          finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
-
-        handlePlayerCollision(room, player, otherPlayer, finalDamage);
-        player.bullets.delete(timestamp);
-        return;
+        if (otherPlayer && otherPlayer !== player && otherPlayer.visible &&
+            isCollisionWithPlayer(bullet, otherPlayer, height, width) && room.winner === -1) {
+      
+          const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
+          
+          const finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
+      
+          handlePlayerCollision(room, player, otherPlayer, finalDamage);
+          player.bullets.delete(timestamp);
+          return;
+        }
       }
     }
-  }
 
   if (room.config.canCollideWithDummies) {
     for (const key in room.dummies) {
