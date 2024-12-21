@@ -544,6 +544,7 @@ function sendBatchedMessages(roomId) {
     }
   });
 
+  room.playerdata = playerData
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
