@@ -1,5 +1,7 @@
 "use strict";
 
+const roomStateLock = new Map();
+
 const { LZString, axios, Limiter } = require('./..//index.js');
 const { matchmaking_timeout, server_tick_rate, WORLD_WIDTH, WORLD_HEIGHT, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
@@ -135,227 +137,187 @@ function playerLeave(roomId, playerId) {
 
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
+      const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints, nickname } = playerVerified;
 
-    const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints, nickname } = playerVerified;
+      const gadgetselected = selected_gadget || 1;
+      const finalskillpoints = skillpoints || 0;
+      const finalnickname = nickname.replace(/[:$]/g, '');
 
-    const gadgetselected = selected_gadget || 1;
-    const finalskillpoints = skillpoints || 0;
-    const finalnickname = nickname.replace(/[:$]/g, '');
+      const roomjoiningvalue = matchmakingsp(finalskillpoints);
 
-    const roomjoiningvalue = matchmakingsp(finalskillpoints);
-    // Check if there's an existing room with available slots
-    const availableRoom = Array.from(rooms.values()).find(
-      (currentRoom) =>
-        currentRoom.players.size < gamemodeconfig[gamemode].maxplayers &&
-        currentRoom.state === "waiting" &&
-        currentRoom.gamemode === gamemode && currentRoom.sp_level === roomjoiningvalue
-    );
+      let roomId, room;
+      let roomCreationLock = false;
 
-    if (availableRoom) {
-      roomId = availableRoom.roomId || `room_${Math.random().toString(36).substring(2, 15)}`;
-      room = availableRoom;
-    } else {
-      roomId = `room_${Math.random().toString(36).substring(2, 15)}`;
-      room = createRoom(roomId, gamemode, gamemodeconfig[gamemode], roomjoiningvalue);
-    }
+      // Synchronize room assignment/creation
+      await acquireRoomLock();
 
+      try {
+          // Check if there's an existing room with available slots
+          const availableRoom = Array.from(rooms.values()).find(
+              (currentRoom) =>
+                  currentRoom.players.size < gamemodeconfig[gamemode].maxplayers &&
+                  currentRoom.state === "waiting" &&
+                  currentRoom.gamemode === gamemode && 
+                  currentRoom.sp_level === roomjoiningvalue
+          );
 
-    const playerRateLimiter = createRateLimiter();
-
-    // Determine spawn position index
-    const playerCount = room.players.size;
-    const spawnPositions = room.spawns
-    const spawnIndex = playerCount % spawnPositions.length;
-
-    const newPlayer = {
-      ws,
-      lastmsg: 0,
-      intervalIds: [],
-      timeoutIds: [],
-      x: spawnPositions[spawnIndex].x,
-      y: spawnPositions[spawnIndex].y,
-      direction: null,
-      prevX: 0,
-      prevY: 0,
-      lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-      startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-      nmb: playerCount,
-      playerId: playerId,
-      spectateid: 0,
-      nickname: finalnickname,
-      spectatingTarget: null,
-      spectatingplayerid: null,
-      rateLimiter: playerRateLimiter,
-      hat: hat,
-      top: top,
-      player_color: player_color,
-      hat_color: hat_color,
-      top_color: top_color,
-      //timeout: setTimeout(() => { player.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
-      health: gamemodeconfig[gamemode].playerhealth,
-      state: 1,
-      starthealth: gamemodeconfig[gamemode].playerhealth,
-      speed: gamemodeconfig[gamemode].playerspeed,
-      startspeed: gamemodeconfig[gamemode].playerspeed,
-      can_bullets_bounce: false,
-      damage: 0,
-      kills: 0,
-      lastShootTime: 0,
-      moving: false,
-      moveInterval: null,
-      visible: true,
-      eliminated: false,
-      place: null,
-      shooting: false,
-      shoot_direction: 90,
-      loadout: { 1: "1", 2: "4", 3: "2",},
-      bullets: new Map(),
-      spectatingPlayer: playerId,
-      emote: 0,
-      respawns: room.respawns,
-      gadgetid: gadgetselected,
-      canusegadget: true,
-      gadgetcooldown: gadgetconfig[gadgetselected].cooldown,
-      gadgetuselimit: gadgetconfig[gadgetselected].use_limit,
-      gadgetchangevars: gadgetconfig[gadgetselected].changevariables,
-
-      usegadget() {
-
-        const player = room.players.get(playerId);
-
-        if (player && room.state === 'playing' && player.visible) {
-          // Apply the gadget effect
-          gadgetconfig[gadgetselected].gadget(player, room);
-        } else {
-          console.error('Player not found');
-
-        }
-      },
-    };
-
-    newPlayer.gun = newPlayer.loadout[1];
-
-    if (newPlayer.gadgetchangevars) {
-      for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
-        // Decrease by percentage
-        newPlayer[variable] += Math.round(newPlayer[variable] * change);
-
+          if (availableRoom) {
+              roomId = availableRoom.roomId;
+              room = availableRoom;
+          } else {
+              roomId = `room_${Math.random().toString(36).substring(2, 15)}`;
+              room = createRoom(roomId, gamemode, gamemodeconfig[gamemode], roomjoiningvalue);
+              roomCreationLock = true; // Indicate that this function created the room
+          }
+      } finally {
+          releaseRoomLock();
       }
-    }
 
+      const playerRateLimiter = createRateLimiter();
 
+      // Determine spawn position index
+      const playerCount = room.players.size;
+      const spawnPositions = room.spawns;
+      const spawnIndex = playerCount % spawnPositions.length;
 
-    if (room) {
+      const newPlayer = {
+          ws,
+          lastmsg: 0,
+          intervalIds: [],
+          timeoutIds: [],
+          x: spawnPositions[spawnIndex].x,
+          y: spawnPositions[spawnIndex].y,
+          direction: null,
+          prevX: 0,
+          prevY: 0,
+          lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
+          startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
+          nmb: playerCount,
+          playerId: playerId,
+          spectateid: 0,
+          nickname: finalnickname,
+          spectatingTarget: null,
+          spectatingplayerid: null,
+          rateLimiter: playerRateLimiter,
+          hat: hat,
+          top: top,
+          player_color: player_color,
+          hat_color: hat_color,
+          top_color: top_color,
+          health: gamemodeconfig[gamemode].playerhealth,
+          state: 1,
+          starthealth: gamemodeconfig[gamemode].playerhealth,
+          speed: gamemodeconfig[gamemode].playerspeed,
+          startspeed: gamemodeconfig[gamemode].playerspeed,
+          can_bullets_bounce: false,
+          damage: 0,
+          kills: 0,
+          lastShootTime: 0,
+          moving: false,
+          moveInterval: null,
+          visible: true,
+          eliminated: false,
+          place: null,
+          shooting: false,
+          shoot_direction: 90,
+          loadout: { 1: "1", 2: "4", 3: "2" },
+          bullets: new Map(),
+          spectatingPlayer: playerId,
+          emote: 0,
+          respawns: room.respawns,
+          gadgetid: gadgetselected,
+          canusegadget: true,
+          gadgetcooldown: gadgetconfig[gadgetselected].cooldown,
+          gadgetuselimit: gadgetconfig[gadgetselected].use_limit,
+          gadgetchangevars: gadgetconfig[gadgetselected].changevariables,
 
+          usegadget() {
+              const player = room.players.get(playerId);
 
-      newPlayer.timeout = setTimeout(() => { newPlayer.ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout),
+              if (player && room.state === 'playing' && player.visible) {
+                  gadgetconfig[gadgetselected].gadget(player, room);
+              } else {
+                  console.error('Player not found or cannot use gadget');
+              }
+          },
+      };
 
-        room.players.set(playerId, newPlayer);
+      newPlayer.gun = newPlayer.loadout[1];
+
+      if (newPlayer.gadgetchangevars) {
+          for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
+              newPlayer[variable] += Math.round(newPlayer[variable] * change);
+          }
+      }
+
+      if (room) {
+          newPlayer.timeout = setTimeout(() => {
+              newPlayer.ws.close(4200, "disconnected_inactivity");
+          }, player_idle_timeout);
+
+          room.players.set(playerId, newPlayer);
+
+          if (ws.readyState === ws.CLOSED) {
+              playerLeave(roomId, playerId);
+              return;
+          }
+      }
+
+      if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
+          roomStateLock.set(roomId, true);
+
+          try {
+              room.state = "countdown";
+              console.log(`Room ${roomId} entering countdown phase`);
+
+              setTimeout(() => {
+                  if (!rooms.has(roomId)) return;
+
+                  room.state = "playing";
+                  console.log(`Room ${roomId} transitioned to playing state`);
+
+                  StartremoveOldKillfeedEntries(room);
+                  if (room.healspawner) initializeHealingCircles(room);
+                  if (room.zoneallowed) UseZone(room);
+                  if (room.regenallowed) startRegeneratingHealth(room, 1);
+                  if (room.healthdecrease) startDecreasingHealth(room, 1);
+
+                  roomStateLock.delete(roomId);
+              }, game_start_time);
+
+          } catch (err) {
+              console.error(`Error during room state transition: ${err}`);
+              roomStateLock.delete(roomId);
+          }
+      }
 
       if (ws.readyState === ws.CLOSED) {
-        playerLeave(roomId, playerId);
-        return;
+          playerLeave(roomId, playerId);
+          return;
       }
 
-    }
-
-    if (room.state === "waiting" && room.players.size > room.maxplayers - 1) {
-      room.state = "await";
-      clearTimeout(room.matchmaketimeout);
-      room.timeoutIds.push(setTimeout(() => {
-
-
-
-        room.state = "countdown";
-
-        playerchunkrenderer(room);
-
-        if (room.maxplayers > 1 && 2 > room.players.size) {
-
-          endGame(room);
-
-          return;
-
-        }
-
-       // room.teams = [];
-
-        // Calculate the number of teams needed based on players and teamsize
-      //  const numTeams = Math.ceil(room.players.size / room.teamsize);
-        
-        // Initialize room.teams with empty subarrays for each team
-       // room.teams = Array.from({ length: numTeams }, () => []);
-        
-        // Assign players to teams sequentially based on player.nmb
-     //   let teamIndex = 0;
-     //   room.players.forEach((player) => {
-          // If the current team is full, move to the next team
-     //     if (room.teams[teamIndex].length >= room.teamsize) {
-      //      teamIndex++;
-      //    }
-        
-          // Assign player.nmb to the current team
-        //  room.teams[teamIndex].push(player.playerId);
-        
-          // Optionally, add the team info to the player object
-      //    player.team = room.teams[teamIndex];
-        
-          // Optionally, inform the player about their team assignment
-        
-      //  });
-
-
-
-        room.timeoutIds.push(setTimeout(() => {
-          room.state = "playing";
-
-          
-
-          // room.players.forEach((player) => {
-
-          //  player.movetimeout = setTimeout(() => { ws.close(4200, "disconnected_inactivity"); }, player_idle_timeout);
-
-          //   });
-
-
-          StartremoveOldKillfeedEntries(room);
-
-          if (room.healspawner) {
-            initializeHealingCircles(room);
-          }
-
-          if (room.zoneallowed) {
-            UseZone(room);
-          }
-
-          if (room.regenallowed) {
-            startRegeneratingHealth(room, 1);
-          }
-
-          if (room.healthdecrease) {
-            startDecreasingHealth(room, 1)
-          }
-
-        }, game_start_time));
-        // generateRandomCoins(room);
-      }, 1000));
-    }
-
-    if (ws.readyState === ws.CLOSED) {
-      playerLeave(roomId, playerId);
-      return;
-    }
-
-
-
-    return { roomId, playerId, room };
+      return { roomId, playerId, room };
 
   } catch (error) {
-    console.error("Error joining room:", error);
-    ws.close(4000, "Error joining room");
-    throw error;
+      console.error("Error joining room:", error);
+      ws.close(4000, "Error joining room");
+      throw error;
   }
 }
+
+// Utility functions for locking
+const roomLock = new Map();
+async function acquireRoomLock() {
+  while (roomLock.get("active")) {
+      await new Promise(resolve => setTimeout(resolve, 50)); // Retry every 50ms
+  }
+  roomLock.set("active", true);
+}
+
+function releaseRoomLock() {
+  roomLock.delete("active");
+}
+
 
 function cleanupRoom(roomId) {
   const room = rooms.get(roomId);
