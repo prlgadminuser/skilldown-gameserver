@@ -2,6 +2,7 @@
 
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { handleElimination } = require('./../playerhandler/eliminated.js')
+const { addKillToKillfeed } = require('./killfeed.js')
 
 
 const PLAYER_WIDTH = 40;
@@ -63,10 +64,12 @@ function dealDamage(room) {
 
 
             handleElimination(room, player);
+            addKillToKillfeed(result.room, "z1", player.nmb, 0, 0, 0);
           } else {
 
 
             respawnplayer(room, player);
+            addKillToKillfeed(result.room, "z2", player.nmb, 0, 0, 0);
           }
         }
       }
