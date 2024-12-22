@@ -242,7 +242,7 @@ wss.on("connection", (ws, req) => {
 
           if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
             ws.close(4094, "Unauthorized");
-            console.log("Invalid token or gamemode");
+           // console.log("Invalid token or gamemode");
             return;
         }
 

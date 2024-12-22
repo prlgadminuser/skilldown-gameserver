@@ -26,7 +26,7 @@ function handleSpectatorMode(player, room) {
           Array.from(room.players.values()).filter(p => !p.eliminated && p !== player)
         );
 
-        console.log(nearestNonEliminatedPlayer)
+      //  console.log(nearestNonEliminatedPlayer)
   
         if (nearestNonEliminatedPlayer) {
           player.spectatingTarget = nearestNonEliminatedPlayer.playerId;// Set new target

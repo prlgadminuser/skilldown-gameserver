@@ -270,13 +270,13 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
               playerchunkrenderer(room)
               room.state = "countdown";
-              console.log(`Room ${roomId} entering countdown phase`);
+            //  console.log(`Room ${roomId} entering countdown phase`);
 
               setTimeout(() => {
                   if (!rooms.has(roomId)) return;
 
                   room.state = "playing";
-                  console.log(`Room ${roomId} transitioned to playing state`);
+                 // console.log(`Room ${roomId} transitioned to playing state`);
 
                   StartremoveOldKillfeedEntries(room);
                   if (room.healspawner) initializeHealingCircles(room);
@@ -808,7 +808,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   room.config = roomConfig
 
   rooms.set(roomId, room);
-  console.log("room created:", roomId)
+ // console.log("room created:", roomId)
 
   room.matchmaketimeout = setTimeout(() => {
 
