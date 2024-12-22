@@ -87,8 +87,8 @@ function moveBullet(room, player, bullet) {
 
       const potentialTargets = Array.from(room.players.values()).filter(otherPlayer => 
         otherPlayer !== player &&  // Exclude the player themselves
-        otherPlayer.visible &&     // Only consider visible players
-        !player.team.includes(otherPlayer.nmb)  // Exclude teammates
+        otherPlayer.visible// &&     // Only consider visible players
+        //!player.team.includes(otherPlayer.nmb)  // Exclude teammates
       );
 
       for (const otherPlayer of potentialTargets) {
