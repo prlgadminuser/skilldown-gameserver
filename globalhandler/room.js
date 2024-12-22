@@ -267,6 +267,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           roomStateLock.set(roomId, true);
 
           try {
+
+              playerchunkrenderer(room)
               room.state = "countdown";
               console.log(`Room ${roomId} entering countdown phase`);
 
