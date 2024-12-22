@@ -64,12 +64,12 @@ function dealDamage(room) {
 
 
             handleElimination(room, player);
-            addKillToKillfeed(result.room, "z1", player.nmb, 0, 0, 3);
+            addKillToKillfeed(room, "z1", player.nmb, 0, 0, 3);
           } else {
 
 
             respawnplayer(room, player);
-            addKillToKillfeed(result.room, "z2", player.nmb, 0, 0, 4);
+            addKillToKillfeed(room, "z2", player.nmb, 0, 0, 4);
           }
         }
       }
