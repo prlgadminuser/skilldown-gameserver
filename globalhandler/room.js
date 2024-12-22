@@ -557,6 +557,7 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
+    kf: getKillfeed(room),
    // ob: eventsender,
     
   };
@@ -630,7 +631,7 @@ function sendBatchedMessages(roomId) {
       const playerSpecificMessage = {
         pd: player.pd,
         rd: newMessage.rd,
-        kf: getKillfeed(room),
+        kf: newMessage.kf,
         dm: newMessage.dm,
         ev: player.nearbyitems,
         sd: selfPlayerData // Include compact selfPlayerData
