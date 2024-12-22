@@ -278,31 +278,31 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
         }
 
-        room.teams = [];
+       // room.teams = [];
 
         // Calculate the number of teams needed based on players and teamsize
-        const numTeams = Math.ceil(room.players.size / room.teamsize);
+      //  const numTeams = Math.ceil(room.players.size / room.teamsize);
         
         // Initialize room.teams with empty subarrays for each team
-        room.teams = Array.from({ length: numTeams }, () => []);
+       // room.teams = Array.from({ length: numTeams }, () => []);
         
         // Assign players to teams sequentially based on player.nmb
-        let teamIndex = 0;
-        room.players.forEach((player) => {
+     //   let teamIndex = 0;
+     //   room.players.forEach((player) => {
           // If the current team is full, move to the next team
-          if (room.teams[teamIndex].length >= room.teamsize) {
-            teamIndex++;
-          }
+     //     if (room.teams[teamIndex].length >= room.teamsize) {
+      //      teamIndex++;
+      //    }
         
           // Assign player.nmb to the current team
-          room.teams[teamIndex].push(player.playerId);
+        //  room.teams[teamIndex].push(player.playerId);
         
           // Optionally, add the team info to the player object
-          player.team = room.teams[teamIndex];
+      //    player.team = room.teams[teamIndex];
         
           // Optionally, inform the player about their team assignment
         
-        });
+      //  });
 
 
 
