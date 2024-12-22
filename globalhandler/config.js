@@ -73,7 +73,7 @@ const gamemodeconfig = {
     can_hit_dummies: false,
     can_hit_players: true,
     maxplayers: 2,
-    respawns_allowed: 8,
+    respawns_allowed: 0,
     playerhealth: 150,
     playerspeed: (0.25 * server_tick_rate) / 17,
     zonespeed: 1.6,
@@ -84,7 +84,7 @@ const gamemodeconfig = {
     show_timer: false,
     custom_map: 2,
     healspawner: true,
-    teamsize: 2,
+    teamsize: 1,
    //health_autodamage: true,
   },
   3: {
@@ -252,6 +252,9 @@ const gunsconfig = {
     cooldown: 1000,
     damage: 15,
     useplayerangle: true,
+    maxexistingtime: 2000,
+    width: 5,
+    height: 5,
     bullets: [
       { angle: 0, speed: 10, distance: 500, delay: 0, offset: 0 },
       { angle: 20, speed: 10, distance: 500, delay: 100, offset: 0 },
@@ -263,7 +266,7 @@ const gunsconfig = {
 
   4: {
     cooldown: 400,
-    distance: 150,
+    distance: 250,
     maxexistingtime: 2000,
     maxbounces: 5,
     damage: 6,
@@ -273,14 +276,15 @@ const gunsconfig = {
     bullets: [
       // Shotgun pellets configuration
      // { angle: -8, speed: 25, delay: 0, offset: 0 },
-      { angle: -5, speed: 25, delay: 0, offset: 0 },
-      { angle: 0, speed: 25, delay: 0, offset: 0 },
-      { angle: 5, speed: 25, delay: 0, offset: 0 },
+      { angle: -5, speed: 27, delay: 0, offset: 0 },
+      { angle: 0, speed: 27, delay: 0, offset: 0 },
+      { angle: 5, speed: 27, delay: 0, offset: 0 },
      // { angle: 8, speed: 25, delay: 0, offset: 0 }
   ],
     damageconfig: [
-      { threshold: 40, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.70 } // Layer 4: 1/4 damage if within 100% of max distance
+      { threshold: 25, damageMultiplier: 1 },   
+      { threshold: 55, damageMultiplier: 0.8 }, // Layer 1: Full damage if within 25% of max distance // Layer 2: 3/4 damage if within 50% of max distance
+      { threshold: 100, damageMultiplier: 0.60 } // Layer 4: 1/4 damage if within 100% of max distance
       // You can add more layers here
   ],
   },

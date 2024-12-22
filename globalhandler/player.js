@@ -60,19 +60,35 @@ function handleMovement(player, room) {
   player.lastProcessedPosition = { x: newX, y: newY };
 }
 
-function handlePlayerCollision(room, shootingPlayer, nearestObject, damage, gunid) {
+function TeamPlayersActive(room, player) {
+  // Ensure the player's team is defined
+  if (!player.team || player.team.length === 0) {
+      return 0; // Return 0 if the player's team is not valid
+  }
+
+  // Count players in the team who are in state 1
+  const count = player.team.reduce((count, player) => {
+      const teamPlayer = room.players.get(player); // Access the player by their ID
+      return teamPlayer && teamPlayer.state === 1 ? count + 1 : count;
+  }, 0);
+
+  return count;
+}
+
+
+function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid) {
 
   //const GUN_BULLET_DAMAGE = Math.round(damage / shootdamagereduce);
 
   const GUN_BULLET_DAMAGE = damage
 
-  nearestObject.health -= GUN_BULLET_DAMAGE;
+  targetPlayer.health -= GUN_BULLET_DAMAGE;
   shootingPlayer.damage += GUN_BULLET_DAMAGE;
-  nearestObject.last_hit_time = new Date().getTime();
+  targetPlayer.last_hit_time = new Date().getTime();
 
   const hit = [
-    nearestObject.x,
-    nearestObject.y,
+    targetPlayer.x,
+    targetPlayer.y,
     Math.random().toString(36).substring(2, 7),
     //new Date().getTime(),
     GUN_BULLET_DAMAGE,
@@ -80,36 +96,38 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage, guni
 
   shootingPlayer.hitdata = hit;
 
-  if (1 > nearestObject.health && 1 > nearestObject.respawns) {
+  //const teamactiveplayers = TeamPlayersActive(room, player)
 
-    const elimtype = 2
-    handleElimination(room, nearestObject)
-    nearestObject.eliminator = shootingPlayer.nmb
-    nearestObject.spectatingTarget = shootingPlayer.playerId;
-    shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
-    addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 2, gunid, 2);
+  if (1 > targetPlayer.health && 1 > targetPlayer.respawns) {
+
+    const elimtype = 2;
+    handleElimination(room, targetPlayer);
+    targetPlayer.eliminator = shootingPlayer.nmb;
+    targetPlayer.spectatingTarget = shootingPlayer.playerId;
+    shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
+    addKillToKillfeed(room, shootingPlayer.nmb, targetPlayer.nmb, 2, gunid, 2);
 
     room.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
     }, 100));
 
-  } else {
+} else {
 
+    if (targetPlayer.health < 1 && targetPlayer.respawns > 0) {
 
-    if (nearestObject.health < 1 && nearestObject.respawns > 0) {
-
-      const elimtype = 1
-      shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
-      addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 1, gunid, 1);
+      const elimtype = 1;
+      shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
+      addKillToKillfeed(room, shootingPlayer.nmb, targetPlayer.nmb, 1, gunid, 1);
 
       room.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;
       }, 100));
 
-      nearestObject.visible = false;
-      respawnplayer(room, nearestObject)
+      targetPlayer.visible = false;
+      respawnplayer(room, targetPlayer);
     }
-  }
+}
+
 }
 
 function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {

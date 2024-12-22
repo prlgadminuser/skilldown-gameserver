@@ -208,7 +208,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       place: null,
       shooting: false,
       shoot_direction: 90,
-      gun: 1,
+      loadout: { 1: "1", 2: "4", 3: "2",},
       bullets: new Map(),
       spectatingPlayer: playerId,
       emote: 0,
@@ -232,6 +232,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
         }
       },
     };
+
+    newPlayer.gun = newPlayer.loadout[1];
 
     if (newPlayer.gadgetchangevars) {
       for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
@@ -293,7 +295,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           }
         
           // Assign player.nmb to the current team
-          room.teams[teamIndex].push(player.nmb);
+          room.teams[teamIndex].push(player.playerId);
         
           // Optionally, add the team info to the player object
           player.team = room.teams[teamIndex];
@@ -306,6 +308,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
         room.timeoutIds.push(setTimeout(() => {
           room.state = "playing";
+
+          
 
           // room.players.forEach((player) => {
 
@@ -605,6 +609,14 @@ function sendBatchedMessages(roomId) {
     
 
       // Create player-specific message with minimal selfPlayerData
+      const playerloadout = [
+        player.loadout[1],
+        player.loadout[2],
+        player.loadout[3],
+
+      ].join('$')
+
+  
 
         const selfPlayerData = [
           player.nmb,
@@ -624,6 +636,7 @@ function sendBatchedMessages(roomId) {
           player.elimlast,
           player.emote,
           player.spectateid,   
+          playerloadout,
         ].join(':');
      
 
@@ -652,6 +665,7 @@ function sendBatchedMessages(roomId) {
         player.pd = playerData
       } else {
         player.pd = {}
+   
       }
     }
 
@@ -666,8 +680,8 @@ function sendBatchedMessages(roomId) {
         kf: newMessage.kf,
         dm: newMessage.dm,
         ev: player.nearbyitems,
-        td: player.team,
-        sd: selfPlayerData // Include compact selfPlayerData
+      //  td: player.team,
+        sd: selfPlayerData, // Include compact selfPlayerData
 
       };
 
@@ -1017,19 +1031,17 @@ function handleShoot(data, player, room) {
 }
 
 function handleSwitchGun(data, player) {
-  const selectedGunNumber = parseFloat(data.gun);
-  const allguns = Object.keys(gunsconfig).length;
+  const GunID = parseFloat(data.gun);
+  const allguns = Object.keys(gunsconfig);
   if (
-    selectedGunNumber !== player.gun &&
-    !player.shooting &&
-    selectedGunNumber >= 1 &&
-    selectedGunNumber <= allguns
-  ) {
-    player.gun = selectedGunNumber;
-  } else if (player.shooting) {
+    GunID !== player.gun && !player.shooting && GunID >= 1 && GunID <= 3 && GunID in allguns) {
+
+    player.gun = player.loadout[GunID];
 
   } else {
+
   }
+
 }
 
 function handleEmote(data, player) {

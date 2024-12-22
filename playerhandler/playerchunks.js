@@ -3,6 +3,8 @@ const { SpatialGrid } = require('./../globalhandler/config');
 
 const chunkradius = 100
 
+
+
 function findNearestCircles(player, room) {
   const grid = room.itemgrid; // Assume room.grid is your SpatialGrid
 
@@ -94,6 +96,7 @@ function playerchunkrenderer(room) {
   room.intervalIds.push(setInterval(() => {
     room.players.forEach((player) => {
 
+ 
         UpdatePlayerChunks(room, player)
       
       });

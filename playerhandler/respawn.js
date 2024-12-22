@@ -1,34 +1,33 @@
 function respawnplayer(room, player) {
 
 
-    player.visible = false
-    player.state = 2
+  player.visible = false
+  player.state = 2
 
-    player.respawns--
+  player.respawns--
 
-    player.moving = false
+  player.moving = false
 
-    clearInterval(player.moveInterval)
-    player.moveInterval = null;
-  
-    player.health = player.starthealth
+  clearInterval(player.moveInterval)
+  player.moveInterval = null;
 
-    player.timeoutIds.push(setTimeout(() =>{
-      player.x = player.startspawn.x
-      player.y = player.startspawn.y
-      }, 3000));
+  player.health = player.starthealth
 
-    player.timeoutIds.push(setTimeout(() =>{
-      player.visible = true
-      player.state = 1
-      }, 5000));
+  player.timeoutIds.push(setTimeout(() =>{
+    player.x = player.startspawn.x
+    player.y = player.startspawn.y
+    }, 3000));
+
+  player.timeoutIds.push(setTimeout(() =>{
+    player.visible = true
+    player.state = 1
+    }, 5000));
 
 
-      
-   }
- 
+    
+ }
 
-   module.exports = {
-    respawnplayer,
-  };
-  
+
+ module.exports = {
+  respawnplayer,
+};
