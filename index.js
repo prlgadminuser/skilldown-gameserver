@@ -343,7 +343,7 @@ wss.on("connection", (ws, req) => {
 
                         connectedClientsCount--;
                         connectedUsernames = connectedUsernames.filter(username => username !== player.playerId);
-                        addKillToKillfeed(result.room, "ext", player.nmb, 0, 0, 0);
+                        addKillToKillfeed(result.room, "ext", player.nmb, 0, 0, 5);
                         result.room.players.delete(result.playerId);
 
                         if (result.room.players.size < 1) {

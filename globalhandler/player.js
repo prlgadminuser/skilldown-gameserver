@@ -86,7 +86,7 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage, guni
     nearestObject.eliminator = shootingPlayer.nmb
     nearestObject.spectatingTarget = shootingPlayer.playerId;
     shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
-    addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 2, gunid);
+    addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 2, gunid, 2);
 
     room.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
@@ -99,7 +99,7 @@ function handlePlayerCollision(room, shootingPlayer, nearestObject, damage, guni
 
       const elimtype = 1
       shootingPlayer.elimlast = nearestObject.nmb + "$" + elimtype;
-      addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 1, gunid);
+      addKillToKillfeed(room, shootingPlayer.nmb, nearestObject.nmb, 1, gunid, 1);
 
       room.timeoutIds.push(setTimeout(() => {
         shootingPlayer.elimlast = null;
