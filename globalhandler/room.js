@@ -268,6 +268,13 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
           try {
 
+            room.state = "await";
+            setTimeout(() => {
+                if (!rooms.has(roomId)) {
+                    roomStateLock.delete(roomId);
+                    return;
+                }
+
               playerchunkrenderer(room)
               room.state = "countdown";
             //  console.log(`Room ${roomId} entering countdown phase`);
@@ -286,7 +293,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
                   roomStateLock.delete(roomId);
               }, game_start_time);
-
+          
+            }, 1000); 
           } catch (err) {
               console.error(`Error during room state transition: ${err}`);
               roomStateLock.delete(roomId);
