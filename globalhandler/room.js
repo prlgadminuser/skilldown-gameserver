@@ -8,6 +8,7 @@ const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modi
 const { gadgetconfig } = require('./gadgets.js')
 const { getKillfeed, StartremoveOldKillfeedEntries } = require('./killfeed.js')
 const { endGame } = require('./game')
+const { UseZone } = require('./zone')
 
 //const { UseZone } = require('./zone');
 
@@ -274,6 +275,34 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           return;
 
         }
+
+        room.teams = [];
+
+        // Calculate the number of teams needed based on players and teamsize
+        const numTeams = Math.ceil(room.players.size / room.teamsize);
+        
+        // Initialize room.teams with empty subarrays for each team
+        room.teams = Array.from({ length: numTeams }, () => []);
+        
+        // Assign players to teams sequentially based on player.nmb
+        let teamIndex = 0;
+        room.players.forEach((player) => {
+          // If the current team is full, move to the next team
+          if (room.teams[teamIndex].length >= room.teamsize) {
+            teamIndex++;
+          }
+        
+          // Assign player.nmb to the current team
+          room.teams[teamIndex].push(player.nmb);
+        
+          // Optionally, add the team info to the player object
+          player.team = room.teams[teamIndex];
+        
+          // Optionally, inform the player about their team assignment
+        
+        });
+
+
 
         room.timeoutIds.push(setTimeout(() => {
           room.state = "playing";
@@ -637,7 +666,9 @@ function sendBatchedMessages(roomId) {
         kf: newMessage.kf,
         dm: newMessage.dm,
         ev: player.nearbyitems,
+        td: player.team,
         sd: selfPlayerData // Include compact selfPlayerData
+
       };
 
       const currentMessageHash = generateHash(playerSpecificMessage);
@@ -734,6 +765,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     roomId: roomId,
     objects: [],
     maxplayers: gmconfig.maxplayers,
+    teamsize: gmconfig.teamsize,
     sp_level: splevel,
     snap: [],
     players: new Map(),

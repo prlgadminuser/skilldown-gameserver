@@ -65,7 +65,8 @@ const gamemodeconfig = {
     seasoncoinsreward: [25, 17, 12, 10, 7],
     show_timer: false,
     custom_map: 2,
-    healspawner: true
+    healspawner: true,
+    teamsize: 1,
   //  health_autodamage: true,
   },
   2: {
@@ -82,7 +83,8 @@ const gamemodeconfig = {
     seasoncoinsreward: [25, 12],
     show_timer: false,
     custom_map: 2,
-    healspawner: true
+    healspawner: true,
+    teamsize: 2,
    //health_autodamage: true,
   },
   3: {
@@ -100,6 +102,7 @@ const gamemodeconfig = {
     show_timer: false,
     healspawner: false,
     custom_map: 3,
+    teamsize: 1,
    //health_autodamage: true,
   },
 };
