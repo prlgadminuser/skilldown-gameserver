@@ -54,7 +54,7 @@ const gamemodeconfig = {
   1: {
     can_hit_dummies: false,
     can_hit_players: true,
-    maxplayers: 3,
+    maxplayers: 4,
     respawns_allowed: 0,
     playerhealth: 77,
     playerspeed: (0.26 * server_tick_rate) / 17,          //(0.26 * server_tick_rate) / 17,
