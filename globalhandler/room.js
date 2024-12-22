@@ -1,14 +1,15 @@
 "use strict";
 
-const { LZString, axios, Limiter, endGame } = require('./..//index.js');
+const { LZString, axios, Limiter } = require('./..//index.js');
 const { matchmaking_timeout, server_tick_rate, WORLD_WIDTH, WORLD_HEIGHT, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
 const { gadgetconfig } = require('./gadgets.js')
 const { getKillfeed, StartremoveOldKillfeedEntries } = require('./killfeed.js')
+const { endGame } = require('./game')
 
-const { UseZone } = require('./zone');
+//const { UseZone } = require('./zone');
 
 const { initializeHealingCircles } = require('./../gameObjectEvents/healingcircle.js')
 const { playerchunkrenderer } = require('./../playerhandler/playerchunks')
@@ -1033,9 +1034,15 @@ function handleMovementData(data, player, room) {
 }
 
 function updatePlayerDirection(player, direction) {
+
   player.direction = direction;
-  player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction;
-}
+ 
+  if (player.direction === -180 || player.direction === 0) {
+     // Keep the direction unchanged for straight down or up
+  } else 
+    player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
+  }
+  
 
 function updatePlayerMovement(player, moving) {
   if (moving === true || moving === "true") {

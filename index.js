@@ -172,25 +172,7 @@ const {
 
 const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./globalhandler/config");
 const { addKillToKillfeed } = require('./globalhandler/killfeed')
-
-
-
-function endGame(room) {
-
-  if (room) {
-  room.players.forEach((player) => {
-
-    if (room.eliminatedPlayers) {
-      player.ws.close(4300, "places");
-    } else {
-      player.ws.close(4301, "game_ended");
-   
-    }
-  
-  });
-}
-}
-
+const { endGame } = require('./globalhandler/game')
 
 
 
