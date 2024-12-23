@@ -1,4 +1,8 @@
 
+
+function getKillfeed(room) {
+  return room.killfeed.map(entry => entry.entry); // Only return the kill entry text
+}
   // Function to add a kill to the killfeed in the room
   function addKillToKillfeed(room, killer, target, type, gunid, messagetype) {
     const timestamp = Date.now(); // Get current timestamp (in milliseconds)
@@ -16,14 +20,12 @@
     if (room.killfeed.length > 5) {
       room.killfeed.pop();  // Remove the oldest entry if there are more than 5
     }
-    room.newkillfeed = room.killfeed.map(entry => entry.entry)
+    room.newkillfeed = JSON.stringify(getKillfeed(room))
   
   }
   
   // Function to get the current killfeed from the room
-  function getKillfeed(room) {
-    return room.killfeed.map(entry => entry.entry); // Only return the kill entry text
-  }
+
   
   // Function to remove entries older than 5 seconds
   function removeOldKillfeedEntries(room) {
