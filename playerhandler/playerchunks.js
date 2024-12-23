@@ -1,7 +1,7 @@
 const { SpatialGrid } = require('./../globalhandler/config');
 
 
-const chunkradius = 200
+const chunkradius = 100
 
 
 
