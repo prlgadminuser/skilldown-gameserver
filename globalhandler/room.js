@@ -623,12 +623,12 @@ function sendBatchedMessages(roomId) {
     //  player.pd = {};
       // Filter playerData to include only players in range for the current player
    
-      filteredplayers = Object.keys(playerData)
-        .filter(player => playersInRange.includes(Number(player))) // Only include players in range
-        .reduce((result, playerId) => {
-          result[playerId] = playerData[playerId]; // Add filtered player data
-          return result;
-        }, {});
+      filteredplayers = Object.entries(playerData).reduce((result, [playerId, playerData]) => {
+        if (playersInRange.has(Number(playerId))) {
+          result[playerId] = playerData; // Add filtered player data
+        }
+        return result;
+      }, {});
 
       player.pd = filteredplayers
     } else {

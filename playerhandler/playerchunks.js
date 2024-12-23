@@ -32,24 +32,24 @@ function findNearestCircles(player, room) {
 }
 
 function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
-  const playersInRange = [];
+  const playersInRange = new Set(); // Initialize an empty Set
 
-  // Loop through the players and check their distance to the (centerX, centerY)
+  // Loop through the players and check their distance to (centerX, centerY)
   players.forEach(player => {
     // Exclude the current player (based on player.nmb)
     if (player.nmb !== excludePlayerId) {
-      const distance = Math.sqrt(
-        Math.pow(player.x - centerX, 2) + Math.pow(player.y - centerY, 2)
-      );
+      const dx = player.x - centerX;
+      const dy = player.y - centerY;
+      const distanceSquared = dx * dx + dy * dy; // Avoid expensive Math.sqrt
 
-      // If the player is within the radius, add them to the result list
-      if (distance <= radius) {
-        playersInRange.push(player.nmb); // Include the player's ID
+      // If the player is within the radius, add them to the Set
+      if (distanceSquared <= radius * radius) {
+        playersInRange.add(player.nmb); // Include the player's ID
       }
     }
   });
 
-  return playersInRange;
+  return playersInRange; // Return the Set of player IDs
 }
 
 function getCircleDetailsForIds(circleIds, room) {
