@@ -88,7 +88,7 @@ const gamemodeconfig = {
    //health_autodamage: true,
   },
   3: {
-    can_hit_dummies: false,
+    can_hit_dummies: true,
     can_hit_players: false,
     maxplayers: 1,
     respawns_allowed: 1,
