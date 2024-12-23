@@ -33,6 +33,7 @@ function getKillfeed(room) {
     
     // Filter out entries that are older than 5 seconds
     room.killfeed = room.killfeed.filter(entry => currentTime - entry.timestamp <= 5000);
+    room.newkillfeed = JSON.stringify(getKillfeed(room))
   }
   
   // Example usage
