@@ -8,7 +8,7 @@
       entry: `${killer}$${target}$${type}$${gunid}$${messagetype}`,
       timestamp: timestamp
     };
-  
+    
     // Add the entry to the beginning of the killfeed (latest at the front)
     room.killfeed.unshift(killEntry);
   
@@ -16,6 +16,7 @@
     if (room.killfeed.length > 5) {
       room.killfeed.pop();  // Remove the oldest entry if there are more than 5
     }
+    room.newkillfeed = room.killfeed.map(entry => entry.entry)
   
   }
   
@@ -35,6 +36,7 @@
   // Example usage
 
   function StartremoveOldKillfeedEntries(room) {
+    room.newkillfeed = []
     room.intervalIds.push(setInterval(() => {
         removeOldKillfeedEntries(room)
       }, 1000));
