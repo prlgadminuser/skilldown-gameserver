@@ -24,7 +24,7 @@ function getDistance(x1, y1, x2, y2) {
 
 
 function handleMovement(player, room) {
-  const deltaTime = 40;
+  const deltaTime = 20;
   
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
 

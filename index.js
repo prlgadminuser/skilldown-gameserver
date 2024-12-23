@@ -266,7 +266,7 @@ wss.on("connection", (ws, req) => {
                 }
 
                 connectedClientsCount++;
-                connectedUsernames.push(result.playerId);
+                connectedUsernames.push(playerVerified.playerId);
               //  console.log(connectedUsernames);
 
              ws.on("message", (message) => {
