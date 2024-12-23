@@ -493,7 +493,7 @@ function sendBatchedMessages(roomId) {
     room.map,
     room.countdown,
     room.winner,
-    [getKillfeed(room)],
+    JSON.stringify(getKillfeed(room)),
   ].join(':');
 
  let playerData = {};
