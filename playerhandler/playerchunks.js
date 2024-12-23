@@ -1,7 +1,7 @@
 const { SpatialGrid } = require('./../globalhandler/config');
 
 
-const chunkradius = 100
+const chunkradius = 150
 
 
 
@@ -83,7 +83,7 @@ function UpdatePlayerChunks(room, player) {
 
     player.nearbyitems = findNearestCircles(player, room)
 
-    player.nearbyplayers = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 350);
+    player.nearbyplayers = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 400);
 
 
     }
@@ -93,6 +93,7 @@ function UpdatePlayerChunks(room, player) {
 function playerchunkrenderer(room) {
   // Initialize the list of healing circles
 
+  
   room.intervalIds.push(setInterval(() => {
     room.players.forEach((player) => {
 
