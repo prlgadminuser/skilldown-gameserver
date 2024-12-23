@@ -46,8 +46,8 @@ function getKillfeed(room) {
   function StartremoveOldKillfeedEntries(room) {
     room.newkillfeed = []
 
-    addKillToKillfeed(room, 0, 0, 2, 4, 2);
-    addKillToKillfeed(room, 0, 0, 2, 4, 4);
+   // addKillToKillfeed(room, 0, 0, 2, 4, 2);
+   // addKillToKillfeed(room, 0, 0, 2, 4, 4);
     room.intervalIds.push(setInterval(() => {
         removeOldKillfeedEntries(room)
       }, 1000));

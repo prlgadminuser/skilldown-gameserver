@@ -285,7 +285,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
                   room.state = "playing";
                  // console.log(`Room ${roomId} transitioned to playing state`);
 
-                  StartremoveOldKillfeedEntries(room);
+                 // StartremoveOldKillfeedEntries(room);
                   if (room.healspawner) initializeHealingCircles(room);
                   if (room.zoneallowed) UseZone(room);
                   if (room.regenallowed) startRegeneratingHealth(room, 1);
@@ -493,7 +493,7 @@ function sendBatchedMessages(roomId) {
     room.map,
     room.countdown,
     room.winner,
-    room.newkillfeed,
+    //room.newkillfeed,
   ].join(':');
 
  let playerData = {};
