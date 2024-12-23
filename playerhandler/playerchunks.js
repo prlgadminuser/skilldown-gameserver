@@ -92,9 +92,12 @@ function UpdatePlayerChunks(room, player) {
 
 function playerchunkrenderer(room) {
   // Initialize the list of healing circles
+  room.activeplayers = Array.from(room.players.values()).filter(player => !player.eliminated).length;
 
-  
   room.intervalIds.push(setInterval(() => {
+
+    room.activeplayers = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+
     room.players.forEach((player) => {
 
  

@@ -460,7 +460,7 @@ function arraysAreEqual(arr1, arr2) {
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
-  const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
+  const playercountroom = room.activeplayers
 
 
 
