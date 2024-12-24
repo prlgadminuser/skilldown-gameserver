@@ -243,6 +243,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       };
 
       newPlayer.gun = newPlayer.loadout[1];
+      handlePong(newPlayer)
 
       if (newPlayer.gadgetchangevars) {
           for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
@@ -996,11 +997,21 @@ function handleMovingState(movingValue, player) {
 
 
 function handlePong(player) {
+  const now = Date.now();
+
+  if (player.lastPing && now - player.lastPing < 1000) {
+    return;
+  }
+
+  player.lastPing = now;
   clearTimeout(player.timeout);
+
   player.timeout = setTimeout(() => {
     player.ws.close(4200, "disconnected_inactivity");
   }, player_idle_timeout);
 }
+
+
 
 function handleShoot(data, player, room) {
   if (data.shoot_direction > -181 && data.shoot_direction < 181) {
@@ -1246,4 +1257,5 @@ module.exports = {
   handleRequest,
   closeRoom,
   handleCoinCollected2,
+  handlePong
 };

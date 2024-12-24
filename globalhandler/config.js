@@ -7,7 +7,7 @@ const gridcellsize = 100;
 
 const server_tick_rate = 17 //17
 const matchmaking_timeout = 1200000
-const player_idle_timeout = 45000
+const player_idle_timeout = 10000
 const game_start_time = 5000
 const game_win_rest_time = 10000
 const room_max_open_time = 600000 //600000
