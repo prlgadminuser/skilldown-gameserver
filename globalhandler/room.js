@@ -1,6 +1,54 @@
 "use strict";
 
+
 const roomStateLock = new Map();
+const roomIndex = new Map();
+const { Mutex } = require('async-mutex');
+
+const roomLock = new Mutex();
+async function acquireRoomLock() {
+  await roomLock.acquire();
+}
+
+function releaseRoomLock() {
+  roomLock.release();
+}
+
+function getAvailableRoom(gamemode, spLevel) {
+  const key = `${gamemode}_${spLevel}`;
+  const roomList = roomIndex.get(key) || [];
+  return roomList.find(room => room.players.size < gamemodeconfig[gamemode].maxplayers && room.state === 'waiting');
+}
+
+function addRoomToIndex(room) {
+  const key = `${room.gamemode}_${room.sp_level}`;
+  if (!roomIndex.has(key)) roomIndex.set(key, []);
+  roomIndex.get(key).push(room);
+}
+
+function removeRoomFromIndex(room) {
+  const key = `${room.gamemode}_${room.sp_level}`;
+  
+  // Check if the index contains the key
+  if (!roomIndex.has(key)) return;
+
+  // Get the list of rooms for this key
+  const roomList = roomIndex.get(key);
+
+  // Filter out the room to be removed
+  const updatedRoomList = roomList.filter(existingRoom => existingRoom.roomId !== room.roomId);
+
+  if (updatedRoomList.length > 0) {
+      // Update the index with the filtered list
+      roomIndex.set(key, updatedRoomList);
+  } else {
+      // If the list is empty, remove the key from the index
+      roomIndex.delete(key);
+  }
+  console.log(roomIndex)
+}
+
+
 
 const { LZString, axios, Limiter } = require('./..//index.js');
 const { matchmaking_timeout, server_tick_rate, WORLD_WIDTH, WORLD_HEIGHT, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
@@ -106,6 +154,7 @@ function closeRoom(roomId) {
 
 
     rooms.delete(roomId);
+    removeRoomFromIndex(room)
 
 
     console.log(`Room ${roomId} closed.`);
@@ -153,13 +202,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       try {
           // Check if there's an existing room with available slots
-          const availableRoom = Array.from(rooms.values()).find(
-              (currentRoom) =>
-                  currentRoom.players.size < gamemodeconfig[gamemode].maxplayers &&
-                  currentRoom.state === "waiting" &&
-                  currentRoom.gamemode === gamemode && 
-                  currentRoom.sp_level === roomjoiningvalue
-          );
+          const availableRoom = getAvailableRoom(gamemode, roomjoiningvalue)
 
           if (availableRoom) {
               roomId = availableRoom.roomId;
@@ -167,6 +210,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           } else {
               roomId = `room_${Math.random().toString(36).substring(2, 15)}`;
               room = createRoom(roomId, gamemode, gamemodeconfig[gamemode], roomjoiningvalue);
+              addRoomToIndex(room)
               roomCreationLock = true; // Indicate that this function created the room
           }
       } finally {
@@ -176,9 +220,10 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       const playerRateLimiter = createRateLimiter();
 
       // Determine spawn position index
-      const playerCount = room.players.size;
+      const playerNumberID = room.currentplayerid;
+      room.currentplayerid += 1
       const spawnPositions = room.spawns;
-      const spawnIndex = playerCount % spawnPositions.length;
+      const spawnIndex = playerNumberID % spawnPositions.length;
 
       const newPlayer = {
           ws,
@@ -192,7 +237,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           prevY: 0,
           lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
           startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-          nmb: playerCount,
+          nmb: playerNumberID,
           playerId: playerId,
           spectateid: 0,
           nickname: finalnickname,
@@ -316,17 +361,6 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 }
 
 // Utility functions for locking
-const roomLock = new Map();
-async function acquireRoomLock() {
-  while (roomLock.get("active")) {
-      await new Promise(resolve => setTimeout(resolve, 50)); // Retry every 50ms
-  }
-  roomLock.set("active", true);
-}
-
-function releaseRoomLock() {
-  roomLock.delete("active");
-}
 
 
 function cleanupRoom(roomId) {
@@ -751,6 +785,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   const itemgrid = new SpatialGrid(gridcellsize); // grid system for items
 
   const room = {
+    currentplayerid: 0,
     killfeed: [],
     itemgrid: itemgrid,
     timeoutIds: [],
@@ -1001,7 +1036,6 @@ function handlePong(player) {
   if (player.lastPing && now - player.lastPing < 1000) {
     return;
   }
-console.log(player.lastPing)
   player.lastPing = now;
   clearTimeout(player.timeout);
 
