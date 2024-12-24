@@ -4,7 +4,7 @@ const { isCollisionWithBullet, adjustBulletDirection, findCollidedWall } = requi
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
-const BULLET_MOVE_INTERVAL = 33 // milliseconds
+const BULLET_MOVE_INTERVAL = 20 // milliseconds
 
 // Helper functions
 const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
@@ -216,7 +216,7 @@ async function handleBulletFired(room, player, gunType) {
   for (const bullet of gun.bullets) {
 
     const bulletdata = {
-      speed: bullet.speed,
+      speed: bullet.speed / 2,
       delay: bullet.delay,
       offset: bullet.offset,
       damage: gun.damage,
@@ -224,7 +224,7 @@ async function handleBulletFired(room, player, gunType) {
       height: gun.height,
       width: gun.width,
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
-      maxtime: Date.now() + gun.maxexistingtime + bullet.delay * 2,
+      maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
       distance: gun.distance,
       canbounce: gun.can_bullets_bounce || false, 
       damageconfig: gun.damageconfig || {},
