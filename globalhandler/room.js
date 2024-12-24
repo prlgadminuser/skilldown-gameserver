@@ -243,7 +243,6 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       };
 
       newPlayer.gun = newPlayer.loadout[1];
-      handlePong(newPlayer)
 
       if (newPlayer.gadgetchangevars) {
           for (const [variable, change] of Object.entries(newPlayer.gadgetchangevars)) {
@@ -1002,7 +1001,7 @@ function handlePong(player) {
   if (player.lastPing && now - player.lastPing < 1000) {
     return;
   }
-
+console.log(player.lastPing)
   player.lastPing = now;
   clearTimeout(player.timeout);
 
