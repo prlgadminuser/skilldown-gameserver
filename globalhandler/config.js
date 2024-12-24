@@ -260,15 +260,15 @@ const gunsconfig = {
   },
 
   4: {
-    cooldown: 1000,
+    cooldown: 800,
     distance: 250,
-    maxexistingtime: 1000,
+    maxexistingtime: 500,
     maxbounces: 5,
     damage: 6,
     width: 5,
     height: 5,
     useplayerangle: true,
-    can_bullets_bounce: true,
+    can_bullets_bounce: false,
     bullets: [
       // Shotgun pellets configuration
      // { angle: -8, speed: 25, delay: 0, offset: 0 },
@@ -280,7 +280,7 @@ const gunsconfig = {
     damageconfig: [
       { threshold: 25, damageMultiplier: 1 },   
       { threshold: 55, damageMultiplier: 0.8 }, // Layer 1: Full damage if within 25% of max distance // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.60 } // Layer 4: 1/4 damage if within 100% of max distance
+      { threshold: 100, damageMultiplier: 0.30 } // Layer 4: 1/4 damage if within 100% of max distance
       // You can add more layers here
   ],
   },

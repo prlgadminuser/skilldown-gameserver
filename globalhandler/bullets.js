@@ -4,18 +4,18 @@ const { isCollisionWithBullet, adjustBulletDirection, findCollidedWall } = requi
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
-const BULLET_MOVE_INTERVAL = 20 // milliseconds
+const BULLET_MOVE_INTERVAL = 17 // milliseconds
 
 // Helper functions
-const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
+const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 const toRadians = degrees => degrees * (Math.PI / 180);
+
 
 const playerHalfWidth = playerHitboxWidth / 2.4;
 const playerHalfHeight = playerHitboxHeight / 2.4;
-
 // Collision Detection
 function isCollisionWithPlayer(bullet, player, height, width) {
- 
+
   return (
     bullet.x + width / 2 >= player.x - playerHalfWidth &&
     bullet.x - width / 2 <= player.x + playerHalfWidth &&
@@ -23,6 +23,7 @@ function isCollisionWithPlayer(bullet, player, height, width) {
     bullet.y - height / 2 <= player.y + playerHalfHeight
   );
 }
+
 
 function isHeadHit(bullet, player, height, width) {
   // Calculate the player's headshot region (top 1/3 of the hitbox)
@@ -226,7 +227,7 @@ async function handleBulletFired(room, player, gunType) {
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
       maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
       distance: gun.distance,
-      canbounce: gun.can_bullets_bounce || false, 
+      canbounce: gun.can_bullets_bounce, 
       damageconfig: gun.damageconfig || {},
       gunid: gunType
     };
