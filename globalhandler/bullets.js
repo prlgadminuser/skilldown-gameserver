@@ -4,29 +4,23 @@ const { isCollisionWithBullet, adjustBulletDirection, findCollidedWall } = requi
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
 
-const BULLET_MOVE_INTERVAL = 17 // milliseconds
+const BULLET_MOVE_INTERVAL = 33 // milliseconds
 
 // Helper functions
-const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
 const toRadians = degrees => degrees * (Math.PI / 180);
+
+const playerHalfWidth = playerHitboxWidth / 2.4;
+const playerHalfHeight = playerHitboxHeight / 2.4;
 
 // Collision Detection
 function isCollisionWithPlayer(bullet, player, height, width) {
-  const playerLeft = player.x - playerHitboxWidth / 2.4;
-  const playerRight = player.x + playerHitboxWidth / 2.4;
-  const playerTop = player.y - playerHitboxHeight / 2.4;
-  const playerBottom = player.y + playerHitboxHeight / 2.4;
-
-  const bulletLeft = bullet.x - width / 2;
-  const bulletRight = bullet.x + width / 2;
-  const bulletTop = bullet.y - height / 2;
-  const bulletBottom = bullet.y + height / 2;
-
+ 
   return (
-    bulletRight >= playerLeft &&
-    bulletLeft <= playerRight &&
-    bulletBottom >= playerTop &&
-    bulletTop <= playerBottom
+    bullet.x + width / 2 >= player.x - playerHalfWidth &&
+    bullet.x - width / 2 <= player.x + playerHalfWidth &&
+    bullet.y + height / 2 >= player.y - playerHalfHeight &&
+    bullet.y - height / 2 <= player.y + playerHalfHeight
   );
 }
 
@@ -222,7 +216,7 @@ async function handleBulletFired(room, player, gunType) {
   for (const bullet of gun.bullets) {
 
     const bulletdata = {
-      speed: bullet.speed / 2,
+      speed: bullet.speed,
       delay: bullet.delay,
       offset: bullet.offset,
       damage: gun.damage,
@@ -230,9 +224,9 @@ async function handleBulletFired(room, player, gunType) {
       height: gun.height,
       width: gun.width,
       bouncesLeft: gun.maxbounces || 0, // Set initial bounces
-      maxtime: Date.now() + gun.maxexistingtime + bullet.delay,
+      maxtime: Date.now() + gun.maxexistingtime + bullet.delay * 2,
       distance: gun.distance,
-      canbounce: player.can_bullets_bounce, 
+      canbounce: gun.can_bullets_bounce || false, 
       damageconfig: gun.damageconfig || {},
       gunid: gunType
     };

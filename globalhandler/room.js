@@ -651,7 +651,6 @@ function sendBatchedMessages(roomId) {
 if (room.state === "waiting") {
   playerSpecificMessage = {
     rd: newMessage.rd,
-   // sd: selfPlayerData, // Include compact selfPlayerData
   };
 } else {
   playerSpecificMessage = {

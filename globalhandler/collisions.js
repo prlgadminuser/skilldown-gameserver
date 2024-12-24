@@ -122,55 +122,61 @@ function findCollidedWall(grid, x, y, height, width) {
   });
 }
 
+function toRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
 
 function adjustBulletDirection(bullet, wall, wallBlockSize) {
   const halfBlockSize = wallBlockSize / 2;
 
-  // Calculate the differences between the bullet's position and the wall's center
+  // Calculate differences between bullet and wall center
   const deltaX = bullet.x - wall.x;
   const deltaY = bullet.y - wall.y;
 
   let normalAngle;
 
-  // Determine which side of the wall the bullet is hitting
+  // Determine side of collision
   if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    // The bullet is closer to the left or right of the wall
-    if (deltaX < -halfBlockSize) {
+    if (deltaX < 0) {
       normalAngle = 180; // Left side
-    } else if (deltaX > halfBlockSize) {
+    } else {
       normalAngle = 0;   // Right side
     }
   } else {
-    // The bullet is closer to the top or bottom of the wall
-    if (deltaY < -halfBlockSize) {
+    if (deltaY < 0) {
       normalAngle = 90;  // Top side
-    } else if (deltaY > halfBlockSize) {
+    } else {
       normalAngle = 270; // Bottom side
     }
   }
 
-  // Convert angles to radians
-  const incomingAngle = bullet.direction * (Math.PI / 180);
-  const normalAngleRadians = normalAngle * (Math.PI / 180);
+  // Adjust for exact boundary hits
+  const onBoundaryX = Math.abs(deltaX) === halfBlockSize;
+  const onBoundaryY = Math.abs(deltaY) === halfBlockSize;
 
-  // Calculate the reflection angle in radians
-  const reflectionAngleRadians = 2 * normalAngleRadians - incomingAngle;
-
-  // Convert the reflection angle back to degrees
-  let reflectionAngleDegrees = (reflectionAngleRadians * 180) / Math.PI;
-
-  // Normalize the reflection angle to the range -180 to 180
-  if (reflectionAngleDegrees > 180) {
-    reflectionAngleDegrees -= 360;
-  } else if (reflectionAngleDegrees < -180) {
-    reflectionAngleDegrees += 360;
+  if (onBoundaryX && onBoundaryY) {
+    // If on both boundaries (corner), prioritize the closest side or default
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      normalAngle = deltaX < 0 ? 180 : 0;
+    } else {
+      normalAngle = deltaY < 0 ? 90 : 270;
+    }
   }
 
-  // Update bullet direction to the normalized reflection angle
+  // Convert to radians
+  const incomingAngle = toRadians(bullet.direction);
+  const normalAngleRadians = toRadians(normalAngle);
+
+  // Reflect the angle
+  const reflectionAngleRadians = 2 * normalAngleRadians - incomingAngle;
+
+  // Convert back to degrees and normalize
+  let reflectionAngleDegrees = (reflectionAngleRadians * 180) / Math.PI;
+  reflectionAngleDegrees = (reflectionAngleDegrees + 360) % 360;
+
+  // Update bullet direction
   bullet.direction = reflectionAngleDegrees;
 }
-
-
 
 
 module.exports = {

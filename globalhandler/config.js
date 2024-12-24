@@ -268,6 +268,7 @@ const gunsconfig = {
     width: 5,
     height: 5,
     useplayerangle: true,
+    can_bullets_bounce: true,
     bullets: [
       // Shotgun pellets configuration
      // { angle: -8, speed: 25, delay: 0, offset: 0 },
