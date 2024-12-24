@@ -646,15 +646,24 @@ function sendBatchedMessages(roomId) {
    // const eventSender = findNearestCircles(player, room);
 
   
-      const playerSpecificMessage = {
-        pd: player.pd,
-        rd: newMessage.rd,
-        dm: newMessage.dm,
-        ev: player.nearbyitems,
-      //  td: player.team,
-        sd: selfPlayerData, // Include compact selfPlayerData
+      let playerSpecificMessage;
 
-      };
+if (room.state === "waiting") {
+  playerSpecificMessage = {
+    rd: newMessage.rd,
+    sd: selfPlayerData, // Include compact selfPlayerData
+  };
+} else {
+  playerSpecificMessage = {
+    pd: player.pd,
+    rd: newMessage.rd,
+    dm: newMessage.dm,
+    ev: player.nearbyitems,
+    // td: player.team, // Uncomment if needed later
+    sd: selfPlayerData, // Include compact selfPlayerData
+  };
+}
+
 
       const currentMessageHash = generateHash(playerSpecificMessage);
 
