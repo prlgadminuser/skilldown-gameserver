@@ -3,6 +3,7 @@
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { handleElimination } = require('./../playerhandler/eliminated.js')
 const { addKillToKillfeed } = require('./killfeed.js')
+const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
 
 
 const PLAYER_WIDTH = 40;
@@ -59,11 +60,13 @@ function dealDamage(room) {
         player.last_hit_time = new Date().getTime();
         if (1 > player.health) {
 
-          if (1 > player.respawns) {
+          const teamactiveplayers = TeamPlayersActive(room, player)
+
+          if (1 > player.respawns && 2 > teamactiveplayers) {
 
 
 
-            handleElimination(room, player);
+            handleElimination(room, player.team);
          //   addKillToKillfeed(room, "z1", player.nmb, 0, 0, 3);
           } else {
 

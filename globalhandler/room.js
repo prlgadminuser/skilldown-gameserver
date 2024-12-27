@@ -79,6 +79,27 @@ function createRateLimiter() {
   });
 }
 
+function CreateTeams(room) {
+  room.teams = []
+  const numTeams = Math.ceil(room.players.size / room.teamsize);
+  const teams = Array.from({ length: numTeams }, () => []);
+
+  let teamIndex = 0;
+  room.players.forEach((player) => {
+    if (teams[teamIndex].length >= room.teamsize) {
+      teamIndex = (teamIndex + 1) % numTeams;
+    }
+    teams[teamIndex].push(player.playerId);
+    player.team = teams[teamIndex];
+  });
+
+  room.teams = teams
+}
+
+
+      
+      
+
 
 let roomId;
 let room;
@@ -310,6 +331,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
       if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
           roomStateLock.set(roomId, true);
+
+          CreateTeams(room)
 
           try {
 
@@ -801,7 +824,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     showtimer: gmconfig.show_timer,
     gamemode: gamemode,
     winner: -1,
-    eliminatedPlayers: [],
+    eliminatedTeams: [],
     zoneStartX: -mapsconfig[mapid].width, // Example start X coordinate (100 units left of the center)
     zoneStartY: -mapsconfig[mapid].height, // Example start Y coordinate (100 units above the center)
     zoneEndX: mapsconfig[mapid].width,  // Example end X coordinate (100 units right of the center)
@@ -868,7 +891,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
       clearInterval(player.moveInterval)
       clearTimeout(player.timeout)
 
-      if (room.eliminatedPlayers) {
+      if (room.eliminatedTeams) {
         player.ws.close(4100, "matchmaking_timeout");
       }
     });

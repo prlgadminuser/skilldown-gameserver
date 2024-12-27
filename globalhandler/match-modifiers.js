@@ -2,6 +2,9 @@
 
 const { respawnplayer } = require("./../playerhandler/respawn");
 const { handleElimination } = require("./../playerhandler/eliminated.js");
+const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
+
+
 
 // Helper function to decrease health
 function applyHealthDecrease(player, room) {
@@ -10,7 +13,8 @@ function applyHealthDecrease(player, room) {
     player.health -= 5;
 
     if (player.health <= 0) {
-      if (player.respawns > 0) {
+      const teamactiveplayers = TeamPlayersActive(room, player)
+      if (player.respawns > 0 || teamactiveplayers > 1) {
         respawnplayer(room, player);
       } else {
         handleElimination(room, player);

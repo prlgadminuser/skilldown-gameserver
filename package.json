@@ -24,5 +24,6 @@
     "rate-limiter-flexible": "^5.0.4",
     "validator": "^13.12.0",
     "ws": "^8.18.0"
-  }
+  },
+  "devDependencies": {}
 }

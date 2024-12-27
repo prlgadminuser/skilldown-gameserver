@@ -4,7 +4,6 @@ const { SpatialGrid } = require('./../globalhandler/config');
 const chunkradius = 150
 
 
-
 function findNearestCircles(player, room) {
   const grid = room.itemgrid; // Assume room.grid is your SpatialGrid
 

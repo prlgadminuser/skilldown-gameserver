@@ -337,21 +337,38 @@ wss.on("connection", (ws, req) => {
                       
 
                         if (result.room.state === "playing" && result.room.winner === -1) {
-                            let remainingPlayers = Array.from(result.room.players.values()).filter(player => !player.eliminated);
-
-                            if (remainingPlayers.length === 1) {
-                                const winner = remainingPlayers[0];
-
-                                result.room.winner = [
-                                  winner.nmb,
-                                ].join('$');
-
-                                increasePlayerWins(winner.playerId, 1);
-                                increasePlayerPlace(winner.playerId, 1, result.room);
-                                result.room.eliminatedPlayers.push({ username: winner.playerId, place: 1 });
-
-                                result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
+                          let remainingTeams = result.room.teams.filter(team => 
+                            team.some(playerId => {
+                                const player = result.room.players.get(playerId);
+                                return player && !player.eliminated;
+                            })
+                        );
+                      
+                          if (remainingTeams.length === 1) {
+                              const winningTeam = remainingTeams[0];
+                              const activePlayers = winningTeam.filter(playerId => !result.room.players.get(playerId).eliminated);
+                      
+                              if (activePlayers.length === 1) {
+                                  const winner = result.room.players.get(activePlayers[0]);
+                                  result.room.winner = [winner.nmb].join('$');
+                              } else {
+                                  result.room.winner = winningTeam.join('$');
+                              }
+                      
+                              winningTeam.forEach(playerId => {
+                                  const player = result.room.players.get(playerId);
+                                  increasePlayerWins(player.playerId, 1);
+                                  increasePlayerPlace(player.playerId, 1, result.room);
+                              });
+                      
+                              result.room.eliminatedTeams.push({ 
+                                  teamId: winningTeam.join('-'), 
+                                  place: 1 
+                              });
+                      
+                              result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
                           }
+                      
                            
                         }
                         

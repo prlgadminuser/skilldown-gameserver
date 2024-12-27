@@ -5,6 +5,7 @@ const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
 const { player_idle_timeout } = require('./config')
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { addKillToKillfeed } = require('./killfeed.js')
+const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
 //const { handleCoinCollected2 } = require('./room')
 
 
@@ -60,20 +61,6 @@ function handleMovement(player, room) {
   player.lastProcessedPosition = { x: newX, y: newY };
 }
 
-function TeamPlayersActive(room, player) {
-  // Ensure the player's team is defined
-  if (!player.team || player.team.length === 0) {
-      return 0; // Return 0 if the player's team is not valid
-  }
-
-  // Count players in the team who are in state 1
-  const count = player.team.reduce((count, player) => {
-      const teamPlayer = room.players.get(player); // Access the player by their ID
-      return teamPlayer && teamPlayer.state === 1 ? count + 1 : count;
-  }, 0);
-
-  return count;
-}
 
 
 function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid) {
@@ -96,12 +83,12 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
 
   shootingPlayer.hitdata = hit;
 
-  //const teamactiveplayers = TeamPlayersActive(room, player)
+  const teamactiveplayers = TeamPlayersActive(room, targetPlayer)
 
-  if (1 > targetPlayer.health && 1 > targetPlayer.respawns) {
+  if (1 > targetPlayer.health && 1 > targetPlayer.respawns && 2 > teamactiveplayers ) {   // if then completely eliminated
 
     const elimtype = 2;
-    handleElimination(room, targetPlayer);
+    handleElimination(room, targetPlayer.team);
     targetPlayer.eliminator = shootingPlayer.nmb;
     targetPlayer.spectatingTarget = shootingPlayer.playerId;
     shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
