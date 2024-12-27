@@ -655,7 +655,7 @@ function sendBatchedMessages(roomId) {
           player.gun,
           player.kills,
           player.damage,
-          player.place,
+          [player.place, player.skillpoints_inc, player.seasoncoins_inc].join('$'),
           player.eliminator,
           player.canusegadget,
           player.gadgetuselimit,

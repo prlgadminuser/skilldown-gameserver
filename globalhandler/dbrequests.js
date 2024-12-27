@@ -205,6 +205,7 @@ async function increasePlayerWins(playerId, wins2) {
 async function increasePlayerPlace(playerId, place2, room) {
   const username = playerId;
   const place = +place2; 
+  const player = room.players.get(playerId)
 
   if (isNaN(place) || place < 1 || place > 5) {
     return res.status(400).json({ error: "Invalid place provided. Place should be a number between 1 and 5." });
@@ -214,6 +215,8 @@ async function increasePlayerPlace(playerId, place2, room) {
   try {
     const skillpoints = room.place_counts[place - 1];
     const season_coins = room.ss_counts[place - 1];
+    player.skillpoints_inc = skillpoints
+    player.seasoncoins_inc = season_coins
     
 
     const updateResult = await userCollection.updateOne(

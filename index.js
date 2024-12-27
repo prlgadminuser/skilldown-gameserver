@@ -358,7 +358,7 @@ wss.on("connection", (ws, req) => {
                               winningTeam.forEach(playerId => {
                                   const player = result.room.players.get(playerId);
                                   increasePlayerWins(player.playerId, 1);
-                                  increasePlayerPlace(player.playerId, 1, result.room);
+                                  increasePlayerPlace(playerId, 1, result.room);
                               });
                       
                               result.room.eliminatedTeams.push({ 
