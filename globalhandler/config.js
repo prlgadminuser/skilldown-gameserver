@@ -84,7 +84,7 @@ const gamemodeconfig = {
     show_timer: false,
     custom_map: 4,
     healspawner: true,
-    teamsize: 2,
+    teamsize: 1,
    //health_autodamage: true,
   },
   3: {
