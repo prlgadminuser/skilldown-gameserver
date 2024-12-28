@@ -62,7 +62,8 @@ const { UseZone } = require('./zone')
 
 //const { UseZone } = require('./zone');
 
-const { initializeHealingCircles } = require('./../gameObjectEvents/healingcircle.js')
+const { initializeHealingCircles } = require('./../gameObjectEvents/healingcircle')
+const { initializeAnimations } = require('./../gameObjectEvents/deathrespawn')
 const { playerchunkrenderer } = require('./../playerhandler/playerchunks')
 
 const {
@@ -354,6 +355,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
                  // console.log(`Room ${roomId} transitioned to playing state`);
 
                  // StartremoveOldKillfeedEntries(room);
+                  initializeAnimations(room);
                   if (room.healspawner) initializeHealingCircles(room);
                   if (room.zoneallowed) UseZone(room);
                   if (room.regenallowed) startRegeneratingHealth(room, 1);
@@ -714,7 +716,8 @@ if (room.state === "waiting") {
     pd: player.pd,
     rd: newMessage.rd,
     dm: newMessage.dm,
-    ev: player.nearbyitems,
+    cl: player.nearbycircles,
+    an: player.nearbyanimations,
     // td: player.team, // Uncomment if needed later
     sd: selfPlayerData, // Include compact selfPlayerData
   };

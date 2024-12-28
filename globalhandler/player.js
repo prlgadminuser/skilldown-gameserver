@@ -6,6 +6,7 @@ const { player_idle_timeout } = require('./config')
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { addKillToKillfeed } = require('./killfeed.js')
 const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
+const { spawnAnimation } = require('./../gameObjectEvents/deathrespawn')
 //const { handleCoinCollected2 } = require('./room')
 
 
@@ -89,6 +90,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
 
     const elimtype = 2;
     handleElimination(room, targetPlayer.team);
+    spawnAnimation(room, targetPlayer, "death")
     targetPlayer.eliminator = shootingPlayer.nmb;
     targetPlayer.spectatingTarget = shootingPlayer.playerId;
     shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
@@ -113,6 +115,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
 
       targetPlayer.visible = false;
       respawnplayer(room, targetPlayer);
+      spawnAnimation(room, targetPlayer, "respawn")
     }
 }
 
@@ -144,7 +147,10 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
   shootingPlayer.hitdata = hit;
 
   if (dummy.h < 1) {
+    spawnAnimation(room, dummy, "death")
     delete room.dummies[dummyKey];
+
+  
 
     room.timeoutIds.push(setTimeout(() => {
       if (room) {

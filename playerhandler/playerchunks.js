@@ -4,7 +4,7 @@ const { SpatialGrid } = require('./../globalhandler/config');
 const chunkradius = 150
 
 
-function findNearestCircles(player, room) {
+function findNearestEvents(player, room) {
   const grid = room.itemgrid; // Assume room.grid is your SpatialGrid
 
   // Define the search area around the player (radius search area)
@@ -15,20 +15,39 @@ function findNearestCircles(player, room) {
   const yMax = player.y + searchRadius;
 
   // Get all objects (circles) in the area
+
+  const formatted = {};
+
   const objectsInArea = grid.getObjectsInArea(xMin, xMax, yMin, yMax);
 
   // Filter and map the circles in the area
-  
-  const eventSender = objectsInArea
-  .filter(obj => obj.id === "circle") // Ensure we're only dealing with circles
+  const circles = objectsInArea
+  .filter(obj => obj.id === "circle")
   .map(circle => [
     circle.type,
     circle.x,
     circle.y,
     circle.radius
   ].join(':'));
-  return eventSender;
+
+  const animations = {};
+  objectsInArea
+    .filter(obj => obj.id === "death" || obj.id === "respawn")
+    .forEach(obj => {
+      animations[`${obj.obj_id}`] = [
+        obj.id,
+        obj.x,
+        obj.y
+      ].join(":");
+    });
+
+// Assign the results to the player
+player.nearbycircles = circles;
+player.nearbyanimations = animations;
 }
+
+
+
 
 function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
   const playersInRange = new Set(); // Initialize an empty Set
@@ -80,7 +99,8 @@ function UpdatePlayerChunks(room, player) {
 
     player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
-    player.nearbyitems = findNearestCircles(player, room)
+     
+   findNearestEvents(player, room)  
 
     player.nearbyplayers = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 400);
 

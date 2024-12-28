@@ -100,7 +100,7 @@ const gamemodeconfig = {
     placereward: [0],
     seasoncoinsreward: [0],
     show_timer: false,
-    healspawner: false,
+    healspawner: true,
     custom_map: 3,
     teamsize: 1,
    //health_autodamage: true,

@@ -14,12 +14,16 @@ function spawnHealingCircle(room) {
   // Choose a random active player as the center of the circle
   const randomPlayer = activePlayers[Math.floor(Math.random() * activePlayers.length)];
 
-   // Generate random coordinates within the map boundaries
-   const randomX = Math.floor(Math.random() * (room.mapWidth * 2 + 1)) - room.mapWidth // Random X between -mapWidth/2 and mapWidth/2
-  const randomY = Math.floor(Math.random() * (room.mapHeight * 2 + 1)) - room.mapHeight// Random Y between -mapHeight/2 and mapHeight/2
+  // Generate random coordinates around the player within a certain range
+const offsetX = Math.floor(Math.random() * 101) - 50; // Random offset between -50 and 50
+ const offsetY = Math.floor(Math.random() * 101) - 50; // Random offset between -50 and 50
+  const randomX = randomPlayer.x + offsetX;
+ const randomY = randomPlayer.y + offsetY;
 
-  //x: randomPlayer.x,          // Center x-coordinate
- // y: randomPlayer.y,
+  //const randomX = Math.floor(Math.random() * (room.mapWidth * 2 + 1)) - room.mapWidth // Random X between -mapWidth/2 and mapWidth/2
+  //const randomY = Math.floor(Math.random() * (room.mapHeight * 2 + 1)) - room.mapHeight// Random Y between -mapHeight/2 and mapHeight/2
+
+
 
 
   // Define a new healing circle object
@@ -121,7 +125,7 @@ function initializeHealingCircles(room) {
   // Spawn a new healing circle every 30 seconds
   room.intervalIds.push(setInterval(() => {
     spawnHealingCircle(room);
-  }, 15000));
+  }, 1500));
 
   // Update healing circles at a regular interval (e.g., 250ms)
   room.intervalIds.push(setInterval(() => {
