@@ -21,31 +21,22 @@ function shrinkZone(room) {
 
   if (room.zoneEndX > 2 && room.zoneEndY > 2) {
 
-    dealDamage(room);
+    const shrinkspeed = room.zonespeed / 10000
 
-    const shrinkspeed = room.zonespeed / 1000
+    room.zoneStartX += shrinkspeed * room.mapHeight;
+    room.zoneStartY += shrinkspeed * room.mapWidth;
+    room.zoneEndX -= shrinkspeed * room.mapHeight;
+    room.zoneEndY -= shrinkspeed * room.mapWidth;
 
-    room.zoneStartX += shrinkspeed * room.mapWidth;
-    room.zoneStartY += shrinkspeed * room.mapHeight;
-    room.zoneEndX -= shrinkspeed * room.mapWidth;
-    room.zoneEndY -= shrinkspeed * room.mapHeight;
-
-    room.zoneStartX = Math.round(room.zoneStartX);
-    room.zoneStartY = Math.round(room.zoneStartY);
-    room.zoneEndX = Math.round(room.zoneEndX);
-    room.zoneEndY = Math.round(room.zoneEndY);
 
        const zonedata = [
-      room.zoneStartX,
-      room.zoneStartY,
-      room.zoneEndX,
-      room.zoneEndY,
+        Math.round(room.zoneStartX),
+        Math.round(room.zoneStartY),
+          Math.round(room.zoneEndX),
+            Math.round(room.zoneEndY),
     ].join('$');
 
     room.zone = zonedata;
-
-  } else {
-    dealDamage(room);
   }
 }
 
@@ -112,7 +103,9 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2
   room.zoneEndY += room.mapHeight / 2
 
-  room.shrinkInterval = room.intervalIds.push(setInterval(() => shrinkZone(room), 250));
+  room.shrinkInterval = room.intervalIds.push(setInterval(() => shrinkZone(room), 33));
+
+  room.damageInterval = room.intervalIds.push(setInterval(() =>  dealDamage(room), 1000));
   /* pingPlayers(room);
  
    room.snapInterval = setInterval(() => {
