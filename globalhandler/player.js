@@ -68,9 +68,10 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
 
   //const GUN_BULLET_DAMAGE = Math.round(damage / shootdamagereduce);
 
-  const GUN_BULLET_DAMAGE = damage
+  const GUN_BULLET_DAMAGE = Math.min(damage, targetPlayer.health);
 
   targetPlayer.health -= GUN_BULLET_DAMAGE;
+ 
   shootingPlayer.damage += GUN_BULLET_DAMAGE;
   targetPlayer.last_hit_time = new Date().getTime();
 

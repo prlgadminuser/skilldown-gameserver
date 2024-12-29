@@ -3,10 +3,10 @@
 const batchedMessages = new Map();
 const rooms = new Map();
 
-const gridcellsize = 50; 
+const gridcellsize = 100; 
 
 const server_tick_rate = 17 //17
-const matchmaking_timeout = 1200000
+const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
 const game_start_time = 5000
 const game_win_rest_time = 10000

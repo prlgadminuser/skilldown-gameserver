@@ -57,7 +57,7 @@ function initializeAnimations(room) {
   // Update animations at a regular interval (e.g., 250ms)
   room.intervalIds.push(setInterval(() => {
     updateAnimations(250, room);
-  }, 250));
+  }, 500));
 }
 
 module.exports = {

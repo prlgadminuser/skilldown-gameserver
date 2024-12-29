@@ -335,6 +335,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
           CreateTeams(room)
 
+          clearTimeout(room.matchmaketimeout);
+
           try {
 
             room.state = "await";
@@ -887,7 +889,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
  // console.log("room created:", roomId)
 
   room.matchmaketimeout = setTimeout(() => {
-
+    
 
     room.players.forEach((player) => {
 
