@@ -81,20 +81,48 @@ function createRateLimiter() {
 }
 
 function CreateTeams(room) {
-  room.teams = []
+
+  if (!room.players || room.players.size === 0) return;
+  room.teams = [];
+
+  // Define team IDs (add more if needed)
+  const teamIDs = ["Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink", "Cyan"];
+
+  // Calculate the number of teams needed
   const numTeams = Math.ceil(room.players.size / room.teamsize);
   const teams = Array.from({ length: numTeams }, () => []);
 
   let teamIndex = 0;
+
+  // Assign players to teams
   room.players.forEach((player) => {
     if (teams[teamIndex].length >= room.teamsize) {
       teamIndex = (teamIndex + 1) % numTeams;
     }
-    teams[teamIndex].push(player.playerId);
-    player.team = teams[teamIndex];
+    teams[teamIndex].push({ playerId: player.playerId, nmb: player.nmb });
+    // Assign the player's team, including teamId
+    player.team = {
+      teamId: teamIDs[teamIndex] || `Team-${teamIndex + 1}`,
+      players: teams[teamIndex],
+    };
   });
 
-  room.teams = teams
+  // Assign team IDs to each team
+  room.teams = teams.map((team, index) => ({
+    id: teamIDs[index] || `Team-${index + 1}`, // Use a default name if IDs are exhausted
+    players: team,
+  }));
+}
+
+
+function getPlayersTeamNmbs(room, nmb) {
+  for (const team of room.teams) {
+    if (team.players.some(player => player.nmb === nmb)) {
+      // Return only the `nmb` values of the players in this team
+      return team.players.map(player => player.nmb);
+    }
+  }
+  return []; // Return an empty array if the player's team is not found
 }
 
 
@@ -720,7 +748,8 @@ if (room.state === "waiting") {
     dm: newMessage.dm,
     cl: player.nearbycircles,
     an: player.nearbyanimations,
-    // td: player.team, // Uncomment if needed later
+    td: player.team.players.map(player => player.nmb),
+    tid: player.team.teamId,
     sd: selfPlayerData, // Include compact selfPlayerData
   };
 }

@@ -337,40 +337,47 @@ wss.on("connection", (ws, req) => {
                       
 
                         if (result.room.state === "playing" && result.room.winner === -1) {
+                          // Get all remaining teams that have at least one active player
                           let remainingTeams = result.room.teams.filter(team => 
-                            team.some(playerId => {
-                                const player = result.room.players.get(playerId);
-                                return player && !player.eliminated;
+                            team.players.some(playerObj => {
+                              const player = result.room.players.get(playerObj.playerId);
+                              return player && !player.eliminated;
                             })
-                        );
-                      
+                          );
+                        
+                          // If only one team remains
                           if (remainingTeams.length === 1) {
-                              const winningTeam = remainingTeams[0];
-                              const activePlayers = winningTeam.filter(playerId => !result.room.players.get(playerId).eliminated);
-                      
-                              if (activePlayers.length === 1) {
-                                  const winner = result.room.players.get(activePlayers[0]);
-                                  result.room.winner = [winner.nmb].join('$');
-                              } else {
-                                  result.room.winner = winningTeam.join('$');
-                              }
-                      
-                              winningTeam.forEach(playerId => {
-                                  const player = result.room.players.get(playerId);
-                                  increasePlayerWins(player.playerId, 1);
-                                  increasePlayerPlace(playerId, 1, result.room);
-                              });
-                      
-                              result.room.eliminatedTeams.push({ 
-                                  teamId: winningTeam.join('-'), 
-                                  place: 1 
-                              });
-                      
-                              result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
+                            const winningTeam = remainingTeams[0];
+                            const activePlayers = winningTeam.players.filter(playerObj => 
+                              !result.room.players.get(playerObj.playerId).eliminated
+                            );
+                        
+                            // If only one active player is left in the winning team
+                            if (activePlayers.length === 1) {
+                              const winner = result.room.players.get(activePlayers[0].playerId);
+                              result.room.winner = [winner.nmb].join('$');
+                            } else {
+                              result.room.winner = winningTeam.id; // Set winner by team ID
+                            }
+                        
+                            // Awarding victory to all players in the winning team
+                            winningTeam.players.forEach(playerObj => {
+                              const player = result.room.players.get(playerObj.playerId);
+                              increasePlayerWins(player.playerId, 1);
+                              increasePlayerPlace(player.playerId, 1, result.room);
+                            });
+                        
+                            // Add the winning team to eliminated teams with place 1
+                            result.room.eliminatedTeams.push({
+                              teamId: winningTeam.id, 
+                              place: 1
+                            });
+                        
+                            // End the game after a short delay
+                            result.room.timeoutIds.push(setTimeout(() => endGame(result.room), game_win_rest_time));
                           }
-                      
-                           
                         }
+                        
                         
                     }
                    

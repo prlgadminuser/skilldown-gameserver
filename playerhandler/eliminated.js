@@ -14,7 +14,7 @@ function handleElimination(room, team) {
     }
 
     // Calculate team's place based on remaining teams at the time of elimination
-    const remainingActiveTeams = room.teams.filter(t => t.some(playerId => !room.players.get(playerId).eliminated)).length;
+    const remainingActiveTeams = room.teams.filter(t => t.players.some(player => !player.eliminated)).length;
     const teamPlace = room.teams.length - room.eliminatedTeams.length;
 
     // Ensure no duplicate places
@@ -49,43 +49,43 @@ function handleElimination(room, team) {
         }
     });
 
+    // Add the eliminated team to the list with its place
     room.eliminatedTeams.push({
-        teamId: team.join('-'), // Create a unique team identifier
+        teamId: team.join('-'), // Create a unique team identifier (based on player IDs)
         place: adjustedPlace,
     });
 
     // Check if game should end
-    if (room.teams.every(t => t.every(playerId => {
-        const player = room.players.get(playerId);
-        return !player || !player.visible;
-    }))) {
+    if (room.teams.every(t => t.players.every(player => player.eliminated || !player.visible))) {
         room.timeoutIds.push(setTimeout(() => {
             endGame(room);
         }, game_win_rest_time));
     }
+
     // Check if only one team remains
-    const remainingTeams = room.teams.filter(t => t.some(playerId => !room.players.get(playerId).eliminated));
+    const remainingTeams = room.teams.filter(t => t.players.some(player => !player.eliminated));
     if (remainingTeams.length === 1) {
         const winningTeam = remainingTeams[0];
-        
-        // Check if winning team has only one player
-        const activePlayers = winningTeam.filter(playerId => !room.players.get(playerId).eliminated);
+
+        // Check if winning team has only one active player
+        const activePlayers = winningTeam.players.filter(player => !player.eliminated);
         if (activePlayers.length === 1) {
-            const remainingPlayer = room.players.get(activePlayers[0]);
-            room.winner = [remainingPlayer.nmb].join('$');
+            const remainingPlayer = activePlayers[0];
+            room.winner = remainingPlayer.nmb; // Winner is the player with no eliminations
         } else {
-            room.winner = winningTeam.join('$');
+            room.winner = winningTeam.id; // Multiple players in the team
         }
 
-        winningTeam.forEach(playerId => {
-            const player = room.players.get(playerId);
+        // Mark winning players with place 1
+        winningTeam.players.forEach(player => {
             player.place = 1; // Set place to 1 for winning team players
-            increasePlayerWins(playerId, 1);
-            increasePlayerPlace(playerId, 1, room);
+            increasePlayerWins(player.playerId, 1);
+            increasePlayerPlace(player.playerId, 1, room);
         });
 
+        // Add the winning team to the eliminatedTeams array with place 1
         room.eliminatedTeams.push({
-            teamId: winningTeam.join('-'),
+            teamId: winningTeam.players.map(player => player.playerId).join('-'),
             place: 1,
         });
 
@@ -94,6 +94,7 @@ function handleElimination(room, team) {
         }, game_win_rest_time));
     }
 }
+
 
 module.exports = {
     handleElimination,

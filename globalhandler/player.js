@@ -65,62 +65,62 @@ function handleMovement(player, room) {
 
 
 function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid) {
-
-  //const GUN_BULLET_DAMAGE = Math.round(damage / shootdamagereduce);
-
+  // Ensure damage doesn't exceed the target player's remaining health
   const GUN_BULLET_DAMAGE = Math.min(damage, targetPlayer.health);
 
+  // Apply damage to the target player and update shooting player's total damage
   targetPlayer.health -= GUN_BULLET_DAMAGE;
- 
   shootingPlayer.damage += GUN_BULLET_DAMAGE;
+
+  // Record the time of the hit for the target player
   targetPlayer.last_hit_time = new Date().getTime();
 
+  // Create hit data to send back to the shooting player
   const hit = [
     targetPlayer.x,
     targetPlayer.y,
-    Math.random().toString(36).substring(2, 7),
-    //new Date().getTime(),
+    Math.random().toString(36).substring(2, 7), // Random hit ID
     GUN_BULLET_DAMAGE,
   ].join('$');
 
   shootingPlayer.hitdata = hit;
 
-  const teamactiveplayers = TeamPlayersActive(room, targetPlayer)
+  // Get the number of active players in the target player's team
+  const teamActivePlayers = TeamPlayersActive(room, targetPlayer);
 
-  if (1 > targetPlayer.health && 1 > targetPlayer.respawns && 2 > teamactiveplayers ) {   // if then completely eliminated
+  // If the target player is completely eliminated (health <= 0, no respawns left, and no active teammates)
+  if (targetPlayer.health <= 0 && targetPlayer.respawns <= 0 && teamActivePlayers <= 1) {
+    const elimType = 2; // Type 2 for complete elimination
+    handleElimination(room, targetPlayer.team); // Eliminate the team
+    spawnAnimation(room, targetPlayer, "death"); // Show death animation
 
-    const elimtype = 2;
-    handleElimination(room, targetPlayer.team);
-    spawnAnimation(room, targetPlayer, "death")
-    targetPlayer.eliminator = shootingPlayer.nmb;
-    targetPlayer.spectatingTarget = shootingPlayer.playerId;
-    shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
-    shootingPlayer.kills += 1
-  //  addKillToKillfeed(room, shootingPlayer.nmb, targetPlayer.nmb, 2, gunid, 2);
+    targetPlayer.eliminator = shootingPlayer.nmb; // Track the player who eliminated
+    targetPlayer.spectatingTarget = shootingPlayer.playerId; // Make the eliminated player spectate the shooter
+    shootingPlayer.elimlast = `${targetPlayer.nmb}$${elimType}`; // Record the elimination details
+    shootingPlayer.kills += 1; // Increase kills for the shooter
 
+    // Delay the reset of last elimination data
     room.timeoutIds.push(setTimeout(() => {
       shootingPlayer.elimlast = null;
     }, 100));
 
-} else {
+  } else if (targetPlayer.health < 1 && targetPlayer.respawns > 0) {
+    // If the target player's health is below 1 and they have respawns left
+    const elimType = 1; // Type 1 for respawnable elimination
+    shootingPlayer.elimlast = `${targetPlayer.nmb}$${elimType}`; // Record the respawn elimination
 
-    if (targetPlayer.health < 1 && targetPlayer.respawns > 0) {
+    // Delay the reset of last elimination data
+    room.timeoutIds.push(setTimeout(() => {
+      shootingPlayer.elimlast = null;
+    }, 100));
 
-      const elimtype = 1;
-      shootingPlayer.elimlast = targetPlayer.nmb + "$" + elimtype;
-   //   addKillToKillfeed(room, shootingPlayer.nmb, targetPlayer.nmb, 1, gunid, 1);
-
-      room.timeoutIds.push(setTimeout(() => {
-        shootingPlayer.elimlast = null;
-      }, 100));
-
-      targetPlayer.visible = false;
-      respawnplayer(room, targetPlayer);
-      spawnAnimation(room, targetPlayer, "respawn")
-    }
+    // Hide the target player and trigger respawn
+    targetPlayer.visible = false;
+    respawnplayer(room, targetPlayer); // Respawn the player
+    spawnAnimation(room, targetPlayer, "respawn"); // Show respawn animation
+  }
 }
 
-}
 
 function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
