@@ -24,7 +24,7 @@ function handleElimination(room, team) {
     }
 
     // Set the place for all players in the team before changing their state
-    team.players.forEach(player => {
+    team.forEach(player => {
         const playerObj = room.players.get(player.playerId);
         if (playerObj && !playerObj.eliminated) {
             playerObj.place = adjustedPlace;
@@ -33,7 +33,7 @@ function handleElimination(room, team) {
     });
 
     // Now mark all players in the team as eliminated and change their state
-    team.players.forEach(player => {
+    team.forEach(player => {
         const playerObj = room.players.get(player.playerId);
         if (playerObj && !playerObj.eliminated) {
             playerObj.eliminated = true;
