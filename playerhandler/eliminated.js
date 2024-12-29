@@ -13,7 +13,7 @@ function handleElimination(room, team) {
         return; // Exit if the game is not in playing state or a winner is already declared
     }
 
-    // Calculate team's place based on remaining teams at the time of elimination
+    // Calculate the team's place based on the remaining teams at the time of elimination
     const remainingActiveTeams = room.teams.filter(t => t.players.some(player => !player.eliminated)).length;
     const teamPlace = room.teams.length - room.eliminatedTeams.length;
 
@@ -23,39 +23,39 @@ function handleElimination(room, team) {
         adjustedPlace++;
     }
 
-    // Set place for all players in the team before changing their state
-    team.forEach(playerId => {
-        const player = room.players.get(playerId);
-        if (player && !player.eliminated) {
-            player.place = adjustedPlace;
-            increasePlayerPlace(playerId, adjustedPlace, room);
+    // Set the place for all players in the team before changing their state
+    team.players.forEach(player => {
+        const playerObj = room.players.get(player.playerId);
+        if (playerObj && !playerObj.eliminated) {
+            playerObj.place = adjustedPlace;
+            increasePlayerPlace(playerObj.playerId, adjustedPlace, room);
         }
     });
 
     // Now mark all players in the team as eliminated and change their state
-    team.forEach(playerId => {
-        const player = room.players.get(playerId);
-        if (player && !player.eliminated) {
-            player.eliminated = true;
-            player.visible = false;
-            player.state = 3;
+    team.players.forEach(player => {
+        const playerObj = room.players.get(player.playerId);
+        if (playerObj && !playerObj.eliminated) {
+            playerObj.eliminated = true;
+            playerObj.visible = false;
+            playerObj.state = 3;
 
-            clearInterval(player.moveInterval);
-            clearTimeout(player.timeout);
+            clearInterval(playerObj.moveInterval);
+            clearTimeout(playerObj.timeout);
 
             room.timeoutIds.push(setTimeout(() => {
-                startSpectatingLogic(player, room);
+                startSpectatingLogic(playerObj, room);
             }, 3000));
         }
     });
 
     // Add the eliminated team to the list with its place
     room.eliminatedTeams.push({
-        teamId: team.join('-'), // Create a unique team identifier (based on player IDs)
+        teamId: team.id, // Using the team ID (teamId) instead of player IDs
         place: adjustedPlace,
     });
 
-    // Check if game should end
+    // Check if the game should end (no players or all are invisible)
     if (room.teams.every(t => t.players.every(player => player.eliminated || !player.visible))) {
         room.timeoutIds.push(setTimeout(() => {
             endGame(room);
@@ -67,7 +67,7 @@ function handleElimination(room, team) {
     if (remainingTeams.length === 1) {
         const winningTeam = remainingTeams[0];
 
-        // Check if winning team has only one active player
+        // Check if the winning team has only one active player
         const activePlayers = winningTeam.players.filter(player => !player.eliminated);
         if (activePlayers.length === 1) {
             const remainingPlayer = activePlayers[0];
@@ -76,16 +76,17 @@ function handleElimination(room, team) {
             room.winner = winningTeam.id; // Multiple players in the team
         }
 
-        // Mark winning players with place 1
+        // Mark the winning players with place 1
         winningTeam.players.forEach(player => {
-            player.place = 1; // Set place to 1 for winning team players
-            increasePlayerWins(player.playerId, 1);
-            increasePlayerPlace(player.playerId, 1, room);
+            const playerObj = room.players.get(player.playerId);
+            playerObj.place = 1; // Set place to 1 for winning team players
+            increasePlayerWins(playerObj.playerId, 1);
+            increasePlayerPlace(playerObj.playerId, 1, room);
         });
 
         // Add the winning team to the eliminatedTeams array with place 1
         room.eliminatedTeams.push({
-            teamId: winningTeam.players.map(player => player.playerId).join('-'),
+            teamId: winningTeam.id, // Use the team ID for the winner
             place: 1,
         });
 
@@ -94,6 +95,7 @@ function handleElimination(room, team) {
         }, game_win_rest_time));
     }
 }
+
 
 
 module.exports = {
