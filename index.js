@@ -339,9 +339,9 @@ wss.on("connection", (ws, req) => {
                         if (result.room.state === "playing" && result.room.winner === -1) {
                           // Get all remaining teams that have at least one active player
                           let remainingTeams = result.room.teams.filter(team => 
-                            team.some(player => {
-                                const player = result.room.players.get(player.playerId);
-                                return player && !player.eliminated;
+                            team.some(playerId => {
+                                const player1 = result.room.players.get(playerId.playerId);
+                                return player1 && !player.eliminated;
                             })
                         );
 
