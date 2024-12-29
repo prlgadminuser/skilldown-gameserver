@@ -38,31 +38,31 @@ function handleElimination(room, team) {
         if (playerObj && !playerObj.eliminated) {
             playerObj.eliminated = true;
             playerObj.visible = false;
-            playerObj.state = 3;
+            playerObj.state = 3; // Mark as eliminated (spectator state)
 
             clearInterval(playerObj.moveInterval);
             clearTimeout(playerObj.timeout);
 
             room.timeoutIds.push(setTimeout(() => {
-                startSpectatingLogic(playerObj, room);
+                startSpectatingLogic(playerObj, room); // Start spectating after a short delay
             }, 3000));
         }
     });
 
     // Add the eliminated team to the list with its place
     room.eliminatedTeams.push({
-        teamId: team.id, // Using the team ID (teamId) instead of player IDs
+        teamId: team.id, // Using the team ID instead of player IDs for the team identifier
         place: adjustedPlace,
     });
 
-    // Check if the game should end (no players or all are invisible)
+    // Check if the game should end (all players from all teams are either eliminated or invisible)
     if (room.teams.every(t => t.players.every(player => player.eliminated || !player.visible))) {
         room.timeoutIds.push(setTimeout(() => {
-            endGame(room);
+            endGame(room); // End the game after a short delay
         }, game_win_rest_time));
     }
 
-    // Check if only one team remains
+    // Check if only one team remains with active players
     const remainingTeams = room.teams.filter(t => t.players.some(player => !room.players.get(player.playerId).eliminated));
     if (remainingTeams.length === 1) {
         const winningTeam = remainingTeams[0];
@@ -91,11 +91,10 @@ function handleElimination(room, team) {
         });
 
         room.timeoutIds.push(setTimeout(() => {
-            endGame(room);
+            endGame(room); // End the game after a short delay
         }, game_win_rest_time));
     }
 }
-
 
 
 module.exports = {

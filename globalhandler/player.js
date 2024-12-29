@@ -91,7 +91,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
   // If the target player is completely eliminated (health <= 0, no respawns left, and no active teammates)
   if (targetPlayer.health <= 0 && targetPlayer.respawns <= 0 && teamActivePlayers <= 1) {
     const elimType = 2; // Type 2 for complete elimination
-    handleElimination(room, targetPlayer.team); // Eliminate the team
+    handleElimination(room, targetPlayer.team.players); // Eliminate the team (team.players has player objects)
     spawnAnimation(room, targetPlayer, "death"); // Show death animation
 
     targetPlayer.eliminator = shootingPlayer.nmb; // Track the player who eliminated
@@ -120,6 +120,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
     spawnAnimation(room, targetPlayer, "respawn"); // Show respawn animation
   }
 }
+
 
 
 function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
