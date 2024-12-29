@@ -338,18 +338,13 @@ wss.on("connection", (ws, req) => {
 
                         if (result.room.state === "playing" && result.room.winner === -1) {
                           // Get all remaining teams that have at least one active player
-                          let remainingTeams = result.room.teams.filter(team => 
-                            team.players.some(playerObj => {
-                              const player = result.room.players.get(playerObj.playerId);
-                              return player && !player.eliminated;
-                            })
-                          );
+                          let remainingTeams = result.room.teams.filter(t => t.players.some(player => !result.room.players.get(player.playerId).eliminated));
                         
                           // If only one team remains
                           if (remainingTeams.length === 1) {
                             const winningTeam = remainingTeams[0];
-                            const activePlayers = winningTeam.players.filter(playerObj => 
-                              !result.room.players.get(playerObj.playerId).eliminated
+                            const activePlayers = winningTeam.players.filter(player => 
+                              !result.room.players.get(player.playerId).eliminated
                             );
                         
                             // If only one active player is left in the winning team
@@ -361,8 +356,8 @@ wss.on("connection", (ws, req) => {
                             }
                         
                             // Awarding victory to all players in the winning team
-                            winningTeam.players.forEach(playerObj => {
-                              const player = result.room.players.get(playerObj.playerId);
+                            winningTeam.players.forEach(player => {
+                              const player = result.room.players.get(player.playerId);
                               increasePlayerWins(player.playerId, 1);
                               increasePlayerPlace(player.playerId, 1, result.room);
                             });

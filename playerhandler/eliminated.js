@@ -63,12 +63,12 @@ function handleElimination(room, team) {
     }
 
     // Check if only one team remains
-    const remainingTeams = room.teams.filter(t => t.players.some(player => !player.eliminated));
+    const remainingTeams = room.teams.filter(t => t.players.some(player => !room.players.get(player.playerId).eliminated));
     if (remainingTeams.length === 1) {
         const winningTeam = remainingTeams[0];
 
         // Check if the winning team has only one active player
-        const activePlayers = winningTeam.players.filter(player => !player.eliminated);
+        const activePlayers = winningTeam.players.filter(player => !room.players.get(player.playerId).eliminated);
         if (activePlayers.length === 1) {
             const remainingPlayer = activePlayers[0];
             room.winner = remainingPlayer.nmb; // Winner is the player with no eliminations
