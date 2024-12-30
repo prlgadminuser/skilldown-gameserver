@@ -3,7 +3,7 @@ function addKillToKillfeed(room, type, killer, target, gunid) {
 
   let entryMessage;
 
-switch (messagetype) {
+switch (type) {
   case '1': // eliminated
     entryMessage = `${killer}$${type}$${target}$${gunid}`;
     break;
