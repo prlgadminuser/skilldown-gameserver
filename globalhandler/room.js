@@ -375,7 +375,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
           roomStateLock.set(roomId, true);
 
-          let playerNumberID = 0; // Start with player number 0
+          let playerNumberID = 1; // Start with player number 0
     
           // Iterate over each player in the room's players collection
           room.players.forEach((player) => {
