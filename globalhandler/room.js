@@ -102,15 +102,22 @@ function CreateTeams(room) {
     teams[teamIndex].push({ playerId: player.playerId, nmb: player.nmb });
     // Assign the player's team, including teamId
     player.team = {
-      teamId: teamIDs[teamIndex] || `Team-${teamIndex + 1}`,
+      id: teamIDs[teamIndex] || `Team-${teamIndex + 1}`,
       players: teams[teamIndex],
     };
+
+  player.teamdata = [
+
+  player.team.players.map(player => player.nmb),
+  player.team.id]//.join('$')
+
   });
 
   // Assign team IDs to each team
   room.teams = teams.map((team, index) => ({
     id: teamIDs[index] || `Team-${index + 1}`, // Use a default name if IDs are exhausted
     players: team,
+    score: 0,
   }));
 }
 
@@ -270,24 +277,24 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       const playerRateLimiter = createRateLimiter();
 
       // Determine spawn position index
-      const playerNumberID = room.currentplayerid;
-      room.currentplayerid += 1
-      const spawnPositions = room.spawns;
-      const spawnIndex = playerNumberID % spawnPositions.length;
+    //  const playerNumberID = room.currentplayerid;
+     // room.currentplayerid += 1
+    //  const spawnPositions = room.spawns;
+    //  const spawnIndex = playerNumberID % spawnPositions.length;
 
       const newPlayer = {
           ws,
           lastmsg: 0,
           intervalIds: [],
           timeoutIds: [],
-          x: spawnPositions[spawnIndex].x,
-          y: spawnPositions[spawnIndex].y,
+      //    x: spawnPositions[spawnIndex].x,
+      //    y: spawnPositions[spawnIndex].y,
           direction: null,
           prevX: 0,
           prevY: 0,
-          lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-          startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-          nmb: playerNumberID,
+       //   lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
+     //     startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
+        //  nmb: playerNumberID,
           playerId: playerId,
           spectateid: 0,
           nickname: finalnickname,
@@ -361,8 +368,36 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
           roomStateLock.set(roomId, true);
 
-          CreateTeams(room)
+          let playerNumberID = 0; // Start with player number 0
+    
+          // Iterate over each player in the room's players collection
+          room.players.forEach((player) => {
+              // Set the player's unique number (nmb)
+              player.nmb = playerNumberID;
+              
+              // Set the player's spawn position (lastProcessedPosition and startspawn)
+              const spawnPositions = room.spawns;
+              const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
 
+              player.x = spawnPositions[spawnIndex].x,
+              player.y = spawnPositions[spawnIndex].y,
+      
+              // Assign the spawn position to the player
+              player.lastProcessedPosition = { 
+                  x: spawnPositions[spawnIndex].x, 
+                  y: spawnPositions[spawnIndex].y 
+              };
+              player.startspawn = { 
+                  x: spawnPositions[spawnIndex].x, 
+                  y: spawnPositions[spawnIndex].y 
+              };
+      
+              // Increment the player number for the next player
+              playerNumberID++;
+          });
+
+          CreateTeams(room)
+          
           clearTimeout(room.matchmaketimeout);
 
           try {
@@ -373,6 +408,21 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
                     roomStateLock.delete(roomId);
                     return;
                 }
+
+                if (room.matchtype === "td") {
+
+                  const t1 = room.teams[0];
+                  const t2 = room.teams[1];
+              
+                  room.scoreboard = [
+                     t1.id,
+                     t1.score,
+                     t2.id,
+                     t2.score,
+                  ].join('$')
+              
+                }
+              
 
               playerchunkrenderer(room)
               room.state = "countdown";
@@ -748,8 +798,8 @@ if (room.state === "waiting") {
     dm: newMessage.dm,
     cl: player.nearbycircles,
     an: player.nearbyanimations,
-    td: player.team.players.map(player => player.nmb),
-    tid: player.team.teamId,
+    td: player.teamdata,
+    sb: room.scoreboard,
     sd: selfPlayerData, // Include compact selfPlayerData
   };
 }
@@ -877,8 +927,12 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     regenallowed: gmconfig.health_restore,
     healthdecrease: gmconfig.health_autodamage,
     healspawner: gmconfig.healspawner,
+    matchtype: gmconfig.matchtype
 
   };
+
+ 
+
 
   room.xcleaninterval = setInterval(() => {
     if (room) {
@@ -978,6 +1032,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
     }, 1000));
   }
 
+  console.log("Room",room.roomId,"created")
   return room;
 }
 
@@ -1049,7 +1104,7 @@ function handleRequest(result, message) {
       break;
   }
 
-  if (result.room.state !== "playing" || player.visible === false || player.eliminated) return;
+  if (result.room.state !== "playing" || player.visible === false || player.eliminated || !result.room.winner === -1) return;
 
   switch (data.type) {
     case "shoot":

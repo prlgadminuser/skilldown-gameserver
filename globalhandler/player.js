@@ -1,5 +1,6 @@
 "use strict";
 
+
 const { isCollisionWithWalls, isCollisionWithCachedWalls } = require('./collisions');
 const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
 const { player_idle_timeout } = require('./config')
@@ -18,6 +19,9 @@ const {
   mapsconfig,
 } = require('./config');
 const { handleElimination } = require('../playerhandler/eliminated');
+
+const { updateTeamScore } = require('./../teamfighthandler/changescore')
+
 
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
@@ -116,7 +120,11 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
 
     // Hide the target player and trigger respawn
     targetPlayer.visible = false;
+
     respawnplayer(room, targetPlayer); // Respawn the player
+    if (room.matchtype === "td"){
+      updateTeamScore(room, shootingPlayer, 1)
+    }
     spawnAnimation(room, targetPlayer, "respawn"); // Show respawn animation
   }
 }
@@ -150,6 +158,8 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
   if (dummy.h < 1) {
     spawnAnimation(room, dummy, "death")
+  
+
     delete room.dummies[dummyKey];
 
   

@@ -7,7 +7,7 @@ function TeamPlayersActive(room, player) {
   let count = 0;
 
   // Loop through the teams and find the team to which the player belongs
-  const team = room.teams.find(t => t.id === player.team.teamId); // Access the team using teamId
+  const team = room.teams.find(t => t.id === player.team.id); // Access the team using teamId
   if (!team) {
     return 0; // Return 0 if the team is not found
   }
