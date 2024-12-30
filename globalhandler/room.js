@@ -106,12 +106,17 @@ function CreateTeams(room) {
       players: teams[teamIndex],
     };
 
-  player.teamdata = [
+ // Extract the player numbers from the team players
+ const playerIds = player.team.players.map(player => player.nmb);
 
-  player.team.players.map(player => player.nmb),
-  player.team.id]//.join('$')
-
-  });
+ // Get the team ID
+ const teamId = player.team.id;
+ 
+ // Combine the data into a structured object
+ player.teamdata = {
+   id: playerIds,  // Array of player IDs
+   tid: teamId     // Team ID
+ };
 
   // Assign team IDs to each team
   room.teams = teams.map((team, index) => ({
@@ -120,6 +125,7 @@ function CreateTeams(room) {
     score: 0,
   }));
   console.log("D")
+});
 }
 
 
