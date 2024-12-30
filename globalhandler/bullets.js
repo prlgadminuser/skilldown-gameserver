@@ -78,7 +78,7 @@ function moveBullet(room, player, bullet) {
     bullet.x = newX;
     bullet.y = newY;
 
-    if (room.config.canCollideWithPlayers) {
+    if (room.config.canCollideWithPlayers && room.winner === -1) {
 
       const potentialTargets = Array.from(room.players.values()).filter(otherPlayer => 
         otherPlayer !== player &&  // Exclude the player themselves
@@ -87,7 +87,7 @@ function moveBullet(room, player, bullet) {
       );
 
       for (const otherPlayer of potentialTargets) {
-        if (isCollisionWithPlayer(bullet, otherPlayer, height, width && room.winner === -1)) {
+        if (isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
           const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
           let finalDamage
           
