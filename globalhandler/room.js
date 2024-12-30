@@ -119,7 +119,7 @@ function CreateTeams(room) {
     players: team,
     score: 0,
   }));
-	console.log(room.teams)
+  console.log("D")
 }
 
 

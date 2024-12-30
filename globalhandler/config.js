@@ -109,7 +109,7 @@ const gamemodeconfig = {
   },
   4: {
     can_hit_dummies: false,
-    can_hit_players: false,
+    can_hit_players: true,
     maxplayers: 2,
     respawns_allowed: Infinity,
     playerhealth: 100,
