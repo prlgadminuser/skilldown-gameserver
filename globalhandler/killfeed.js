@@ -5,22 +5,22 @@ function addKillToKillfeed(room, type, killer, target, gunid) {
 
 switch (type) {
   case 1: // eliminated
-    entryMessage = `${killer}$${type}$${target}$${gunid}`;
+    entryMessage = `${type}$${killer}$${target}$${gunid}`;
     break;
   case 2: // knocked
-    entryMessage = `${killer}$${type}$${target}$${gunid}`;
+    entryMessage = `${type}$${killer}$${target}$${gunid}`;
     break;
 
   case 3: // eliminated by storm
-    entryMessage = `${target}$${type}`;
+    entryMessage = `${type}$${target}$`;
     break;
 
   case 4: // knocked by storm
-    entryMessage = `${target}$${type}`;
+    entryMessage = `${type}$${target}$`;
     break;
 
   case 5: // left the game
-    entryMessage = `${target}$${type}`;
+    entryMessage = `${type}$${target}$`;
     break;
 
 }
