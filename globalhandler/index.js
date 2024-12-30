@@ -96,7 +96,7 @@ const Limiter = require("limiter").RateLimiter;
 
 process.on("SIGINT", function () {
   mongoose.connection.close(function () {
-    console.log("Mongoose disconnected on app termination");
+   // console.log("Mongoose disconnected on app termination");
     process.exit(0);
   });
 });
@@ -259,7 +259,7 @@ wss.on("connection", (ws, req) => {
 
           if (!(token && token.length < 300 && gamemode in gamemodeconfig)) {
             ws.close(4094, "Unauthorized");
-            console.log("Invalid token or gamemode");
+        //    console.log("Invalid token or gamemode");
             return;
         }
 

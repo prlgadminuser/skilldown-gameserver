@@ -1,9 +1,33 @@
-function addKillToKillfeed(room, killer, target, type, gunid, messagetype) {
+function addKillToKillfeed(room, type, killer, target, gunid) {
   const timestamp = Date.now(); // Get current timestamp (in milliseconds)
+
+  let entryMessage;
+
+switch (messagetype) {
+  case '1': // eliminated
+    entryMessage = `${killer}$${type}$${target}$${gunid}`;
+    break;
+  case '2': // knocked
+    entryMessage = `${killer}$${type}$${target}$${gunid}`;
+    break;
+
+  case '3': // eliminated by storm
+    entryMessage = `${target}$${type} `;
+    break;
+
+  case '4': // knocked by storm
+    entryMessage = `${target}$${type} `;
+    break;
+
+  case '5': // left the game
+    entryMessage = `${target}$${type}`;
+    break;
+
+}
   
   // Create the killfeed entry with a timestamp
   const killEntry = {
-    entry: `${killer}$${target}$${type}$${gunid}$${messagetype}`,
+    entry: entryMessage,
     timestamp: timestamp
   };
 

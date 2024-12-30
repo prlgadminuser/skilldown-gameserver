@@ -96,6 +96,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
   if (targetPlayer.health <= 0 && targetPlayer.respawns <= 0 && teamActivePlayers <= 1) {
     const elimType = 2; // Type 2 for complete elimination
     handleElimination(room, targetPlayer.team.players); // Eliminate the team (team.players has player objects)
+    addKillToKillfeed(room, 1, shootingPlayer.nmb, targetPlayer.nmb, gunid)
     spawnAnimation(room, targetPlayer, "death"); // Show death animation
 
     targetPlayer.eliminator = shootingPlayer.nmb; // Track the player who eliminated
@@ -122,6 +123,7 @@ function handlePlayerCollision(room, shootingPlayer, targetPlayer, damage, gunid
     targetPlayer.visible = false;
 
     respawnplayer(room, targetPlayer); // Respawn the player
+    addKillToKillfeed(room, 2, shootingPlayer.nmb, targetPlayer.nmb, gunid)
     if (room.matchtype === "td"){
       updateTeamScore(room, shootingPlayer, 1)
     }

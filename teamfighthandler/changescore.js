@@ -14,7 +14,7 @@ function updateTeamScore(room, player, points) {
     // Update the team's total score
     team.score += points;
 
-    targetpoints = 5
+    targetpoints = 20
 
 
     const t1 = room.teams[0];
