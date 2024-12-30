@@ -710,7 +710,7 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
-    kf: room.killfeed,
+    kf: room.newkillfeed,
    // ob: eventsender,
     
   };
@@ -901,6 +901,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   const room = {
     currentplayerid: 0,
     killfeed: [],
+    newkillfeed: [],
     itemgrid: itemgrid,
     timeoutIds: [],
     intervalIds: [],
