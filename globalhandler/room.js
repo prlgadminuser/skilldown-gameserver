@@ -638,7 +638,6 @@ function sendBatchedMessages(roomId) {
     room.map,
     room.countdown,
     room.winner,
-    room.killfeed,
   ].join(':');
 
  let playerData = {};
@@ -711,6 +710,7 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
+    kf: room.killfeed,
    // ob: eventsender,
     
   };
@@ -801,6 +801,7 @@ if (room.state === "waiting") {
   playerSpecificMessage = {
     pd: player.pd,
     rd: newMessage.rd,
+    kf: newMessage.kf,
     dm: newMessage.dm,
     cl: player.nearbycircles,
     an: player.nearbyanimations,
