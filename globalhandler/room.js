@@ -328,7 +328,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           place: null,
           shooting: false,
           shoot_direction: 90,
-          loadout: { 1: "1", 2: "4", 3: "2" },
+          loadout: { 1: "1", 2: "4", 3: "3" },
           bullets: new Map(),
           spectatingPlayer: playerId,
           emote: 0,
@@ -642,15 +642,12 @@ function sendBatchedMessages(roomId) {
 
  let playerData = {};
 
-  Array.from(room.players.values()).forEach(player => {
-    if (player.visible !== false) {
-      const formattedBullets = {};
-      player.bullets.forEach(bullet => {
-        formattedBullets[bullet.timestamp] = {
-          x: bullet.x,
-          y: bullet.y,
-          d: Math.round(bullet.direction),
-        };
+ Array.from(room.players.values()).forEach(player => {
+  if (player.visible !== false) {
+    const formattedBullets = {};
+    player.bullets.forEach(bullet => {
+      formattedBullets[bullet.timestamp] = 
+        `${bullet.x}:${bullet.y}:${Math.round(bullet.direction)}:${bullet.gunid}`;
       });
 
       if (room.state === "playing") {
