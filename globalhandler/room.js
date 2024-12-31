@@ -328,7 +328,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
           place: null,
           shooting: false,
           shoot_direction: 90,
-          loadout: { 1: "1", 2: "4", 3: "3" },
+          loadout: { 1: "1", 2: "4", 3: "2" },
           bullets: new Map(),
           spectatingPlayer: playerId,
           emote: 0,
