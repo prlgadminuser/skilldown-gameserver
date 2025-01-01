@@ -439,7 +439,6 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
                   room.state = "playing";
                  // console.log(`Room ${roomId} transitioned to playing state`);
-
                   StartremoveOldKillfeedEntries(room);
                   initializeAnimations(room);
                   if (room.healspawner) initializeHealingCircles(room);
