@@ -28,7 +28,7 @@ function smoothZoneMovement(room) {
   // Calculate current width and height of the zone
  
     // Otherwise, calculate progress based on elapsed time and shrink rate
-  const progress = Math.min(adjustedElapsedTime / (shrinkTime * zonespeed), 1);
+  const progress = Math.min(adjustedElapsedTime / (shrinkTime / 2 * zonespeed), 1);
   
 
     // If not yet at target size, interpolate between the current size and target size
