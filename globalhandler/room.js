@@ -438,6 +438,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
                   if (!rooms.has(roomId)) return;
 
                   room.state = "playing";
+
                  // console.log(`Room ${roomId} transitioned to playing state`);
                   StartremoveOldKillfeedEntries(room);
                   initializeAnimations(room);
@@ -599,6 +600,13 @@ function arraysAreEqual(arr1, arr2) {
 
 
 
+const state_map = {
+  "waiting": 1,
+  "await": 2,
+  "countdown": 3,
+  "playing": 4
+}
+
 
 
 function sendBatchedMessages(roomId) {
@@ -630,7 +638,7 @@ function sendBatchedMessages(roomId) {
   
 
   const roomdata = [
-    room.state,
+    state_map[room.state],
     room.zone,
     room.maxplayers,
     playercountroom,
@@ -649,6 +657,8 @@ function sendBatchedMessages(roomId) {
         `${bullet.x}:${bullet.y}:${Math.round(bullet.direction)}:${bullet.gunid}`;
       });
 
+      const finalbullets = JSON.stringify(formattedBullets)
+
       if (room.state === "playing") {
 
         const currentPlayerData = [
@@ -657,19 +667,18 @@ function sendBatchedMessages(roomId) {
           "",
           "",
           "",
-          player.starthealth,
+          "",//player.starthealth,
           "",
           player.x,
           player.y,
           player.direction2,
           player.health,
-          player.shooting,
+          player.shooting ? 1 : 0,
           player.gun,
-          player.emote,   // Compact bullets or undefined
-          "$b" + JSON.stringify(formattedBullets),
+          player.emote, 
+          !(finalbullets.length === 2) ? "$b" + finalbullets : undefined,  // Compact bullets or undefined
         ].join(':');
 
-        
 
         playerData[player.nmb] = currentPlayerData;
  
@@ -687,10 +696,9 @@ function sendBatchedMessages(roomId) {
           player.y,
           player.direction2,
           player.health,
-          player.shooting,
+          player.shooting ? 1 : 0,
           player.gun,
           player.emote,   // Compact bullets or undefined
-          "$b" + JSON.stringify(formattedBullets),
         ].join(':');
 
         playerData[player.nmb] = currentPlayerData;
@@ -713,10 +721,6 @@ function sendBatchedMessages(roomId) {
 
   const jsonString = JSON.stringify(newMessage);
 
-  if (room/*.lastSentMessage !== jsonString
-    */) {
-    const compressedString = LZString.compressToUint8Array(jsonString);
-
     room.players.forEach(player => {
 
     
@@ -735,13 +739,13 @@ function sendBatchedMessages(roomId) {
           player.nmb,
           player.state,
           player.health,
-          player.shooting,
+          player.shooting ? 1 : 0,
           player.gun,
           player.kills,
           player.damage,
           [player.place, player.skillpoints_inc, player.seasoncoins_inc].join('$'),
           player.eliminator,
-          player.canusegadget,
+          player.canusegadget ? 1 : 0,
           player.gadgetuselimit,
           player.x,
           player.y,
@@ -778,6 +782,7 @@ function sendBatchedMessages(roomId) {
         player.pd = playerData
       } else {
         player.pd = {}
+     
    
       }
     }
@@ -792,28 +797,38 @@ function sendBatchedMessages(roomId) {
 if (room.state === "waiting") {
   playerSpecificMessage = {
     rd: newMessage.rd,
+
   };
 } else {
-  playerSpecificMessage = {
-    pd: player.pd,
-    rd: newMessage.rd,
-    kf: newMessage.kf,
-    dm: newMessage.dm,
-    cl: player.nearbycircles,
-    an: player.nearbyanimations,
-    td: player.teamdata,
-    sb: room.scoreboard,
-    sd: selfPlayerData, // Include compact selfPlayerData
-  };
+  playerSpecificMessage = [
+    { key: 'pd', value: player.pd },
+    { key: 'rd', value: newMessage.rd },
+    { key: 'kf', value: newMessage.kf },
+   { key: 'dm', value: newMessage.dm },
+    { key: 'cl', value: player.nearbycircles },
+    { key: 'an', value: player.nearbyanimations },
+    { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
+    //{ key: 'sb', value: room.scoreboard },
+    { key: 'sd', value: selfPlayerData }
+  ].reduce((acc, { key, value }) => {
+    // Check if value is not null, undefined, an empty array, or an empty object
+    if (value !== null && value !== undefined && 
+        (!Array.isArray(value) || value.length > 0) && 
+        (!(value instanceof Object) || Object.keys(value).length > 0)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+  
 }
-
 
       const currentMessageHash = generateHash(playerSpecificMessage);
 
+      const playermsg = JSON.stringify(playerSpecificMessage)
+
       // Throttle the message sending for performance
       if (player.ws && currentMessageHash !== player.lastMessageHash) {
-        const compressedPlayerMessage = LZString.compressToUint8Array(
-          JSON.stringify(playerSpecificMessage)
+        const compressedPlayerMessage = LZString.compressToUint8Array((playermsg)
         );
         player.ws.send(compressedPlayerMessage, { binary: true });
         player.lastMessageHash = currentMessageHash; // Store the new hash
@@ -822,7 +837,6 @@ if (room.state === "waiting") {
 
   room.lastSentMessage = jsonString
 
-}
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
