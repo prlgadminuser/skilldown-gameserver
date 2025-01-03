@@ -164,7 +164,6 @@ function handleDummyCollision(room, shootingPlayer, dummyKey, damage) {
 
     delete room.dummies[dummyKey];
 
-  
 
     room.timeoutIds.push(setTimeout(() => {
       if (room) {

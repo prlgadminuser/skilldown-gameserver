@@ -19,7 +19,7 @@ function spawnAnimation(room, player, animationType) {
     type: animationType === "death" ? "2" : "3", // Assign unique type values for animations
     x: player.x, // Player's current x-coordinate
     y: player.y, // Player's current y-coordinate
-    duration: 3000, // Duration in milliseconds (3 seconds)
+    duration: 100, // Duration in milliseconds (3 seconds)
     elapsedTime: 0, // Time elapsed since the animation started
   };
 

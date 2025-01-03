@@ -31,15 +31,11 @@ function findNearestEvents(player, room) {
   ].join(':'));
 
   const animations = {};
-  objectsInArea
-    .filter(obj => obj.id === "death" || obj.id === "respawn")
-    .forEach(obj => {
-      animations[`${obj.obj_id}`] = [
-        obj.id,
-        obj.x,
-        obj.y
-      ].join(":");
-    });
+objectsInArea
+  .filter(obj => obj.id === "death" || obj.id === "respawn")
+  .forEach(obj => {
+    animations[obj.obj_id] = `${obj.type}:${obj.x}:${obj.y}`;
+  });
 
 // Assign the results to the player
 player.nearbycircles = circles;
@@ -70,24 +66,6 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
   return playersInRange; // Return the Set of player IDs
 }
 
-function getCircleDetailsForIds(circleIds, room) {
-  const grid = room.itemgrid; // Assume this is the SpatialGrid or similar structure
-
-  // Retrieve detailed information for each circle ID
-  const detailedInfo = circleIds
-      .map(id => grid.getObjectById(id)) // Assuming grid.getObjectById retrieves an object by its ID
-      .filter(obj => obj && obj.id === "circle") // Ensure the object exists and is a circle
-      .map(circle => [
-          circle.type,
-          circle.x,
-          circle.y,
-          circle.radius
-      ].join(':')); // Format the details as a string
-
-  return detailedInfo;
-}
-
-
 
 function UpdatePlayerChunks(room, player) {
 
@@ -97,33 +75,48 @@ function UpdatePlayerChunks(room, player) {
   const yMin = player.y - searchRadius;
   const yMax = player.y + searchRadius;
 
-    player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
+  player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
-     
-   findNearestEvents(player, room)  
+  player.nearbyplayers = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 400);
 
-    player.nearbyplayers = getPlayersInRange(Array.from(room.players.values()).filter(p => p.visible), player.x, player.y, 400);
+}
 
+function UpdatePlayerEvents(room, player) {
 
-    }
+  findNearestEvents(player, room)
+
+}
+    
 
 
 
 function playerchunkrenderer(room) {
   // Initialize the list of healing circles
 
-  
+
 
   room.intervalIds.push(setInterval(() => {
 
 
     room.players.forEach((player) => {
 
- 
-        UpdatePlayerChunks(room, player)
-      
-      });
+
+      UpdatePlayerChunks(room, player)
+
+    });
   }, 250));
+
+
+  room.intervalIds.push(setInterval(() => {
+
+
+    room.players.forEach((player) => {
+
+
+      UpdatePlayerEvents(room, player)
+
+    });
+  }, 50));
 }
 
 module.exports = {
