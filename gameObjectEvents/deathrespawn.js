@@ -19,7 +19,7 @@ function spawnAnimation(room, player, animationType) {
     type: animationType === "death" ? "2" : "3", // Assign unique type values for animations
     x: player.x, // Player's current x-coordinate
     y: player.y, // Player's current y-coordinate
-    duration: 100, // Duration in milliseconds (3 seconds)
+    duration: 1000, // Duration in milliseconds (3 seconds)
     elapsedTime: 0, // Time elapsed since the animation started
   };
 
@@ -57,7 +57,7 @@ function initializeAnimations(room) {
   // Update animations at a regular interval (e.g., 250ms)
   room.intervalIds.push(setInterval(() => {
     updateAnimations(250, room);
-  }, 500));
+  }, 250));
 }
 
 module.exports = {
