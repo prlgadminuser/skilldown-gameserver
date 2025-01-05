@@ -5,7 +5,6 @@ const { handleElimination } = require("./../playerhandler/eliminated.js");
 const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
 
 
-
 // Helper function to decrease health
 function applyHealthDecrease(player, room) {
   if (player.health > 0) {

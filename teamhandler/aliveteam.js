@@ -1,3 +1,5 @@
+
+
 function TeamPlayersActive(room, player) {
   // Ensure the player's team is valid
   if (!player.team || player.team.players.length === 0) {

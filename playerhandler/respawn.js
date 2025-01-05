@@ -1,3 +1,5 @@
+"use strict";
+
 function respawnplayer(room, player) {
 
 

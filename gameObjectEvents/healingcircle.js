@@ -1,11 +1,5 @@
 "use strict";
 
-/**
- * Manages healing circles and their behavior.
- * Healing circles spawn at random active player locations, expand, heal players, and expire after a duration.
- */
-const { SpatialGrid } = require('./../globalhandler/config');
-
 function spawnHealingCircle(room) {
   // Filter active players (not eliminated)
   const activePlayers = Array.from(room.players.values()).filter((player) => player.state === 1 && player.health > 0);

@@ -1,11 +1,6 @@
 "use strict";
 
 const wallblocksize = 50
-const { SpatialGrid } = require('./config');
-
-
-
-
 
 const halfBlockSize = wallblocksize / 2;
 
@@ -91,7 +86,7 @@ function isCollisionWithBullet(grid, x, y, height, width) {
     ) {
       return true; // Collision detected
     }
-}
+  }
   return false; // No collision detected
 }
 
@@ -106,7 +101,7 @@ function findCollidedWall(grid, x, y, height, width) {
   const halfWidth = 50 / 2;
   const halfHeight = 50 / 2;
   return nearbyWalls.find((wall) => {
-   
+
 
     const wallLeft = wall.x - halfWidth;
     const wallRight = wall.x + halfWidth;

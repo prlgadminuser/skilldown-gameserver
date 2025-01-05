@@ -1,33 +1,17 @@
 "use strict";
 
-
-const { isCollisionWithWalls, isCollisionWithCachedWalls } = require('./collisions');
-const { increasePlayerPlace, increasePlayerWins } = require('./dbrequests')
-const { player_idle_timeout } = require('./config')
+const { isCollisionWithCachedWalls } = require('./collisions');
 const { respawnplayer } = require('./../playerhandler/respawn')
 const { addKillToKillfeed } = require('./killfeed.js')
 const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
 const { spawnAnimation } = require('./../gameObjectEvents/deathrespawn')
-//const { handleCoinCollected2 } = require('./room')
-
-
-const {
-  WORLD_WIDTH,
-  WORLD_HEIGHT,
-  playerspeed,
-  game_win_rest_time,
-  mapsconfig,
-} = require('./config');
 const { handleElimination } = require('../playerhandler/eliminated');
-
 const { updateTeamScore } = require('./../teamfighthandler/changescore')
 
 
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
-
-
 
 function handleMovement(player, room) {
   const deltaTime = 20;

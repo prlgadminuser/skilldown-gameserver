@@ -1,11 +1,5 @@
 "use strict";
 
-/**
- * Manages death and respawn animations and their behavior.
- * Animations spawn at player locations and expire after 3 seconds.
- */
-const { SpatialGrid } = require('./../globalhandler/config');
-
 function spawnAnimation(room, player, animationType) {
   if (!player) return; // Ensure the player exists
 
@@ -27,8 +21,6 @@ function spawnAnimation(room, player, animationType) {
   room.itemgrid.addObject(newAnimation);
   room.objects.push(newAnimation);
 
-  // Optionally log animation spawn
-  // console.log(`${animationType} animation spawned for player at (${newAnimation.x}, ${newAnimation.y})`);
 }
 
 function updateAnimations(deltaTime, room) {
@@ -38,23 +30,18 @@ function updateAnimations(deltaTime, room) {
     // Skip objects that are not animations
     if (animation.id !== "death" && animation.id !== "respawn") continue;
 
-    // Update elapsed time
     animation.elapsedTime += deltaTime;
 
-    // Remove the animation if it has expired
     if (animation.elapsedTime >= animation.duration) {
       room.itemgrid.removeObject(animation);
       room.objects.splice(i, 1);
-      // console.log(`${animation.id} animation removed after 3 seconds.`);
     }
   }
 }
 
 function initializeAnimations(room) {
-  // Initialize the list of animations (if not already initialized)
   room.objects = room.objects || [];
 
-  // Update animations at a regular interval (e.g., 250ms)
   room.intervalIds.push(setInterval(() => {
     updateAnimations(250, room);
   }, 250));

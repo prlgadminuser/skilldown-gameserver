@@ -67,8 +67,9 @@ const server = http.createServer((req, res) => {
 
 const wss = new WebSocket.Server({
   noServer: true,
-  clientTracking: false, 
-  perMessageDeflate: {
+  clientTracking: false,
+  perMessageDeflate: false,
+ /* perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,
       memLevel: 7,
@@ -77,16 +78,14 @@ const wss = new WebSocket.Server({
     zlibInflateOptions: {
       chunkSize: 10 * 1024,
     },
-    clientNoContextTakeover: true,
-    serverNoContextTakeover: true,
     serverMaxWindowBits: 10,
     concurrencyLimit: 10,
-    threshold: 1024,
+    threshold: 1024,  // Only compress messages larger than 1KB
   },
-  //perMessageDeflate: true,
+
+*/
   proxy: true,
-  maxPayload: 1004,
-  //maxPayload: 10 * 1024 * 1024 
+  maxPayload: 100, // 10MB max payload (adjust according to your needs)
 });
 
 
@@ -215,6 +214,13 @@ async function handlePlayerVerification(token) {
 
 wss.on("connection", (ws, req) => {
     try {
+
+
+      if (connectedClientsCount > maxClients - 1) {
+        ws.close(4034, "code:full");
+        return;
+    }
+    
         // Check for maintenance mode
           checkForMaintenance()
         .then(isMaintenance => {
@@ -223,12 +229,6 @@ wss.on("connection", (ws, req) => {
                 return;
             }
 
-
-        // Check for maximum clients limit
-        if (connectedClientsCount > maxClients) {
-            ws.close(4034, "code:full");
-            return;
-        }
 
         // Parse URL and headers
         const [_, token, gamemode] = req.url.split('/');
@@ -271,19 +271,23 @@ wss.on("connection", (ws, req) => {
 
              ws.on("message", (message) => {
 
+              const player = result.room.players.get(result.playerId);
+
+              
+
  
     const compressedBinary = message.toString("utf-8"); // Convert Buffer to string
 
 
                     try {
                         const parsedMessage = compressedBinary;
-                        const player = result.room.players.get(result.playerId);
+       
 
-                        if (player && compressedBinary.length < 200 && player.rateLimiter.tryRemoveTokens(1)) {
+                        if (player.rateLimiter.tryRemoveTokens(1) && player && compressedBinary.length < 200) {
                             handleRequest(result, parsedMessage);
                         }
                     } catch (error) {
-                        console.error("Failed to parse JSON:", error.message);
+
                     }
                   
                 });
@@ -417,15 +421,11 @@ wss.on("connection", (ws, req) => {
             return;
           }
     
-          if (connectedClientsCount < maxClients) {
+        
             wss.handleUpgrade(request, socket, head, (ws) => {
               wss.emit("connection", ws, request);
             });
-          } else {
-            
-            socket.destroy();
-          }
-        })
+          })
         .catch(() => {
           socket.write('HTTP/1.1 429 Too Many Requests\r\n\r\n');
           socket.destroy();

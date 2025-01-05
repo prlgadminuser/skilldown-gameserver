@@ -1,3 +1,4 @@
+"use strict";
 // Function to handle spectating logic for eliminated players
 function handleSpectatorMode(player, room) {
     // Only start spectating logic if the player is eliminated

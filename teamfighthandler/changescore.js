@@ -1,3 +1,5 @@
+"use strict";
+
 const { increasePlayerPlace, increasePlayerWins } = require('./../globalhandler/dbrequests')
 const { endGame } = require('./../globalhandler/game')
 const { game_win_rest_time } = require('./../globalhandler/config')

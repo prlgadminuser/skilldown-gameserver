@@ -4,23 +4,12 @@ const testmode = false
 
 const WebSocket = require("ws");
 const http = require('http');
-const cors = require("cors");
 const axios = require("axios");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const jwt = require("jsonwebtoken");
-const rateLimit = require("express-rate-limit");
 const LZString = require("lz-string");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 const osu = require('node-os-utils');
-const express = require("express");
-
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 1,
-  message: "lg_server_limit_reached",
-});
-
-//app.use(limiter);
 
 const cpu = osu.cpu;
 const mem = osu.mem;
