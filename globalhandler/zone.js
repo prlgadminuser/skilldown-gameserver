@@ -28,7 +28,7 @@ function smoothZoneMovement(room) {
   // Calculate current width and height of the zone
  
     // Otherwise, calculate progress based on elapsed time and shrink rate
-  const progress = Math.min(adjustedElapsedTime / (shrinkTime / 2 * zonespeed), 1);
+  const progress = Math.min(adjustedElapsedTime / shrinkTime / 100, 1);
   
 
     // If not yet at target size, interpolate between the current size and target size
@@ -135,10 +135,14 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2;
   room.zoneEndY += room.mapHeight / 2;
 
+  const mapWidth = room.mapWidth * 0.7
+  const mapHeight = room.mapHeight * 0.7
+
   room.zonephases = [
-    { waitTime: 2000, shrinkTime: 30000000, damagePerSecond: 2, zonespeed: 1, ...generateRandomTarget(room.mapWidth, room.mapHeight), targetSize: 600 },
-    { waitTime: 10000, shrinkTime: 3000000, damagePerSecond: 8, zonespeed: 1.5, ...generateRandomTarget(room.mapWidth, room.mapHeight), targetSize: 300 },
-    { waitTime: 10000, shrinkTime: 3000000, damagePerSecond: 12, zonespeed: 1.5, ...generateRandomTarget(room.mapWidth, room.mapHeight), targetSize: 0 },
+    { waitTime: 0, shrinkTime: 240000, damagePerSecond: 2, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 2 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 4, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 1.3 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 8, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 0.6 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 12, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: 0 },
   ];
 
   room.currentPhase = 0;
