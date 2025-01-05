@@ -5,7 +5,7 @@ const { handleElimination } = require('./../playerhandler/eliminated.js');
 const { addKillToKillfeed } = require('./killfeed.js');
 const { TeamPlayersActive } = require('./../teamhandler/aliveteam');
 
-const PLAYER_WIDTH = 30;
+const PLAYER_WIDTH = 40;
 const PLAYER_HEIGHT = 60;
 
 function isWithinZone(room, playerX, playerY) {
