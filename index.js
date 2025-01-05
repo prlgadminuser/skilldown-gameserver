@@ -177,22 +177,25 @@ const { endGame } = require('./globalhandler/game')
 
 
 const allowedOrigins = [
-  "https://slcount.netlify.app",
-  "https://slgame.netlify.app",
-  "https://serve.gamejolt.net",
-  "http://serve.gamejolt.net",
-  "tw-editor://.",
-  "https://html-classic.itch.zone",
-  "null",
-  "https://turbowarp.org",
-    "https://liquemgames.itch.io/sr",
-  "https://s-r.netlify.app",
   "https://uploads.ungrounded.net",
+  "https://slcount.netlify.app",
+  "https://s-r.netlify.app",
+  "https://serve.gamejolt.net",
+  "null",
+  "tw-editor://.",
+  "http://serve.gamejolt.net",
+  "https://www.newgrounds.com/portal/view/5561763",
+  "https://www.newgrounds.com/projects/games/5561763/preview",
   "https://prod-dpgames.crazygames.com",
   "https://crazygames.com",
-  "https://crazygames.com/game/skilled-royale",
-  "https://skilldown.netlify.app",
-];
+   "https://crazygames.com/game/skilled-royale",
+   "https://html-classic.itch.zone",
+  "https://liquemgames.itch.io/sr",
+  "http://liquemgames.itch.io/sr",
+   "https://turbowarp.org",
+   "https://skilldown.netlify.app",
+  ];
+
 
 function isValidOrigin(origin) {
   const trimmedOrigin = origin.trim().replace(/(^,)|(,$)/g, "");
