@@ -101,14 +101,10 @@ room.players.forEach((player) => {
 }
 
 async function CreateTeams(room) {
-
   if (!room.players || room.players.size === 0) return;
-  room.teams = [];
-
-  // Define team IDs (add more if needed)
+  
+  // Define team IDs
   const teamIDs = ["Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink", "Cyan"];
-
-  // Calculate the number of teams needed
   const numTeams = Math.ceil(room.players.size / room.teamsize);
   const teams = Array.from({ length: numTeams }, () => []);
 
@@ -120,36 +116,28 @@ async function CreateTeams(room) {
       teamIndex = (teamIndex + 1) % numTeams;
     }
     teams[teamIndex].push({ playerId: player.playerId, nmb: player.nmb });
-    // Assign the player's team, including teamId
+
+    // Assign the player's team
     player.team = {
       id: teamIDs[teamIndex] || `Team-${teamIndex + 1}`,
-      players: teams[teamIndex],
+      players: teams[teamIndex], // Directly reference the team array
     };
 
-    // Extract the player numbers from the team players
-    const playerIds = Object.fromEntries(
-      player.team.players.map((p) => [p.nmb, p.nmb])
-    );
-
-    // Get the team ID
-    const teamId = player.team.id;
-
-    // Combine the data into a structured object
+    // Extract the player numbers
     player.teamdata = {
-      id: playerIds,  // Array of player IDs
-      tid: teamId     // Team ID
+      id: Object.fromEntries(teams[teamIndex].map((p) => [p.nmb, p.nmb])),
+      tid: player.team.id,
     };
-
-    // Assign team IDs to each team
-    room.teams = teams.map((team, index) => ({
-      id: teamIDs[index] || `Team-${index + 1}`, // Use a default name if IDs are exhausted
-      players: team,
-      score: 0,
-    }));
-    // console.log("D")
   });
 
+  // Assign room.teams once after all players are assigned
+  room.teams = teams.map((team, index) => ({
+    id: teamIDs[index] || `Team-${index + 1}`,
+    players: team,
+    score: 0,
+  }));
 }
+
 
 
 function getPlayersTeamNmbs(room, nmb) {
