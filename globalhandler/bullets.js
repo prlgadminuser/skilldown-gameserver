@@ -76,12 +76,15 @@ function moveBullet(room, player, bullet) {
     bullet.x = newX;
     bullet.y = newY;
 
+    console.log(player.team.players)
+
     if (room.config.canCollideWithPlayers && room.winner === -1) {
+
 
       const potentialTargets = Array.from(room.players.values()).filter(otherPlayer =>
         otherPlayer !== player &&  // Exclude the player themselves
         otherPlayer.visible &&     // Only consider visible players
-        !player.team.players.includes(otherPlayer.nmb)  // Exclude teammates
+        !player.team.players.some(player => player.nmb === otherPlayer.nmb)  // Exclude teammates
       );
 
       for (const otherPlayer of potentialTargets) {
