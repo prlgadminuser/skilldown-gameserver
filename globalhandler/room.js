@@ -69,7 +69,38 @@ function createRateLimiter() {
   });
 }
 
-function CreateTeams(room) {
+async function setupRoomPlayers(room) {
+
+let playerNumberID = 0; // Start with player number 0
+
+// Iterate over each player in the room's players collection
+room.players.forEach((player) => {
+  // Set the player's unique number (nmb)
+  player.nmb = playerNumberID;
+
+  // Set the player's spawn position (lastProcessedPosition and startspawn)
+  const spawnPositions = room.spawns;
+  const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
+
+  player.x = spawnPositions[spawnIndex].x,
+    player.y = spawnPositions[spawnIndex].y,
+
+    // Assign the spawn position to the player
+    player.lastProcessedPosition = {
+      x: spawnPositions[spawnIndex].x,
+      y: spawnPositions[spawnIndex].y
+    };
+  player.startspawn = {
+    x: spawnPositions[spawnIndex].x,
+    y: spawnPositions[spawnIndex].y
+  };
+
+  // Increment the player number for the next player
+  playerNumberID++;
+});
+}
+
+async function CreateTeams(room) {
 
   if (!room.players || room.players.size === 0) return;
   room.teams = [];
@@ -117,6 +148,7 @@ function CreateTeams(room) {
     }));
     // console.log("D")
   });
+
 }
 
 
@@ -367,35 +399,10 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
     if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
       roomStateLock.set(roomId, true);
 
-      let playerNumberID = 0; // Start with player number 0
+    
+      await setupRoomPlayers(room)
 
-      // Iterate over each player in the room's players collection
-      room.players.forEach((player) => {
-        // Set the player's unique number (nmb)
-        player.nmb = playerNumberID;
-
-        // Set the player's spawn position (lastProcessedPosition and startspawn)
-        const spawnPositions = room.spawns;
-        const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
-
-        player.x = spawnPositions[spawnIndex].x,
-          player.y = spawnPositions[spawnIndex].y,
-
-          // Assign the spawn position to the player
-          player.lastProcessedPosition = {
-            x: spawnPositions[spawnIndex].x,
-            y: spawnPositions[spawnIndex].y
-          };
-        player.startspawn = {
-          x: spawnPositions[spawnIndex].x,
-          y: spawnPositions[spawnIndex].y
-        };
-
-        // Increment the player number for the next player
-        playerNumberID++;
-      });
-
-      CreateTeams(room)
+      await CreateTeams(room)
 
       clearTimeout(room.matchmaketimeout);
 

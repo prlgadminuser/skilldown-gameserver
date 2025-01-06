@@ -76,7 +76,6 @@ function moveBullet(room, player, bullet) {
     bullet.x = newX;
     bullet.y = newY;
 
-    console.log(player.team.players)
 
     if (room.config.canCollideWithPlayers && room.winner === -1) {
 
