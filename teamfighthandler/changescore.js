@@ -5,6 +5,9 @@ const { endGame } = require('./../globalhandler/game')
 const { game_win_rest_time } = require('./../globalhandler/config')
 
 function updateTeamScore(room, player, points) {
+
+    const targetpoints = 20
+
     // Find the player by playerId
 
     // Find the team that matches the player's team ID
@@ -15,8 +18,6 @@ function updateTeamScore(room, player, points) {
 
     // Update the team's total score
     team.score += points;
-
-    targetpoints = 20
 
 
     const t1 = room.teams[0];
@@ -37,8 +38,8 @@ function updateTeamScore(room, player, points) {
         return;
     }
 
-    team1Score = t1.score
-    team2Score = t2.score
+    const team1Score = t1.score
+    const team2Score = t2.score
 
     if (team1Score >= targetpoints) {
         declareWinner(room, room.teams[0]); // Declare team 1 as the winner

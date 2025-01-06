@@ -292,6 +292,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       //     startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
       //  nmb: playerNumberID,
       playerId: playerId,
+      finalrewards_awarded: false,
       spectateid: 0,
       nickname: finalnickname,
       spectatingTarget: null,

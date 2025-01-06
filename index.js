@@ -177,25 +177,22 @@ const { endGame } = require('./globalhandler/game')
 
 
 const allowedOrigins = [
-  "https://uploads.ungrounded.net",
   "https://slcount.netlify.app",
-  "https://s-r.netlify.app",
+  "https://slgame.netlify.app",
   "https://serve.gamejolt.net",
-  "null",
-  "tw-editor://.",
   "http://serve.gamejolt.net",
-  "https://www.newgrounds.com/portal/view/5561763",
-  "https://www.newgrounds.com/projects/games/5561763/preview",
+  "tw-editor://.",
+  "https://html-classic.itch.zone",
+  "null",
+  "https://turbowarp.org",
+    "https://liquemgames.itch.io/sr",
+  "https://s-r.netlify.app",
+  "https://uploads.ungrounded.net",
   "https://prod-dpgames.crazygames.com",
   "https://crazygames.com",
-   "https://crazygames.com/game/skilled-royale",
-   "https://html-classic.itch.zone",
-  "https://liquemgames.itch.io/sr",
-  "http://liquemgames.itch.io/sr",
-   "https://turbowarp.org",
-   "https://skilldown.netlify.app",
-  ];
-
+  "https://crazygames.com/game/skilled-royale",
+  "https://skilldown.netlify.app",
+];
 
 function isValidOrigin(origin) {
   const trimmedOrigin = origin.trim().replace(/(^,)|(,$)/g, "");
@@ -358,9 +355,11 @@ wss.on("connection", (ws, req) => {
                             const winningTeam = remainingTeams[0];
                             
                             // Filter active players in the winning team (those who are not eliminated)
-                            const activePlayers = winningTeam.players.filter(player => 
-                              !result.room.players.get(player.playerId).eliminated
-                            );
+                            const activePlayers = winningTeam.players.filter(player => {
+                              const roomPlayer = result.room.players.get(player.playerId);
+                              return roomPlayer && (roomPlayer.eliminated === false || roomPlayer.eliminated == null);
+                            });
+                            
                             
                             // If only one active player is left in the winning team
                             if (activePlayers.length === 1) {

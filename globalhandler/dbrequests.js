@@ -207,10 +207,11 @@ async function increasePlayerPlace(playerId, place2, room) {
   const place = +place2; 
   const player = room.players.get(playerId)
 
-  if (isNaN(place) || place < 1 || place > 5) {
-    return res.status(400).json({ error: "Invalid place provided. Place should be a number between 1 and 5." });
+  if (isNaN(place) || place < 1 || place > 5 || player.finalrewards_awarded) {
+    return;
   }
   
+  player.finalrewards_awarded = true
 
   try {
     const skillpoints = room.place_counts[place - 1];
