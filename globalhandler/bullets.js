@@ -58,8 +58,8 @@ function moveBullet(room, player, bullet) {
   const xDelta = speed * Math.cos(radians);
   const yDelta = speed * Math.sin(radians);
 
-  const newX = Math.round(bullet.x + xDelta);
-  const newY = Math.round(bullet.y + yDelta);
+  const newX = parseFloat((bullet.x + xDelta).toFixed(1));
+  const newY = parseFloat((bullet.y + yDelta).toFixed(1));
   const distanceTraveled = calculateDistance(bullet.startX, bullet.startY, newX, newY);
 
   const timenow = Date.now();
@@ -165,8 +165,8 @@ async function shootBullet(room, player, bulletdata) {
   const yOffset = offset * Math.sin(radians);
   const timestamp = Math.random().toString(36).substring(2, 7);
 
-  const x1 = Math.round(Math.round(30) * Math.cos(radians1)); // Offset along the x-axis
-  const y1 = Math.round(Math.round(30) * Math.sin(radians1));
+  const x1 = parseFloat((30 * Math.cos(radians1)).toFixed(1)); // Offset along the x-axis
+const y1 = parseFloat((30 * Math.sin(radians1)).toFixed(1)); // Offset along the y-axis
 
   const bullet = {
     x: player.x + xOffset + x1,
