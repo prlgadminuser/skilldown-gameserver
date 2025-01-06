@@ -96,7 +96,9 @@ function CreateTeams(room) {
     };
 
     // Extract the player numbers from the team players
-    const playerIds = player.team.players.map(player => player.nmb);
+    const playerIds = Object.fromEntries(
+      player.team.players.map((p) => [p.nmb, p.nmb])
+    );
 
     // Get the team ID
     const teamId = player.team.id;
