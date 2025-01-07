@@ -102,7 +102,7 @@ room.players.forEach((player) => {
 
 async function CreateTeams(room) {
   if (!room.players || room.players.size === 0) return;
-  
+
   // Define team IDs
   const teamIDs = ["Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink", "Cyan"];
   const numTeams = Math.ceil(room.players.size / room.teamsize);
@@ -110,33 +110,39 @@ async function CreateTeams(room) {
 
   let teamIndex = 0;
 
-  // Assign players to teams
+  // Step 1: Assign players to teams
   room.players.forEach((player) => {
     if (teams[teamIndex].length >= room.teamsize) {
       teamIndex = (teamIndex + 1) % numTeams;
     }
     teams[teamIndex].push({ playerId: player.playerId, nmb: player.nmb });
-
-    // Assign the player's team
     player.team = {
       id: teamIDs[teamIndex] || `Team-${teamIndex + 1}`,
-      players: teams[teamIndex], // Directly reference the team array
-    };
-
-    // Extract the player numbers
-    player.teamdata = {
-      id: Object.fromEntries(teams[teamIndex].map((p) => [p.nmb, p.nmb])),
-      tid: player.team.id,
+      players: teams[teamIndex], // Reference to team
     };
   });
 
-  // Assign room.teams once after all players are assigned
+  // Step 2: Finalize `room.teams`
   room.teams = teams.map((team, index) => ({
     id: teamIDs[index] || `Team-${index + 1}`,
     players: team,
     score: 0,
   }));
+
+  // Step 3: Assign complete `teamdata` to each player
+  room.players.forEach((player) => {
+    const team = player.team; // Get the player's team
+    const playerIds = Object.fromEntries(
+      team.players.map((p) => [p.nmb, p.nmb]) // Extract all player IDs in the team
+    );
+
+    player.teamdata = {
+      id: playerIds, // Complete team member IDs
+      tid: team.id,  // Team ID
+    };
+  });
 }
+
 
 
 
