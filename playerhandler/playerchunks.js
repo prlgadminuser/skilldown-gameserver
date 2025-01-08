@@ -1,6 +1,6 @@
 "use strict";
 
-const chunkradius = 150
+const chunkradius = 100
 
 
 function findNearestEvents(player, room) {
@@ -103,7 +103,7 @@ function playerchunkrenderer(room) {
       UpdatePlayerChunks(room, player)
 
     });
-  }, 250));
+  }, 200));
 
 
   room.intervalIds.push(setInterval(() => {
