@@ -16,38 +16,36 @@ function getDistance(x1, y1, x2, y2) {
 function handleMovement(player, room) {
   const deltaTime = 20;
   
-  const finalDirection = player.moving ? player.direction - 90 : player.direction;
-
-  const radians = (finalDirection * Math.PI) / 180;
+  // Calculate radians for final direction
+  const radians = ((player.moving ? player.direction - 90 : player.direction) * Math.PI) / 180;
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
 
   let newX = player.x + xDelta;
   let newY = player.y + yDelta;
 
+  // Perform collision checks
   if (isCollisionWithCachedWalls(player.nearbywalls, newX, newY)) {
+    const canMoveX = !isCollisionWithCachedWalls(player.nearbywalls, newX, player.y);
+    const canMoveY = !isCollisionWithCachedWalls(player.nearbywalls, player.x, newY);
 
-    if (!isCollisionWithCachedWalls(player.nearbywalls, newX, player.y)) {
-      newY = player.y;
-    }
-    else if (!isCollisionWithCachedWalls(player.nearbywalls, player.x, newY)) {
-      newX = player.x;
-    }
+    // Resolve collision by moving along one axis
+    if (canMoveX) newY = player.y;
+    else if (canMoveY) newX = player.x;
     else {
       newX = player.x;
       newY = player.y;
     }
   }
 
-  newX = Math.round(newX);
-  newY = Math.round(newY);
-  newX = Math.max(-room.mapWidth, Math.min(room.mapWidth, newX));
-  newY = Math.max(-room.mapHeight, Math.min(room.mapHeight, newY));
+  // Constrain new position within map bounds
+  newX = Math.min(Math.max(newX, -room.mapWidth), room.mapWidth);
+  newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
-
-  player.x = newX;
-  player.y = newY;
-  player.lastProcessedPosition = { x: newX, y: newY };
+  // Apply new position and store last processed position
+  player.x = Math.round(newX);
+  player.y = Math.round(newY);
+  player.lastProcessedPosition = { x: player.x, y: player.y };
 }
 
 

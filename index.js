@@ -1,5 +1,7 @@
 "use strict";
 
+process.env.NODE_ENV = 'production';
+
 const testmode = true
 
 const WebSocket = require("ws");

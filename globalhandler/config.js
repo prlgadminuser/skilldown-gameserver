@@ -56,7 +56,7 @@ const gamemodeconfig = {
     maxplayers: 5,
     respawns_allowed: 0,
     playerhealth: 77,
-    playerspeed: (0.26 * server_tick_rate) / 17,          //(0.26 * server_tick_rate) / 17,
+    playerspeed: (0.22 * server_tick_rate) / 17,          //(0.26 * server_tick_rate) / 17,
     zonespeed: 1.2,
     usezone: true,
     health_restore: true,
@@ -75,7 +75,7 @@ const gamemodeconfig = {
     maxplayers: 2,
     respawns_allowed: 0,
     playerhealth: 150,
-    playerspeed: (0.25 * server_tick_rate) / 17,
+    playerspeed: (0.22 * server_tick_rate) / 17,
     zonespeed: 1.2,
     usezone: true,
     health_restore: true,
@@ -93,7 +93,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 9999,
-    playerspeed: (0.2 * server_tick_rate) / 17,
+    playerspeed: (0.22 * server_tick_rate) / 17,
     usezone: false,
     zonespeed: 0.8,
     health_restore: false,
@@ -112,7 +112,7 @@ const gamemodeconfig = {
     maxplayers: 4,
     respawns_allowed: Infinity,
     playerhealth: 100,
-    playerspeed: (0.26 * server_tick_rate) / 17,
+    playerspeed: (0.22 * server_tick_rate) / 17,
     usezone: false,
     zonespeed: 0.8,
     health_restore: false,
@@ -456,7 +456,6 @@ class SpatialGrid {
 Object.keys(mapsconfig).forEach(mapKey => {
   const map = mapsconfig[mapKey];
   const grid = new SpatialGrid(gridcellsize);
-  console.log(map.height / gridcellsize * map.width / gridcellsize)
 
   map.walls.forEach(wall => grid.addWall(wall));
 
