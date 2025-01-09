@@ -1,3 +1,4 @@
+
 "use strict";
 
 const chunkradius = 100
@@ -13,9 +14,6 @@ function findNearestEvents(player, room) {
   const yMin = player.y - searchRadius;
   const yMax = player.y + searchRadius;
 
-  // Get all objects (circles) in the area
-
-  const formatted = {};
 
   const objectsInArea = grid.getObjectsInArea(xMin, xMax, yMin, yMax);
 
@@ -82,40 +80,32 @@ function UpdatePlayerChunks(room, player) {
 
 function UpdatePlayerEvents(room, player) {
 
-  findNearestEvents(player, room)
-
 }
     
 
 
 
 function playerchunkrenderer(room) {
-  // Initialize the list of healing circles
-
-
 
   room.intervalIds.push(setInterval(() => {
 
-
     room.players.forEach((player) => {
-
 
       UpdatePlayerChunks(room, player)
 
     });
-  }, 200));
+  }, 100));
+
 
 
   room.intervalIds.push(setInterval(() => {
 
-
     room.players.forEach((player) => {
 
-
-      UpdatePlayerEvents(room, player)
+      findNearestEvents(player, room)
 
     });
-  }, 50));
+  }, 100));
 }
 
 module.exports = {
