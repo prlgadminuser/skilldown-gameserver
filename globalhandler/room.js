@@ -62,7 +62,7 @@ function removeRoomFromIndex(room) {
 
 
 function createRateLimiter() {
-  const rate = 50; // Allow one request every 50 milliseconds
+  const rate = 60; // Allow one request every 50 milliseconds
   return new Limiter({
     tokensPerInterval: rate,
     interval: 1000, // milliseconds
