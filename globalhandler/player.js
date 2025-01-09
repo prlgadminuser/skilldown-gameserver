@@ -15,21 +15,11 @@ function getDistance(x1, y1, x2, y2) {
 
 function handleMovement(player, room) {
   const deltaTime = 20;
-
+  
   // Calculate radians for final direction
   const radians = ((player.moving ? player.direction - 90 : player.direction) * Math.PI) / 180;
-  
-  // Calculate raw deltas based on direction and speed
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
-
-  // Normalize diagonal movement to ensure consistent speed in all directions
-  const maxDelta = Math.max(Math.abs(xDelta), Math.abs(yDelta));
-  if (maxDelta > player.speed * deltaTime) {
-    const normalizationFactor = (player.speed * deltaTime) / maxDelta;
-    xDelta *= normalizationFactor;
-    yDelta *= normalizationFactor;
-  }
 
   let newX = player.x + xDelta;
   let newY = player.y + yDelta;
@@ -57,8 +47,6 @@ function handleMovement(player, room) {
   player.y = Math.round(newY);
   player.lastProcessedPosition = { x: player.x, y: player.y };
 }
-
-
 
 
 
