@@ -1,7 +1,7 @@
 
 "use strict";
 
-const chunkradius = 200
+const chunkradius = 150
 
 
 function findNearestEvents(player, room) {
