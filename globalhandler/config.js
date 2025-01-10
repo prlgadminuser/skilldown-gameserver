@@ -150,7 +150,7 @@ const mapsconfig = {
     width: 400,
     height: 500,
     spawns: [
-      { x: 200, y: 0 },
+      {"x":-0,"y":0},
     ],
     dummies: {
       a1: { x: 100, y: 0, h: 100, sh: 100, t: 1 },

@@ -7,6 +7,7 @@ const { TeamPlayersActive } = require('./../teamhandler/aliveteam')
 const { spawnAnimation } = require('./../gameObjectEvents/deathrespawn')
 const { handleElimination } = require('../playerhandler/eliminated');
 const { updateTeamScore } = require('./../teamfighthandler/changescore')
+const { findCollidedWall } = require('./collisions');
 
 
 function getDistance(x1, y1, x2, y2) {
@@ -43,10 +44,12 @@ function handleMovement(player, room) {
   newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
   // Apply new position and store last processed position
-  player.x = Math.round(newX);
-  player.y = Math.round(newY);
+  player.x = parseFloat(newX.toFixed(2));
+  player.y = parseFloat(newY.toFixed(2));
   player.lastProcessedPosition = { x: player.x, y: player.y };
 }
+
+
 
 
 
