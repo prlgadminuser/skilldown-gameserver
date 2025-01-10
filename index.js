@@ -2,6 +2,8 @@
 
 const testmode = true
 
+
+
 const WebSocket = require("ws");
 const http = require('http');
 const cors = require("cors");
@@ -13,6 +15,7 @@ const LZString = require("lz-string");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 const osu = require('node-os-utils');
 const express = require("express");
+const { uri } = require("./idbconfig");
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
@@ -100,10 +103,6 @@ process.on("SIGINT", function () {
   });
 });
 
-const password = process.env.DB_KEY || "8RLj5Vr3F6DRBAYc"
-const encodedPassword = encodeURIComponent(password);
-
-const uri = `mongodb+srv://Liquem:${encodedPassword}@cluster0.ed4zami.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -154,7 +153,6 @@ module.exports = {
   jwt,
 };
 
-
 const {
   joinRoom,
   closeRoom,
@@ -172,6 +170,7 @@ const {
 const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./globalhandler/config");
 const { addKillToKillfeed } = require('./globalhandler/killfeed')
 const { endGame } = require('./globalhandler/game')
+
 
 
 
@@ -446,7 +445,7 @@ wss.on("connection", (ws, req) => {
     });
     
 
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 8080;
     server.listen(PORT, () => {
       console.log(`Server is listening on port ${PORT}`);
     });

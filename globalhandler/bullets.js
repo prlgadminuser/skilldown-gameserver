@@ -2,9 +2,9 @@
 
 const { isCollisionWithBullet, adjustBulletDirection, findCollidedWall } = require('./collisions');
 const { handlePlayerCollision, handleDummyCollision } = require('./player');
-const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate } = require('./config');
+const { playerHitboxHeight, playerHitboxWidth, gunsconfig } = require('./config');
 
-const BULLET_MOVE_INTERVAL = server_tick_rate // milliseconds
+const BULLET_MOVE_INTERVAL = 17 // milliseconds
 
 // Helper functions
 const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -37,7 +37,6 @@ function isHeadHit(bullet, player, height, width) {
   const bulletTop = bullet.y - height / 2;
   const bulletBottom = bullet.y + height / 2;
 
-  // Check if the bullet is within the player's headshot region
   const isHeadshot = (
     bulletBottom <= headshotBottom &&
     bulletTop >= headshotTop &&
@@ -48,7 +47,6 @@ function isHeadHit(bullet, player, height, width) {
   return isHeadshot;
 }
 
-// Bullet Movement
 function moveBullet(room, player, bullet) {
   if (!bullet || !room) return;
 

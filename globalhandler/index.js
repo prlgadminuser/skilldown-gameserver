@@ -83,12 +83,6 @@ const wss = new WebSocket.Server({
 
 const Limiter = require("limiter").RateLimiter;
 
-process.on("SIGINT", function () {
-  mongoose.connection.close(function () {
-   // console.log("Mongoose disconnected on app termination");
-    process.exit(0);
-  });
-});
 
 const password = process.env.DB_KEY || "8RLj5Vr3F6DRBAYc"
 const encodedPassword = encodeURIComponent(password);
