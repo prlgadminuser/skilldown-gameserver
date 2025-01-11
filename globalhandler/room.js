@@ -628,10 +628,7 @@ function sendBatchedMessages(roomId) {
   }
 
 
-
-
-
-  const roomdata = [
+  let roomdata = [
     state_map[room.state],
     room.zone,
     room.maxplayers,
@@ -640,6 +637,15 @@ function sendBatchedMessages(roomId) {
     room.countdown,
     room.winner,
   ].join(':');
+  
+  // Check if the new roomdata is different from the last sent data
+  if (room.rdlast !== roomdata) {
+    room.rdlast = roomdata;  // Update the last sent room data
+  
+    // Continue with sending the data...
+  } else {
+    roomdata = undefined;  // No need to send the data if it hasn't changed
+  }
 
   let playerData = {};
 
