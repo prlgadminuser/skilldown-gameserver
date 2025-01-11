@@ -88,7 +88,7 @@ const wss = new WebSocket.Server({
 
 */
   proxy: true,
-  maxPayload: 100, // 10MB max payload (adjust according to your needs)
+  maxPayload: 10, // 10MB max payload (adjust according to your needs)
 });
 
 
@@ -264,32 +264,33 @@ wss.on("connection", (ws, req) => {
                     return;
                 }
 
+                const player = result.room.players.get(result.playerId);
+
                 connectedClientsCount++;
                 connectedUsernames.push(playerVerified.playerId);
               //  console.log(connectedUsernames);
 
              ws.on("message", (message) => {
 
-              const player = result.room.players.get(result.playerId);
-
-              
-
- 
-    const compressedBinary = message.toString("utf-8"); // Convert Buffer to string
+               if (!player.rateLimiter.tryRemoveTokens(1) || message.length > 10) return;
 
 
-                    try {
-                        const parsedMessage = compressedBinary;
-       
 
-                        if (player.rateLimiter.tryRemoveTokens(1) && player && compressedBinary.length < 200) {
-                            handleRequest(result, parsedMessage);
-                        }
-                    } catch (error) {
+               const compressedBinary = message.toString("utf-8"); // Convert Buffer to string
 
-                    }
-                  
-                });
+
+               try {
+                 const parsedMessage = compressedBinary;
+
+
+                 if (player) {
+                   handleRequest(result, parsedMessage);
+                 }
+               } catch (error) {
+
+               }
+
+             });
 
 
  /*            ws.on("message", (message) => {

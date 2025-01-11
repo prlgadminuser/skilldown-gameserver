@@ -18,8 +18,7 @@ const playerHitboxHeight = 120;
 const validDirections = [-90, 0, 180, -180, 90, 45, 135, -135, -45];
 
 const isValidDirection = (direction) => {
-const numericDirection = parseFloat(direction);
-return !isNaN(numericDirection) && validDirections.includes(numericDirection);
+return validDirections.includes(direction);
   };
 
 const teleporters = [

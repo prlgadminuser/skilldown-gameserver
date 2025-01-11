@@ -62,7 +62,7 @@ function removeRoomFromIndex(room) {
 
 
 function createRateLimiter() {
-  const rate = 60; // Allow one request every 50 milliseconds
+  const rate = 40; // Allow one request every 50 milliseconds
   return new Limiter({
     tokensPerInterval: rate,
     interval: 1000, // milliseconds
@@ -1107,7 +1107,6 @@ const isValidDirection = (direction) => {
 
 function handleRequest(result, message) {
   const player = result.room.players.get(result.playerId);
-  const data = JSON.parse(message);
 
   if (message.length > 100) {
     player.ws.close(4000, "ahhh whyyyyy");
@@ -1116,34 +1115,41 @@ function handleRequest(result, message) {
 
   if (!player) return;
 
-  switch (data.type) {
-    case "pong":
+  switch (message) {
+    case "1":
       handlePong(player);
       break;
   }
 
+
+
   if (result.room.state !== "playing" || player.visible === false || player.eliminated || !result.room.winner === -1) return;
 
-  switch (data.type) {
-    case "shoot":
+  const data = message.split(':');
+
+  const type = data[0]
+
+
+  switch (type) {
+    case "3":
+      handleMovementData(data, player, result.room);
+      break;
+    case "4":
       handleShoot(data, player, result.room);
       break;
-    case "switch_gun":
+    case "5":
       handleSwitchGun(data, player);
       break;
-    case "emote":
+    case "6":
       handleEmote(data, player);
       break;
-    case "gadget":
+    case "7":
       handleGadget(player);
-      break;
-    case "movement":
-      handleMovementData(data, player, result.room);
       break;
   }
   //handleMovingState(data.moving, player);
 
-  if (data.moving === "false") {
+  if (type === "2") {
     clearInterval(player.moveInterval);
     player.moveInterval = null;
     player.moving = false;
@@ -1177,14 +1183,15 @@ function handlePong(player) {
 
 
 function handleShoot(data, player, room) {
-  if (data.shoot_direction > -181 && data.shoot_direction < 181) {
-    player.shoot_direction = parseFloat(data.shoot_direction);
+  const shoot_direction = data[1]
+  if (shoot_direction > -181 && shoot_direction < 181) {
+    player.shoot_direction = parseFloat(shoot_direction);
     handleBulletFired(room, player, player.gun);
   }
 }
 
 function handleSwitchGun(data, player) {
-  const GunID = parseFloat(data.gun);
+  const GunID = parseFloat(data[1]);
   const allguns = Object.keys(gunsconfig);
   if (
     GunID !== player.gun && !player.shooting && GunID >= 1 && GunID <= 3 && GunID in allguns) {
@@ -1198,8 +1205,9 @@ function handleSwitchGun(data, player) {
 }
 
 function handleEmote(data, player) {
-  if (data.id >= 1 && data.id <= 4 && player.emote === 0) {
-    player.emote = data.id;
+  const emoteid = data[1]
+  if (emoteid >= 1 && emoteid <= 4 && player.emote === 0) {
+    player.emote = emoteid;
     player.timeoutIds.push(setTimeout(() => {
       player.emote = 0;
     }, 3000));
@@ -1218,14 +1226,16 @@ function handleGadget(player) {
 }
 
 function handleMovementData(data, player, room) {
-  if (typeof data.direction === "string" && isValidDirection(data.direction)) {
-    const validDirection = parseFloat(data.direction);
-    if (!isNaN(validDirection)) {
-      updatePlayerDirection(player, validDirection);
-      updatePlayerMovement(player, data.moving);
+  const direction = data[1];
+
+  if (isValidDirection(direction)) {
+    const validDirection = direction;
+    if (validDirection) {
+      updatePlayerDirection(player, direction);
+      player.moving = true;
       handlePlayerMoveInterval(player, room);
     } else {
-      console.warn("Invalid direction value:", data.direction);
+      console.warn("Invalid direction value:", direction);
     }
   }
 }
