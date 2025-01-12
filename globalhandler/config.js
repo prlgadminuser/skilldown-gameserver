@@ -86,7 +86,7 @@ const gamemodeconfig = {
     can_hit_players: false,
     maxplayers: 1,
     respawns_allowed: 1,
-    playerhealth: 99,
+    playerhealth: 9999,
     playerspeed: 0.17,
     usezone: false,
     zonespeed: 0.8,
