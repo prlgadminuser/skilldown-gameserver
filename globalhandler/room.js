@@ -648,6 +648,7 @@ function sendBatchedMessages(roomId) {
   }
 
 
+
   let roomdata = [
     state_map[room.state],
     room.zone,
@@ -820,6 +821,26 @@ function sendBatchedMessages(roomId) {
 
       };
     } else {
+
+
+
+        let finalselfdata = undefined
+
+        if (room.state === "playing") {
+
+          if (player.selflastmsg !== selfPlayerData) {
+            player.selflastmsg = selfPlayerData;
+            finalselfdata = selfPlayerData  // Update the last sent room data
+          } else {
+            finalselfdata = undefined; // No need to send the data if it hasn't changed
+          }
+
+        } else {
+
+          finalselfdata = selfPlayerData
+
+        }
+
       playerSpecificMessage = [
         { key: 'pd', value: player.pd },
         { key: 'rd', value: newMessage.rd },
@@ -829,7 +850,7 @@ function sendBatchedMessages(roomId) {
         { key: 'an', value: player.nearbyanimations },
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
         { key: 'sb', value: room.scoreboard },
-        { key: 'sd', value: selfPlayerData }
+        { key: 'sd', value: finalselfdata }
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
         if (value !== null && value !== undefined &&
