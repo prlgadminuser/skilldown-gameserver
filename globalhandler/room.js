@@ -824,22 +824,22 @@ function sendBatchedMessages(roomId) {
 
 
 
-      //  let finalselfdata = undefined
+      let finalselfdata = undefined
 
-     //   if (room.state === "playing") {
+    if (room.state === "playing") {
 
-       //   if (player.selflastmsg !== selfPlayerData) {
-       //     player.selflastmsg = selfPlayerData;
-       //     finalselfdata = selfPlayerData  // Update the last sent room data
-        //  } else {
-        //    finalselfdata = undefined; // No need to send the data if it hasn't changed
-        //  }
+     if (player.selflastmsg !== selfPlayerData) {
+     player.selflastmsg = selfPlayerData;
+     finalselfdata = selfPlayerData  // Update the last sent room data
+     } else {
+       finalselfdata = undefined; // No need to send the data if it hasn't changed
+      }
 
-       // } else {
+       } else {
 
         
 
-      //  }
+     }
 
       playerSpecificMessage = [
         { key: 'pd', value: player.pd },
