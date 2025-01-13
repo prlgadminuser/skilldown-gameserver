@@ -837,7 +837,7 @@ function sendBatchedMessages(roomId) {
 
        // } else {
 
-          finalselfdata = selfPlayerData
+        
 
       //  }
 
@@ -850,7 +850,7 @@ function sendBatchedMessages(roomId) {
         { key: 'an', value: player.nearbyanimations },
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
         { key: 'sb', value: room.scoreboard },
-        { key: 'sd', value: finalselfdata }
+        { key: 'sd', value: selfPlayerData }
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
         if (value !== null && value !== undefined &&
