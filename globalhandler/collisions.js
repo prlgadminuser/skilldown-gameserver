@@ -57,6 +57,7 @@ function isCollisionWithCachedWalls(walls, x, y) {
 
   return false; // No collision detected
 }
+  
 
 function isCollisionWithBullet(grid, x, y, height, width) {
 

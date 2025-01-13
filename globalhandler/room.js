@@ -308,6 +308,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
     const newPlayer = {
       ws,
+      hitmarkers: new Set(),
       lastmsg: 0,
       intervalIds: [],
       timeoutIds: [],
@@ -432,6 +433,25 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
             if (!rooms.has(roomId)) return;
 
             room.state = "playing";
+
+            if (room.showtimer === true) {
+              const countdownDuration = room_max_open_time // 10 minutes in milliseconds
+              const countdownStartTime = Date.now();
+          
+              room.intervalIds.push(setInterval(() => {
+                const elapsedTime = Date.now() - countdownStartTime;
+                const remainingTime = countdownDuration - elapsedTime;
+          
+                if (remainingTime <= 0) {
+                  clearInterval(room.countdownInterval);
+                  room.countdown = "0-00";
+                } else {
+                  const minutes = Math.floor(remainingTime / 1000 / 60);
+                  const seconds = Math.floor((remainingTime / 1000) % 60);
+                  room.countdown = `${minutes}-${seconds.toString().padStart(2, '0')}`;
+                }
+              }, 1000));
+            }
 
             // console.log(`Room ${roomId} transitioned to playing state`);
             StartremoveOldKillfeedEntries(room);
@@ -1031,24 +1051,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   room.runtimeout = roomopentoolong;
 
   // Countdown timer update every second
-  if (room.showtimer === true) {
-    const countdownDuration = room_max_open_time // 10 minutes in milliseconds
-    const countdownStartTime = Date.now();
-
-    room.intervalIds.push(setInterval(() => {
-      const elapsedTime = Date.now() - countdownStartTime;
-      const remainingTime = countdownDuration - elapsedTime;
-
-      if (remainingTime <= 0) {
-        clearInterval(room.countdownInterval);
-        room.countdown = "0-00";
-      } else {
-        const minutes = Math.floor(remainingTime / 1000 / 60);
-        const seconds = Math.floor((remainingTime / 1000) % 60);
-        room.countdown = `${minutes}-${seconds.toString().padStart(2, '0')}`;
-      }
-    }, 1000));
-  }
+  
 
   console.log("Room", room.roomId, "created")
   return room;
