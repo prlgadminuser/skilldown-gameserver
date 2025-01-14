@@ -78,7 +78,7 @@ function handleSpectatorMode(player, room) {
       } else {
         handleSpectatorMode(player, room); // Continuously handle spectating state
       }
-    }, 17)); // Adjust intervalfrequency as needed
+    }, 16.4)); // Adjust intervalfrequency as needed
   }
   
 
