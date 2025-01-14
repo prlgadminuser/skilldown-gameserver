@@ -78,7 +78,6 @@ room.players.forEach((player) => {
   // Set the player's unique number (nmb)
   player.nmb = playerNumberID;
 
-  // Set the player's spawn position (lastProcessedPosition and startspawn)
   const spawnPositions = room.spawns;
   const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
 
@@ -86,10 +85,6 @@ room.players.forEach((player) => {
     player.y = spawnPositions[spawnIndex].y,
 
     // Assign the spawn position to the player
-    player.lastProcessedPosition = {
-      x: spawnPositions[spawnIndex].x,
-      y: spawnPositions[spawnIndex].y
-    };
   player.startspawn = {
     x: spawnPositions[spawnIndex].x,
     y: spawnPositions[spawnIndex].y
@@ -312,14 +307,9 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       lastmsg: 0,
       intervalIds: [],
       timeoutIds: [],
-      //    x: spawnPositions[spawnIndex].x,
-      //    y: spawnPositions[spawnIndex].y,
       direction: null,
       prevX: 0,
       prevY: 0,
-      //   lastProcessedPosition: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-      //     startspawn: { x: spawnPositions[spawnIndex].x, y: spawnPositions[spawnIndex].y },
-      //  nmb: playerNumberID,
       playerId: playerId,
       finalrewards_awarded: false,
       spectateid: 0,
