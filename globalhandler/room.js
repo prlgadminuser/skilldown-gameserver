@@ -1297,7 +1297,7 @@ function handlePlayerMoveInterval(player, room) {
         clearInterval(player.moveInterval);
         player.moveInterval = null;
       }
-    }, server_tick_rate - 2);
+    }, server_tick_rate);
     player.intervalIds.push(player.moveInterval)
   }
 }
