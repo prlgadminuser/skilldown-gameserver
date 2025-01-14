@@ -65,7 +65,7 @@ function getPlayersInRange(players, centerX, centerY, radius, excludePlayerId) {
 
 function UpdatePlayerChunks(room, player) {
 
-  const chunkradius = 80
+  const chunkradius = 100
 
   const searchRadius = chunkradius  // Search area in pixels around the player
   const xMin = player.x - searchRadius;
