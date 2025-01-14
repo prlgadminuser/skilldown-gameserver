@@ -18,7 +18,9 @@ function handleMovement(player, room) {
   const deltaTime = 20; // Fixed time step in ms
 
   // Calculate radians for final direction
-  const radians = ((player.direction - 90) * Math.PI) / 180;
+  const finalDirection = player.moving ? player.direction - 90 : player.direction;
+
+  const radians = (finalDirection * Math.PI) / 180;
 
   // Calculate movement deltas
   const xDelta = player.speed * deltaTime * Math.cos(radians);

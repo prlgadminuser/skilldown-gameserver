@@ -1,4 +1,7 @@
 "use strict";
+
+const { server_tick_rate } = require("../globalhandler/config");
+
 // Function to handle spectating logic for eliminated players
 function handleSpectatorMode(player, room) {
     // Only start spectating logic if the player is eliminated
@@ -78,7 +81,7 @@ function handleSpectatorMode(player, room) {
       } else {
         handleSpectatorMode(player, room); // Continuously handle spectating state
       }
-    }, 16.4)); // Adjust intervalfrequency as needed
+    }, server_tick_rate - 0.1)); // Adjust intervalfrequency as needed
   }
   
 

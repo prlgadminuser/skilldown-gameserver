@@ -303,7 +303,6 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
     const newPlayer = {
       ws,
-      hitmarkers: new Set(),
       lastmsg: 0,
       intervalIds: [],
       timeoutIds: [],
