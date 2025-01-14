@@ -18,11 +18,11 @@ function handleMovement(player, room) {
   const deltaTime = 20; // Fixed time step in ms
 
   // Calculate radians for final direction
-  const radians = ((player.moving ? player.direction - 90 : player.direction) * Math.PI) / 180;
+  const radians = ((player.direction) * Math.PI) / 180;
 
   // Calculate movement deltas
-  const xDelta = player.speed * deltaTime * Math.cos(radians);
-  const yDelta = player.speed * deltaTime * Math.sin(radians);
+  const xDelta = Math.round(player.speed * deltaTime * Math.cos(radians));
+  const yDelta = Math.round(player.speed * deltaTime * Math.sin(radians));
 
   // Update position with precise values
   let newX = player.x + xDelta;
@@ -47,8 +47,8 @@ function handleMovement(player, room) {
   newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
   // Apply new position and store last processed position
-  player.x = parseFloat(newX.toFixed(2)); // Store precise position
-  player.y = parseFloat(newY.toFixed(2));
+  player.x = parseFloat(newX.toFixed(1)); // Store precise position
+  player.y = parseFloat(newY.toFixed(1));
   player.lastProcessedPosition = { x: player.x, y: player.y };
 }
 
