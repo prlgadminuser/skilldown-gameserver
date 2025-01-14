@@ -22,8 +22,8 @@ function handleMovement(player, room) {
   const xDelta = player.speed * deltaTime * Math.cos(radians);
   const yDelta = player.speed * deltaTime * Math.sin(radians);
 
-  let newX = player.x + xDelta;
-  let newY = player.y + yDelta;
+  let newX = player.x + Math.round(xDelta);
+  let newY = player.y + Math.round(yDelta);
 
   // Perform collision checks
   if (isCollisionWithCachedWalls(player.nearbywalls, newX, newY)) {
