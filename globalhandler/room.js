@@ -1253,15 +1253,18 @@ function handleMovementData(data, player, room) {
   }
 }
 
-function updatePlayerDirection(player, direction) {
+  function updatePlayerDirection(player, direction) {
 
-  player.direction = direction;
+    player.direction = direction;
+ 
+    if (player.direction == -180 || player.direction == 0) {
+    } else 
+      player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
+    }
+    
+  
+  
 
-  if (player.direction === -180 || player.direction === 0) {
-    // Keep the direction unchanged for straight down or up
-  } else
-    player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
-}
 
 
 function updatePlayerMovement(player, moving) {
