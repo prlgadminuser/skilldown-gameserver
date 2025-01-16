@@ -871,6 +871,8 @@ function sendBatchedMessages(roomId) {
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
 
+  handlePlayerMoveIntervalAll(room)
+
 
 }
 
@@ -1246,7 +1248,7 @@ function handleMovementData(data, player, room) {
     if (validDirection) {
       updatePlayerDirection(player, direction);
       player.moving = true;
-      handlePlayerMoveInterval(player, room);
+      //handlePlayerMoveInterval(player, room);
     } else {
       console.warn("Invalid direction value:", direction);
     }
@@ -1286,13 +1288,24 @@ function handlePlayerMoveInterval(player, room) {
       if (player.moving) {
         handleMovement(player, room);
       } else {
+        if (player.moveInterval)
         clearInterval(player.moveInterval);
         player.moveInterval = null;
       }
-    }, server_tick_rate + 1);
+    }, server_tick_rate - 1);
     player.intervalIds.push(player.moveInterval)
   }
 }
+
+
+function handlePlayerMoveIntervalAll(room) {
+
+  room.players.forEach((player) => {
+      if (player.moving) {
+        handleMovement(player, room);
+      };
+    });
+  }
 
 /*function handleRequest(result, message) {
   const player = result.room.players.get(result.playerId);
