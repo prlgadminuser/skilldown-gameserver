@@ -25,9 +25,8 @@ function isCollisionWithPlayer(bullet, player, height, width) {
 }
 
 function isHeadHit(bullet, player, height, width) {
-  // Calculate the player's headshot region (top 1/3 of the hitbox)
-  const headshotTop = player.y - playerHitboxHeight / 3;  // Headshot region starts at top of the player hitbox
-  const headshotBottom = player.y - playerHitboxHeight / 6; // Headshot region ends a little below the top
+  const headshotTop = player.y - playerHitboxHeight / 3; 
+  const headshotBottom = player.y - playerHitboxHeight / 6; 
 
   const playerLeft = player.x - playerHitboxWidth / 2.4;
   const playerRight = player.x + playerHitboxWidth / 2.4;
@@ -52,7 +51,7 @@ function moveBullet(room, player, bullet) {
 
   const { speed, direction, timestamp, height, width, bouncesLeft, maxtime, distance, canbounce, damageconfig, damage, gunid } = bullet;
 
-  const radians = toRadians(direction - 90); // Adjust direction to radians
+  const radians = toRadians(direction - 90); 
   const xDelta = speed * Math.cos(radians);
   const yDelta = speed * Math.sin(radians);
 
@@ -64,7 +63,7 @@ function moveBullet(room, player, bullet) {
   //console.log(t1, bullet.maxtime);
 
   if (distanceTraveled > distance || timenow > maxtime) {
-    player.bullets.delete(timestamp); // Remove the bullet if it exceeds max distance
+    player.bullets.delete(timestamp);
     return;
 
   }
@@ -79,14 +78,13 @@ function moveBullet(room, player, bullet) {
 
 
       const potentialTargets = Array.from(room.players.values()).filter(otherPlayer =>
-        otherPlayer !== player &&  // Exclude the player themselves
-        otherPlayer.visible &&     // Only consider visible players
-        !player.team.players.some(player => player.nmb === otherPlayer.nmb)  // Exclude teammates
+        otherPlayer !== player &&
+        otherPlayer.visible &&    
+        !player.team.players.some(player => player.nmb === otherPlayer.nmb)
       );
 
       for (const otherPlayer of potentialTargets) {
         if (isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
-        //  const shootDistance = (distanceTraveled / distance + 0.5).toFixed(1);
           let finalDamage
 
           finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
@@ -103,7 +101,6 @@ function moveBullet(room, player, bullet) {
       if (room.dummies.hasOwnProperty(key)) {
         const dummy = room.dummies[key];
         
-        // Check for collision with the dummy
         if (isCollisionWithPlayer(bullet, dummy, height, width)) { // Reuse the same collision function
           // Handle the dummy collision
 
