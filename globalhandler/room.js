@@ -615,8 +615,6 @@ const state_map = {
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
 
-	  handlePlayerMoveIntervalAll(room)
-
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
 
 
@@ -872,6 +870,9 @@ function sendBatchedMessages(roomId) {
 
   // Clear the batch after sending
   batchedMessages.set(roomId, []);
+
+  handlePlayerMoveIntervalAll(room)
+
 
 }
 

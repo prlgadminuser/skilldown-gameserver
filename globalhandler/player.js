@@ -51,7 +51,7 @@ function handleMovement(player, room) {
   // Apply new position and store last processed position
   player.x = parseFloat(newX.toFixed(0)); // Store precise position
   player.y = parseFloat(newY.toFixed(0));
-} 
+}
 
 
 
