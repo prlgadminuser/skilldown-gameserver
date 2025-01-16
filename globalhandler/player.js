@@ -14,15 +14,17 @@ function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
-function handleMovement(player, room, deltaTime) {
+function handleMovement(player, room) {
+  const deltaTime = 20; // Fixed time step in ms
+
   // Calculate radians for final direction
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
 
   const radians = (finalDirection * Math.PI) / 180;
 
   // Calculate movement deltas
-  const xDelta = player.speed * deltaTime * Math.cos(radians) / 1000; // Convert ms to seconds
-  const yDelta = player.speed * deltaTime * Math.sin(radians) / 1000;
+  const xDelta = player.speed * deltaTime * Math.cos(radians);
+  const yDelta = player.speed * deltaTime * Math.sin(radians);
 
   // Update position with precise values
   let newX = player.x + xDelta;
@@ -46,16 +48,10 @@ function handleMovement(player, room, deltaTime) {
   newX = Math.min(Math.max(newX, -room.mapWidth), room.mapWidth);
   newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
-  // Smooth interpolation for rendered position (useful for UI rendering)
-  const smoothingFactor = 0.1; // Adjust for desired smoothness (0.1 for smoother movement)
-  player.renderedX = player.renderedX + smoothingFactor * (newX - player.renderedX);
-  player.renderedY = player.renderedY + smoothingFactor * (newY - player.renderedY);
-
-  // Apply new precise position for logic
-  player.x = newX;
-  player.y = newY;
-}
-
+  // Apply new position and store last processed position
+  player.x = parseFloat(newX.toFixed(0)); // Store precise position
+  player.y = parseFloat(newY.toFixed(0));
+} 
 
 
 
