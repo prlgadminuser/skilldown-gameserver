@@ -337,7 +337,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
       place: null,
       shooting: false,
       shoot_direction: 90,
-      loadout: { 1: "1", 2: "4", 3: "2" },
+      loadout: { 1: "1", 2: "4", 3: "5" },
       bullets: new Map(),
       spectatingPlayer: playerId,
       emote: 0,
@@ -858,8 +858,7 @@ function sendBatchedMessages(roomId) {
 
     // Throttle the message sending for performance
     if (player.ws && currentMessageHash !== player.lastMessageHash) {
-      const compressedPlayerMessage = LZString.compressToUint8Array((playermsg)
-      );
+      const compressedPlayerMessage = LZString.compressToUint8Array(playermsg)
       player.ws.send(compressedPlayerMessage, { binary: true });
       player.lastMessageHash = currentMessageHash; // Store the new hash
     }
@@ -877,7 +876,7 @@ function sendBatchedMessages(roomId) {
 }
 
 // Function to handle spectating logic for eliminated players
-
+0
 
 
 

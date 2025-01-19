@@ -4,7 +4,7 @@ const batchedMessages = new Map();
 const rooms = new Map();
 
 const gridcellsize = 100; 
-const server_tick_rate = 16.5 //17
+const server_tick_rate = 17 //17
 const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
 const game_start_time = 5000
@@ -87,13 +87,13 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 9999,
-    playerspeed: 0.13,
+    playerspeed: 0.1,
     usezone: false,
     zonespeed: 0.8,
     health_restore: false,
     placereward: [0],
     seasoncoinsreward: [0],
-    show_timer: true,
+    show_timer: false,
     custom_map: 3,
     teamsize: 1,
     //health_autodamage: true,
@@ -314,8 +314,8 @@ const gunsconfig = {
     can_bullets_bounce: true,
     bullets: [
       // Shotgun pellets configuration
-     // { angle: -8, speed: 25, delay: 0, offset: 40 },
-   //   { angle: -8, speed: 25, delay: 0, offset: 20 },
+     { angle: -8, speed: 25, delay: 0, offset: 40 },
+    { angle: -8, speed: 25, delay: 0, offset: 20 },
    //  { angle: -8, speed: 25, delay: 0, offset: 0 },
   //  { angle: -5, speed: 27, delay: 0, offset: 0 },
       { angle: 0, speed: 13, delay: 0, offset: 0 },
