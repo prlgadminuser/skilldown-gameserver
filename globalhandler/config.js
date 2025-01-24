@@ -4,10 +4,10 @@ const batchedMessages = new Map();
 const rooms = new Map();
 
 const gridcellsize = 100; 
-const server_tick_rate = 16.4 //17
+const server_tick_rate = 16 //17
 const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
-const game_start_time = 5000
+const game_start_time = 1000
 const game_win_rest_time = 10000
 const room_max_open_time = 600000 //600000
 const maxClients = 100;
@@ -55,7 +55,7 @@ const gamemodeconfig = {
     maxplayers: 5,
     respawns_allowed: 0,
     playerhealth: 77,
-    playerspeed: 0.13,         //(0.26 * server_tick_rate) / 17,
+    playerspeed: 0.14,         //(0.26 * server_tick_rate) / 17,
     zonespeed: 1.2,
     usezone: true,
     health_restore: true,
@@ -71,7 +71,7 @@ const gamemodeconfig = {
     maxplayers: 2,
     respawns_allowed: 0,
     playerhealth: 150,
-    playerspeed: 0.13,
+    playerspeed: 0.14,
     zonespeed: 1.2,
     usezone: true,
     health_restore: true,
@@ -87,7 +87,7 @@ const gamemodeconfig = {
     maxplayers: 1,
     respawns_allowed: 1,
     playerhealth: 9999,
-    playerspeed: 0.13,
+    playerspeed: 0.14,
     usezone: false,
     zonespeed: 0.8,
     health_restore: false,
@@ -104,7 +104,7 @@ const gamemodeconfig = {
     maxplayers: 4,
     respawns_allowed: Infinity,
     playerhealth: 100,
-    playerspeed: 0.13,
+    playerspeed: 0.14,
     usezone: false,
     zonespeed: 0.8,
     health_restore: false,
@@ -488,5 +488,5 @@ module.exports = {
   rooms,
   room_max_open_time,
   SpatialGrid,
-  gridcellsize
+  gridcellsize,
 };

@@ -8,6 +8,8 @@ const { spawnAnimation } = require('./../gameObjectEvents/deathrespawn')
 const { handleElimination } = require('../playerhandler/eliminated');
 const { updateTeamScore } = require('./../teamfighthandler/changescore')
 const { findCollidedWall } = require('./collisions');
+const { globalspeedmultiplier } = require('./config');
+
 
 
 function getDistance(x1, y1, x2, y2) {

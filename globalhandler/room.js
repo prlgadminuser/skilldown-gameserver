@@ -773,7 +773,9 @@ function sendBatchedMessages(roomId) {
     if (room.state === "playing") {
 
 
-      const playersInRange = player.nearbyplayers
+      const playersInRange = player.nearbyplayers 
+
+
 
 
       //  player.pd = {};
@@ -876,8 +878,6 @@ function sendBatchedMessages(roomId) {
 
 }
 
-// Function to handle spectating logic for eliminated players
-0
 
 
 
