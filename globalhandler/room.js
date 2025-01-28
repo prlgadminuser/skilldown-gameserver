@@ -262,9 +262,9 @@ function playerLeave(roomId, playerId) {
 
 async function joinRoom(ws, token, gamemode, playerVerified) {
   try {
-    const { playerId, hat, top, player_color, hat_color, top_color, selected_gadget, skillpoints, nickname } = playerVerified;
+    const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname } = playerVerified;
 
-    const gadgetselected = selected_gadget || 1;
+    const gadgetselected = gadget || 1;
     const finalskillpoints = skillpoints || 0;
     const finalnickname = nickname.replace(/[:$]/g, '');
 

@@ -29,13 +29,13 @@ async function verifyPlayer(token) {
       { username },
       {
         projection: {
-          equipped_item: 1,
-          equipped_item2: 1,
-          equipped_color: 1,
-          equipped_hat_color: 1,
-          equipped_body_color: 1,
+          hat: 1,
+          top: 1,
+          color: 1,
+          hat_color: 1,
+          top_color: 1,
           sp: 1,
-          equipped_gadget: 1,
+          gadget: 1,
           nickname: 1,
         },
       }
@@ -46,25 +46,25 @@ async function verifyPlayer(token) {
     }
 
     const {
-      equipped_item,
-      equipped_item2,
-      equipped_color,
-      equipped_hat_color,
-      equipped_body_color,
+      hat,
+      top,
+      color,
+      hat_color,
+      top_color,
       sp,
-      equipped_gadget,
+      gadget,
       nickname,
     } = userInformation;
 
     return {
       playerId: username,
-      hat: equipped_item,
-      top: equipped_item2,
-      player_color: equipped_color,
-      hat_color: equipped_hat_color,
-      top_color: equipped_body_color,
+      hat: hat,
+      top: top,
+      player_color: color,
+      hat_color: hat_color,
+      top_color: top_color,
       skillpoints: sp,
-      selected_gadget: equipped_gadget,
+      gadget: gadget,
       nickname: nickname,
     };
 
