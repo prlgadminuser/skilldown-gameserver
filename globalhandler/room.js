@@ -654,8 +654,7 @@ function sendBatchedMessages(roomId) {
   
     // Continue with sending the data...
   } else {
-    room.rdlast = roomdata;
-   // roomdata = undefined;  // No need to send the data if it hasn't changed
+    roomdata = undefined;  // No need to send the data if it hasn't changed
   }
 
   let playerData = {};
