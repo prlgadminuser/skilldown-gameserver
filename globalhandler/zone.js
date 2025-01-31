@@ -120,12 +120,11 @@ function pingPlayers(room) {
   );
 }
 
-function generateRandomTarget(mapWidth, mapHeight, startX = -mapWidth, startY = -mapHeight, endX = mapWidth, endY = mapHeight) {
-  // Use provided boundaries to generate a target within the zone
-  const randomX = Math.floor(Math.random() * (endX - startX + 1)) + startX;
-  const randomY = Math.floor(Math.random() * (endY - startY + 1)) + startY;
+function generateRandomTarget(mapWidth, mapHeight) {
+  const randomX = Math.floor(Math.random() * (mapWidth * 2 + 1)) - mapWidth;
+  const randomY = Math.floor(Math.random() * (mapHeight * 2 + 1)) - mapHeight;
 
-  console.log(randomX, randomY);
+  console.log(randomX, randomY)
 
   return { targetX: randomX, targetY: randomY };
 }
@@ -136,45 +135,15 @@ function UseZone(room) {
   room.zoneEndX += room.mapWidth / 2;
   room.zoneEndY += room.mapHeight / 2;
 
-  const mapWidth = room.mapWidth * 0.7;
-  const mapHeight = room.mapHeight * 0.7;
+  const mapWidth = room.mapWidth * 0.7
+  const mapHeight = room.mapHeight * 0.7
 
-  // First zone is generated without boundaries
   room.zonephases = [
-    { 
-      waitTime: 0, 
-      shrinkTime: 240000, 
-      damagePerSecond: 2, 
-      zonespeed: 5, 
-      ...generateRandomTarget(mapWidth, mapHeight),
-      targetSize: room.mapHeight * 2
-    },
-    { 
-      waitTime: 20000, 
-      shrinkTime: 50000, 
-      damagePerSecond: 4, 
-      zonespeed: 5, 
-      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
-      targetSize: room.mapHeight * 1.3 
-    },
-    { 
-      waitTime: 20000, 
-      shrinkTime: 50000, 
-      damagePerSecond: 8, 
-      zonespeed: 5, 
-      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
-      targetSize: room.mapHeight * 0.6 
-    },
-    { 
-      waitTime: 20000, 
-      shrinkTime: 50000, 
-      damagePerSecond: 12, 
-      zonespeed: 5, 
-      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
-      targetSize: 0 
-    },
+    { waitTime: 0, shrinkTime: 240000, damagePerSecond: 2, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 2 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 4, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 1.3 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 8, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: room.mapHeight * 0.6 },
+    { waitTime: 20000, shrinkTime: 50000, damagePerSecond: 12, zonespeed: 5, ...generateRandomTarget(mapWidth, mapHeight), targetSize: 0 },
   ];
-
 
   room.currentPhase = 0;
   room.phaseStartTime = new Date().getTime();
