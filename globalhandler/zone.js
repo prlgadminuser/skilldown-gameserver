@@ -154,7 +154,7 @@ function UseZone(room) {
       shrinkTime: 50000, 
       damagePerSecond: 4, 
       zonespeed: 5, 
-      ...generateRandomTarget(mapWidth, mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
+      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
       targetSize: room.mapHeight * 1.3 
     },
     { 
@@ -162,7 +162,7 @@ function UseZone(room) {
       shrinkTime: 50000, 
       damagePerSecond: 8, 
       zonespeed: 5, 
-      ...generateRandomTarget(mapWidth, mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
+      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
       targetSize: room.mapHeight * 0.6 
     },
     { 
@@ -170,7 +170,7 @@ function UseZone(room) {
       shrinkTime: 50000, 
       damagePerSecond: 12, 
       zonespeed: 5, 
-      ...generateRandomTarget(mapWidth, mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
+      ...generateRandomTarget(room.mapWidth, room.mapHeight, room.zoneStartX, room.zoneStartY, room.zoneEndX, room.zoneEndY),
       targetSize: 0 
     },
   ];
