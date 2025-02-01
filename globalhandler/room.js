@@ -369,7 +369,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
     if (room) {
       newPlayer.timeout = setTimeout(() => {
-        if (newPlayer.lastPing > Date.now() - player_idle_timeout) {
+        if (newPlayer.lastPing > Date.now()) {
 
           newPlayer.ws.close(4200, "disconnected_inactivity")
         }
