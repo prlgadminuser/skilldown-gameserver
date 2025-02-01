@@ -369,7 +369,10 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
 
     if (room) {
       newPlayer.timeout = setTimeout(() => {
-        newPlayer.ws.close(4200, "disconnected_inactivity");
+        if (newPlayer.lastPing > Date.now() - player_idle_timeout) {
+
+          newPlayer.ws.close(4200, "disconnected_inactivity")
+        }
       }, player_idle_timeout);
 
       room.players.set(playerId, newPlayer);
@@ -1187,11 +1190,7 @@ function handlePong(player) {
     return;
   }
   player.lastPing = now;
-  clearTimeout(player.timeout);
 
-  player.timeout = setTimeout(() => {
-    player.ws.close(4200, "disconnected_inactivity");
-  }, player_idle_timeout);
 }
 
 

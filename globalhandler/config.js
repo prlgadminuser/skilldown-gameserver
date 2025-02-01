@@ -88,7 +88,7 @@ const gamemodeconfig = {
     respawns_allowed: 1,
     playerhealth: 9999,
     playerspeed: 0.14,
-    usezone: false,
+    usezone: true,
     zonespeed: 0.8,
     health_restore: false,
     placereward: [0],
