@@ -1167,19 +1167,9 @@ function handleRequest(result, message) {
   //handleMovingState(data.moving, player);
 
   if (type === "2") {
-    clearInterval(player.moveInterval);
-    player.moveInterval = null;
     player.moving = false;
   }
 
-}
-
-function handleMovingState(movingValue, player) {
-  if (movingValue === false || movingValue === "false") {
-    clearInterval(player.moveInterval);
-    player.moveInterval = null;
-    player.moving = false;
-  }
 }
 
 
@@ -1277,23 +1267,6 @@ function updatePlayerMovement(player, moving) {
   }
 }
 
-
-
-function handlePlayerMoveInterval(player, room) {
-  if (!player.moveInterval) {
-    clearInterval(player.moveInterval);
-    player.moveInterval = setInterval(() => {
-      if (player.moving) {
-        handleMovement(player, room);
-      } else {
-        if (player.moveInterval)
-        clearInterval(player.moveInterval);
-        player.moveInterval = null;
-      }
-    }, server_tick_rate);
-    player.intervalIds.push(player.moveInterval)
-  }
-}
 
 
 function handlePlayerMoveIntervalAll(room) {

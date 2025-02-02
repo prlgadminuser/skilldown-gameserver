@@ -10,9 +10,6 @@ function respawnplayer(room, player) {
 
   player.moving = false
 
-  clearInterval(player.moveInterval)
-  player.moveInterval = null;
-
   player.health = player.starthealth
 
   player.timeoutIds.push(setTimeout(() =>{
