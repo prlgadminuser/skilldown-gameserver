@@ -120,14 +120,19 @@ function pingPlayers(room) {
   );
 }
 
+const RandomZone = false
+
 function generateRandomTarget(mapWidth, mapHeight) {
-  const randomX = Math.floor(Math.random() * (mapWidth * 2 + 1)) - mapWidth;
-  const randomY = Math.floor(Math.random() * (mapHeight * 2 + 1)) - mapHeight;
-
-  console.log(randomX, randomY)
-
-  return { targetX: randomX, targetY: randomY };
+  if (RandomZone) {
+    const randomX = Math.floor(Math.random() * (mapWidth * 2 + 1)) - mapWidth;
+    const randomY = Math.floor(Math.random() * (mapHeight * 2 + 1)) - mapHeight;
+    return { targetX: randomX, targetY: randomY };
+  } else {
+    return { targetX: 0, targetY: 0 };
+  }
 }
+
+ 
 
 function UseZone(room) {
   room.zoneStartX -= room.mapWidth / 2;
