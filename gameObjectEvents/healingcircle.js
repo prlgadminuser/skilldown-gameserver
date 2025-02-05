@@ -1,5 +1,7 @@
 "use strict";
 
+const { playerHitboxHeight, playerHitboxWidth } = require('./../globalhandler/config');
+
 function spawnHealingCircle(room) {
   // Filter active players (not eliminated)
   const activePlayers = Array.from(room.players.values()).filter((player) => player.state === 1 && player.health > 0);
@@ -95,8 +97,8 @@ function updateHealingCircles(deltaTime, room) {
 }
 
 function isPlayerInsideCircle(player, circle) {
-  const PLAYER_WIDTH = 40;  // Example player width
-  const PLAYER_HEIGHT = 70; // Example player height
+  const PLAYER_WIDTH = playerHitboxWidth / 2;  // Example player width
+  const PLAYER_HEIGHT =  playerHitboxHeight / 2; // Example player height
 
   // Calculate the distance from the circle center to the closest point on the player's hitbox
   const closestX = Math.max(player.x - PLAYER_WIDTH, Math.min(circle.x, player.x + PLAYER_WIDTH));

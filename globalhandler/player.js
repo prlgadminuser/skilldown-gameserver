@@ -17,7 +17,7 @@ function getDistance(x1, y1, x2, y2) {
 }
 
 function handleMovement(player, room) {
-  const deltaTime = 20; // Fixed time step in ms
+  const deltaTime = 1; // Fixed time step in ms
 
   // Calculate radians for final direction
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
@@ -51,8 +51,8 @@ function handleMovement(player, room) {
   newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
   // Apply new position and store last processed position
-  player.x = parseFloat(newX.toFixed(0)); // Store precise position
-  player.y = parseFloat(newY.toFixed(0));
+  player.x = parseFloat(newX.toFixed(1)); // Store precise position
+  player.y = parseFloat(newY.toFixed(1));
 }
 
 

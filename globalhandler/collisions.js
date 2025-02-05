@@ -34,7 +34,7 @@ function isCollisionWithWalls(grid, x, y) {
 function isCollisionWithCachedWalls(walls, x, y) {
   const xMin = x - 20;
   const xMax = x + 20;
-  const yMin = y - 45;
+  const yMin = y - 53;
   const yMax = y + 45
 
   const nearbyWalls = walls

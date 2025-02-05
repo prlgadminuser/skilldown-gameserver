@@ -1,7 +1,7 @@
 "use strict";
 
 const { LZString, axios, Limiter } = require('./..//index.js');
-const { matchmaking_timeout, server_tick_rate, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
+const { matchmaking_timeout, server_tick_rate, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time, playerHitboxWidth, playerHitboxHeight } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
