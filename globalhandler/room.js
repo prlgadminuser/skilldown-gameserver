@@ -772,35 +772,41 @@ function sendBatchedMessages(roomId) {
 
 
     let filteredplayers = {};
+    player.nearbyids = new Set();
+
     if (room.state === "playing") {
-
-
-      const playersInRange = player.nearbyplayers 
-
-
-
-
-      //  player.pd = {};
-      // Filter playerData to include only players in range for the current player
-
+      const playersInRange = player.nearbyplayers;
+      const previousHashes = player.pdHashes || {}; // Store previous hashes
+    
+      // Filter playerData to include only players in range
       filteredplayers = Object.entries(playerData).reduce((result, [playerId, playerData]) => {
         if (playersInRange.has(Number(playerId))) {
-          result[playerId] = playerData; // Add filtered player data
+          player.nearbyids.add(playerId);
+          const currentHash = generateHash(playerData);
+    
+          // Only include new players or changed data based on hash comparison
+          if (!previousHashes[playerId] || previousHashes[playerId] !== currentHash) {
+            result[playerId] = playerData;
+            previousHashes[playerId] = currentHash; // Update hash
+          }
         }
         return result;
       }, {});
 
-      player.pd = filteredplayers
+      player.nearbyfinalids = player.nearbyids
+    
+      player.pd = filteredplayers;
+      player.pdHashes = previousHashes; // Save updated hashes
     } else {
-
       if (room.state === "countdown") {
-        player.pd = playerData
+        player.pd = playerData;
+        player.pdHashes = {}; // Reset hash storage
       } else {
-        player.pd = {}
-
-
+        player.pd = {};
+        player.pdHashes = {}; // Reset hash storage
       }
     }
+
 
 
 
@@ -836,7 +842,6 @@ function sendBatchedMessages(roomId) {
      }
 
       playerSpecificMessage = [
-        { key: 'pd', value: player.pd },
         { key: 'rd', value: newMessage.rd },
         { key: 'kf', value: newMessage.kf },
         { key: 'dm', value: newMessage.dm },
@@ -856,6 +861,9 @@ function sendBatchedMessages(roomId) {
       }, {});
 
     }
+
+    playerSpecificMessage.pd = player.pd
+    playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []
 
     const currentMessageHash = generateHash(playerSpecificMessage);
 
