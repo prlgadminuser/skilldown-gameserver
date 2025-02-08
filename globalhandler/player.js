@@ -16,8 +16,16 @@ function getDistance(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
-function handleMovement(player, room) {
+function handleMovement(player, room) { // all hitbox should be more then the other function in collsision
+
   const deltaTime = 1; // Fixed time step in ms
+
+  const xMin = player.x - 16;  
+  const xMax = player.x + 16;
+  const yMin = player.y - 61;
+  const yMax = player.y + 51
+
+  player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
   // Calculate radians for final direction
   const finalDirection = player.moving ? player.direction - 90 : player.direction;
@@ -31,7 +39,7 @@ function handleMovement(player, room) {
   // Update position with precise values
   let newX = player.x + xDelta;
   let newY = player.y + yDelta;
-
+  
   // Perform collision checks
   if (isCollisionWithCachedWalls(player.nearbywalls, newX, newY)) {
     const canMoveX = !isCollisionWithCachedWalls(player.nearbywalls, newX, player.y);

@@ -12,6 +12,13 @@ const game_win_rest_time = 10000
 const room_max_open_time = 600000 //600000
 const maxClients = 100;
 
+const hitboxplayer = {
+ xMin: 14,
+ xMax: 14,
+ yMin: 50,
+ yMax: 43,
+  }
+
 const playerHitboxWidth = 60; 
 const playerHitboxHeight = 120;
 
