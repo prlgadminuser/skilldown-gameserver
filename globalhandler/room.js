@@ -851,7 +851,7 @@ function sendBatchedMessages(roomId) {
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
-        { key: 'pd', value: player.pd },
+       // { key: 'pd', value: player.pd },
     //    { key: 'np', value: }
 
       ].reduce((acc, { key, value }) => {
@@ -866,6 +866,7 @@ function sendBatchedMessages(roomId) {
 
     }
 
+    playerSpecificMessage.pd = player.pd
     playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] 
 
 
