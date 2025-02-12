@@ -71,28 +71,28 @@ function createRateLimiter() {
 
 async function setupRoomPlayers(room) {
 
-let playerNumberID = 0; // Start with player number 0
+  let playerNumberID = 0; // Start with player number 0
 
-// Iterate over each player in the room's players collection
-room.players.forEach((player) => {
-  // Set the player's unique number (nmb)
-  player.nmb = playerNumberID;
+  // Iterate over each player in the room's players collection
+  room.players.forEach((player) => {
+    // Set the player's unique number (nmb)
+    player.nmb = playerNumberID;
 
-  const spawnPositions = room.spawns;
-  const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
+    const spawnPositions = room.spawns;
+    const spawnIndex = playerNumberID % spawnPositions.length; // Distribute players across spawn positions
 
-  player.x = spawnPositions[spawnIndex].x,
-    player.y = spawnPositions[spawnIndex].y,
+    player.x = spawnPositions[spawnIndex].x,
+      player.y = spawnPositions[spawnIndex].y,
 
-    // Assign the spawn position to the player
-  player.startspawn = {
-    x: spawnPositions[spawnIndex].x,
-    y: spawnPositions[spawnIndex].y
-  };
+      // Assign the spawn position to the player
+      player.startspawn = {
+        x: spawnPositions[spawnIndex].x,
+        y: spawnPositions[spawnIndex].y
+      };
 
-  // Increment the player number for the next player
-  playerNumberID++;
-});
+    // Increment the player number for the next player
+    playerNumberID++;
+  });
 }
 
 async function CreateTeams(room) {
@@ -386,7 +386,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
     if (room.state === "waiting" && room.players.size >= room.maxplayers && !roomStateLock.get(roomId)) {
       roomStateLock.set(roomId, true);
 
-    
+
       await setupRoomPlayers(room)
 
       await CreateTeams(room)
@@ -429,11 +429,11 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
             if (room.showtimer === true) {
               const countdownDuration = room_max_open_time // 10 minutes in milliseconds
               const countdownStartTime = Date.now();
-          
+
               room.intervalIds.push(setInterval(() => {
                 const elapsedTime = Date.now() - countdownStartTime;
                 const remainingTime = countdownDuration - elapsedTime;
-          
+
                 if (remainingTime <= 0) {
                   clearInterval(room.countdownInterval);
                   room.countdown = "0-00";
@@ -650,11 +650,11 @@ function sendBatchedMessages(roomId) {
     room.countdown,
     room.winner,
   ].join(':');
-  
+
   // Check if the new roomdata is different from the last sent data
   if (room.rdlast !== roomdata) {
     room.rdlast = roomdata;  // Update the last sent room data
-  
+
     // Continue with sending the data...
   } else {
     roomdata = undefined;  // No need to send the data if it hasn't changed
@@ -777,13 +777,13 @@ function sendBatchedMessages(roomId) {
     if (room.state === "playing") {
       const playersInRange = player.nearbyplayers;
       const previousHashes = player.pdHashes || {}; // Store previous hashes
-    
+
       // Filter playerData to include only players in range
       filteredplayers = Object.entries(playerData).reduce((result, [playerId, playerData]) => {
         if (playersInRange.has(Number(playerId))) {
           player.nearbyids.add(playerId);
           const currentHash = generateHash(playerData);
-    
+
           // Only include new players or changed data based on hash comparison
           if (!previousHashes[playerId] || previousHashes[playerId] !== currentHash) {
             result[playerId] = playerData;
@@ -803,8 +803,8 @@ function sendBatchedMessages(roomId) {
 
       }
 
- player.lastfinalidshash = generateHash(player.nearbyids);
-    
+      player.lastfinalidshash = generateHash(player.nearbyids);
+
       player.pd = filteredplayers;
       player.pdHashes = previousHashes; // Save updated hashes
     } else {
@@ -836,20 +836,20 @@ function sendBatchedMessages(roomId) {
 
       let finalselfdata
 
-    if (room.state === "playing") {
+      if (room.state === "playing") {
 
-     if (player.selflastmsg !== selfPlayerData) {
-     player.selflastmsg = selfPlayerData;
-     finalselfdata = selfPlayerData  // Update the last sent room data
-     } else {
-       finalselfdata = undefined; // No need to send the data if it hasn't changed
-      }
+        if (player.selflastmsg !== selfPlayerData) {
+          player.selflastmsg = selfPlayerData;
+          finalselfdata = selfPlayerData  // Update the last sent room data
+        } else {
+          finalselfdata = undefined; // No need to send the data if it hasn't changed
+        }
 
-       } else {
+      } else {
 
         finalselfdata = selfPlayerData
 
-     }
+      }
 
       playerSpecificMessage = [
         { key: 'rd', value: newMessage.rd },
@@ -861,8 +861,8 @@ function sendBatchedMessages(roomId) {
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
         { key: 'pd', value: player.pd },
-        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] }
-        
+        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : ["-"] }
+
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
         if (value !== null && value !== undefined &&
@@ -1084,7 +1084,7 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
   room.runtimeout = roomopentoolong;
 
   // Countdown timer update every second
-  
+
 
   console.log("Room", room.roomId, "created")
   return room;
@@ -1262,17 +1262,17 @@ function handleMovementData(data, player, room) {
   }
 }
 
-  function updatePlayerDirection(player, direction) {
+function updatePlayerDirection(player, direction) {
 
-    player.direction = direction;
- 
-    if (player.direction == -180 || player.direction == 0) {
-    } else 
-      player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
-    }
-    
-  
-  
+  player.direction = direction;
+
+  if (player.direction == -180 || player.direction == 0) {
+  } else
+    player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
+}
+
+
+
 
 
 
@@ -1291,11 +1291,11 @@ function updatePlayerMovement(player, moving) {
 function handlePlayerMoveIntervalAll(room) {
 
   room.players.forEach((player) => {
-      if (player.moving) {
-        handleMovement(player, room);
-      };
-    });
-  }
+    if (player.moving) {
+      handleMovement(player, room);
+    };
+  });
+}
 
 /*function handleRequest(result, message) {
   const player = result.room.players.get(result.playerId);
