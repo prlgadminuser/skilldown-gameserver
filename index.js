@@ -167,7 +167,7 @@ const {
   checkForMaintenance,
 } = require("./globalhandler/dbrequests");
 
-const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig, rooms } = require("./globalhandler/config");
+const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig } = require("./globalhandler/config");
 const { addKillToKillfeed } = require('./globalhandler/killfeed')
 const { endGame } = require('./globalhandler/game')
 

@@ -793,7 +793,17 @@ function sendBatchedMessages(roomId) {
         return result;
       }, {});
 
-      player.nearbyfinalids = player.nearbyids
+      if (generateHash(player.nearbyids) !== player.lastfinalidshash) {
+
+        player.nearbyfinalids = player.nearbyids
+
+      } else {
+
+        player.nearbyfinalids = undefined
+
+      }
+
+ player.lastfinalidshash = generateHash(player.nearbyids);
     
       player.pd = filteredplayers;
       player.pdHashes = previousHashes; // Save updated hashes
@@ -849,7 +859,10 @@ function sendBatchedMessages(roomId) {
         { key: 'an', value: player.nearbyanimations },
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
         { key: 'sb', value: room.scoreboard },
-        { key: 'sd', value: finalselfdata }
+        { key: 'sd', value: finalselfdata },
+        { key: 'pd', value: player.pd },
+        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] }
+        
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
         if (value !== null && value !== undefined &&
@@ -862,8 +875,6 @@ function sendBatchedMessages(roomId) {
 
     }
 
-    playerSpecificMessage.pd = player.pd
-    playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []
 
     const currentMessageHash = generateHash(playerSpecificMessage);
 
