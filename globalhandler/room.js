@@ -793,17 +793,8 @@ function sendBatchedMessages(roomId) {
         return result;
       }, {});
 
-      if (generateHash(player.nearbyids) !== player.lastfinalidshash) {
-
         player.nearbyfinalids = player.nearbyids
 
-      } else {
-
-        player.nearbyfinalids = []
-
-      }
-
-      player.lastfinalidshash = generateHash(player.nearbyids);
 
       player.pd = filteredplayers;
       player.pdHashes = previousHashes; // Save updated hashes
@@ -861,7 +852,7 @@ function sendBatchedMessages(roomId) {
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
         { key: 'pd', value: player.pd },
-        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : ["-"] }
+    //    { key: 'np', value: }
 
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
@@ -874,6 +865,8 @@ function sendBatchedMessages(roomId) {
       }, {});
 
     }
+
+    playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] 
 
 
     const currentMessageHash = generateHash(playerSpecificMessage);
