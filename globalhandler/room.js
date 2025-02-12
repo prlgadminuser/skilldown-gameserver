@@ -799,7 +799,7 @@ function sendBatchedMessages(roomId) {
 
       } else {
 
-        player.nearbyfinalids = undefined
+        player.nearbyfinalids = []
 
       }
 
