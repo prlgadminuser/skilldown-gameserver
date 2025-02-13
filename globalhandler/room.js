@@ -793,18 +793,9 @@ function sendBatchedMessages(roomId) {
         return result;
       }, {});
 
-      const currentHash = generateHash(player.nearbyids);
-
-      if (player.lastidshash !== currentHash) {
 
         player.nearbyfinalids = player.nearbyids
-        player.lastidshash = currentHash
 
-      } else {
-
-        player.nearbyfinalids = []
-
-      }
 
 
       player.pd = filteredplayers;
@@ -812,7 +803,6 @@ function sendBatchedMessages(roomId) {
     } else {
       if (room.state === "countdown") {
         player.pd = playerData;
-        player.nearbyfinalids = player.nearbyids
         player.pdHashes = {}; // Reset hash storage
       } else {
         player.pd = {};
@@ -864,7 +854,7 @@ function sendBatchedMessages(roomId) {
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
         { key: 'pd', value: player.pd },
-        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []}
+      //  { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []}
 
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
@@ -879,7 +869,7 @@ function sendBatchedMessages(roomId) {
     }
 
     //playerSpecificMessage.pd = player.pd
-    //playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] 
+    playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] 
 
 
     const currentMessageHash = generateHash(playerSpecificMessage);
