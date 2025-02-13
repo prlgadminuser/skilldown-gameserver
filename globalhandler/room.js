@@ -797,8 +797,8 @@ function sendBatchedMessages(roomId) {
 
       if (player.lastidshash !== currentHash) {
 
-        player.lastidshash = currentHash
         player.nearbyfinalids = player.nearbyids
+        player.lastidshash = currentHash
 
       } else {
 
