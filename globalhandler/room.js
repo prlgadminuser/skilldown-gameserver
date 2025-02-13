@@ -1,7 +1,7 @@
 "use strict";
 
 const { LZString, axios, Limiter } = require('./..//index.js');
-const { matchmaking_timeout, server_tick_rate, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time, playerHitboxWidth, playerHitboxHeight } = require('./config.js');
+const { matchmaking_timeout, server_tick_rate, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
@@ -141,7 +141,7 @@ async function CreateTeams(room) {
 
 
 
-function getPlayersTeamNmbs(room, nmb) {
+/*function getPlayersTeamNmbs(room, nmb) {
   for (const team of room.teams) {
     if (team.players.some(player => player.nmb === nmb)) {
       // Return only the `nmb` values of the players in this team
@@ -150,14 +150,7 @@ function getPlayersTeamNmbs(room, nmb) {
   }
   return []; // Return an empty array if the player's team is not found
 }
-
-
-
-
-
-
-let roomId;
-let room;
+  */
 
 function clearAndRemoveInactiveTimers(timerArray, clearFn) {
   return timerArray.filter(timer => {
@@ -260,7 +253,7 @@ function playerLeave(roomId, playerId) {
 }
 
 
-async function joinRoom(ws, token, gamemode, playerVerified) {
+async function joinRoom(ws, gamemode, playerVerified) {
   try {
     const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname } = playerVerified;
 
@@ -271,7 +264,7 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
     const roomjoiningvalue = matchmakingsp(finalskillpoints);
 
     let roomId, room;
-    let roomCreationLock = false;
+    let roomCreationLock = false
 
     // Synchronize room assignment/creation
     await acquireRoomLock();
@@ -304,6 +297,8 @@ async function joinRoom(ws, token, gamemode, playerVerified) {
     const newPlayer = {
       ws,
       lastmsg: 0,
+      lastplayeridshash: 0,
+      pids_send_allowed: true,
       intervalIds: [],
       timeoutIds: [],
       direction: null,
@@ -587,25 +582,6 @@ function sendBatchedMessages(roomId) {
 
 */
 
-function arraysAreEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-  for (let i = 0; i < arr1.length; i++) {
-    if (
-      arr1[i].x !== arr2[i].x ||
-      arr1[i].y !== arr2[i].y ||
-      arr1[i].h !== arr2[i].h
-    ) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-
-
-
-
 const state_map = {
   "waiting": 1,
   "await": 2,
@@ -620,10 +596,6 @@ function sendBatchedMessages(roomId) {
 
   const playercountroom = Array.from(room.players.values()).filter(player => !player.eliminated).length;
 
-
-
-
-
   if (room.dummies) {
     const transformData = (data) => {
       const transformed = {};
@@ -632,8 +604,6 @@ function sendBatchedMessages(roomId) {
       }
       return transformed;
     };
-
-
 
     room.dummiesfiltered = JSON.stringify(transformData(room.dummies), null, 2)
 
@@ -773,6 +743,7 @@ function sendBatchedMessages(roomId) {
 
     let filteredplayers = {};
     player.nearbyids = new Set();
+    let thisnearbyids = new Set();
 
     if (room.state === "playing") {
       const playersInRange = player.nearbyplayers;
@@ -792,6 +763,7 @@ function sendBatchedMessages(roomId) {
         }
         return result;
       }, {});
+
 
 
         player.nearbyfinalids = player.nearbyids
@@ -853,7 +825,7 @@ function sendBatchedMessages(roomId) {
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
         { key: 'pd', value: player.pd },
-       // { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []}
+        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] },
 
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
@@ -867,8 +839,8 @@ function sendBatchedMessages(roomId) {
 
     }
 
-    //playerSpecificMessage.pd = player.pd
-    playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] 
+    //playerSpecificMessage.np = player.nearbyfinalids && player.pids_send_allowed ? Array.from(player.nearbyfinalids) : []
+
 
 
     const currentMessageHash = generateHash(playerSpecificMessage);
@@ -895,6 +867,12 @@ function sendBatchedMessages(roomId) {
 }
 
 
+function generateHashFive(obj) {
+  return JSON.stringify(obj)
+    .split('')
+    .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 0)
+    .toString(16);
+}
 
 
 // Efficient Hashing Function
@@ -1163,7 +1141,7 @@ function handleRequest(result, message) {
 
   switch (type) {
     case "3":
-      handleMovementData(data, player, result.room);
+      handleMovementData(data, player);
       break;
     case "4":
       handleShoot(data, player, result.room);
@@ -1242,7 +1220,7 @@ function handleGadget(player) {
   }
 }
 
-function handleMovementData(data, player, room) {
+function handleMovementData(data, player) {
   const direction = data[1];
 
   if (isValidDirection(direction)) {
@@ -1265,22 +1243,6 @@ function updatePlayerDirection(player, direction) {
   } else
     player.direction2 = direction > 90 ? 90 : direction < -90 ? -90 : direction; // Adjust otherwise
 }
-
-
-
-
-
-
-function updatePlayerMovement(player, moving) {
-  if (moving === true || moving === "true") {
-    player.moving = true;
-  } else if (moving === false || moving === "false") {
-    player.moving = false;
-  } else {
-    //console.warn("Invalid 'moving' value:", moving);
-  }
-}
-
 
 
 function handlePlayerMoveIntervalAll(room) {
@@ -1444,5 +1406,6 @@ module.exports = {
   handleRequest,
   closeRoom,
   handleCoinCollected2,
-  handlePong
+  handlePong,
+  getDistance,
 };

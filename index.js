@@ -6,38 +6,14 @@ const testmode = true
 
 const WebSocket = require("ws");
 const http = require('http');
-const cors = require("cors");
 const axios = require("axios");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const jwt = require("jsonwebtoken");
-const rateLimit = require("express-rate-limit");
 const LZString = require("lz-string");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
-const osu = require('node-os-utils');
-const express = require("express");
 const { uri } = require("./idbconfig");
 
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 1,
-  message: "lg_server_limit_reached",
-});
-
 //app.use(limiter);
-
-const cpu = osu.cpu;
-const mem = osu.mem;
-
-
-// Function to log the server's RAM and CPU usage
-async function logServerUsage() {
-  const cpuUsage = await cpu.usage();
-  const memoryInfo = await mem.info();
-
-  console.log('CPU Usage:', cpuUsage + '%');
-  console.log('Memory Usage:', memoryInfo.usedMemMb + ' MB used of ' + memoryInfo.totalMemMb + ' MB');
-  console.log('Memory Usage:', memoryInfo.usedMemPercentage + '%');
-}
 
 // Log server usage every 5 seconds
 //setInterval(logServerUsage, 60000);
@@ -55,7 +31,7 @@ let connectedUsernames = [];
 
 const rateLimiterConnection = new RateLimiterMemory(ConnectionOptionsRateLimit);
 
-const server = http.createServer((req, res) => {
+const server = http.createServer((res) => {
   // Set security headers
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -87,7 +63,7 @@ const wss = new WebSocket.Server({
   },
 
 */
-  proxy: true,
+  //proxy: true,
   maxPayload: 10, // 10MB max payload (adjust according to your needs)
 });
 
@@ -109,7 +85,6 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-    socketTimeoutMS: 30000,
  //   maxConnecting: 2,
    // maxIdleTimeMS: 300000,
    // maxPoolSize: 100,
@@ -167,7 +142,7 @@ const {
   checkForMaintenance,
 } = require("./globalhandler/dbrequests");
 
-const { game_win_rest_time, maxClients, all_gamemodes, gamemodeconfig } = require("./globalhandler/config");
+const { game_win_rest_time, maxClients, gamemodeconfig } = require("./globalhandler/config");
 const { addKillToKillfeed } = require('./globalhandler/killfeed')
 const { endGame } = require('./globalhandler/game')
 
@@ -196,10 +171,6 @@ const allowedOrigins = [
 function isValidOrigin(origin) {
   const trimmedOrigin = origin.trim().replace(/(^,)|(,$)/g, "");
   return allowedOrigins.includes(trimmedOrigin);
-}
-
-function isvalidmode(gmd) {
-  return all_gamemodes.includes(gmd);
 }
 
 
@@ -258,7 +229,7 @@ wss.on("connection", (ws, req) => {
             }
 
             // Join room and handle connection
-            joinRoom(ws, token, gamemode, playerVerified).then(result => {
+            joinRoom(ws, gamemode, playerVerified).then(result => {
                 if (!result) {
                     ws.close(4001, "Invalid token");
                     return;
@@ -310,7 +281,7 @@ wss.on("connection", (ws, req) => {
 */
           
 
-                ws.on('close', (code, reason) => {
+                ws.on('close', () => {
                     const player = result.room.players.get(result.playerId);
                     if (player) {
                         clearInterval(player.moveInterval);
