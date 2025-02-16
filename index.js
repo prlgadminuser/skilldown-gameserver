@@ -31,16 +31,27 @@ let connectedUsernames = [];
 
 const rateLimiterConnection = new RateLimiterMemory(ConnectionOptionsRateLimit);
 
-const server = http.createServer((res) => {
-  // Set security headers
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('Referrer-Policy', 'no-referrer');
-  res.setHeader('Permissions-Policy', 'interest-cohort=()');
+const server = http.createServer((req, res) => {
+  try {
+    if (!res) {
+      req.destroy(); // Close the connection if res is undefined
+      return;
+    }
 
-  // Handle request and send a response
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('qs\n');
+    // Set security headers
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Permissions-Policy', 'interest-cohort=()');
+
+    // Handle request and send a response
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('qs\n');
+  } catch (error) {
+    console.error('Error handling request:', error);
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Internal Server Error\n');
+  }
 });
 
 
