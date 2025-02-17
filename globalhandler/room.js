@@ -718,32 +718,42 @@ function sendBatchedMessages(roomId) {
 
 
 
-    const selfPlayerData = [
-      player.nmb,
-      player.state,
-      player.health,
-      player.shooting ? 1 : 0,
-      player.gun,
-      player.kills,
-      player.damage,
-      [player.place, player.skillpoints_inc, player.seasoncoins_inc].join('$'),
-      player.eliminator,
-      player.canusegadget ? 1 : 0,
-      player.gadgetuselimit,
-      player.x,
-      player.y,
-      player.hitdata,
-      player.elimlast,
-      player.emote,
-      player.spectateid,
-      playerloadout,
-    ].join(':');
+    const selfdata = {
+      id: player.nmb,
+      state: player.state,
+      h: player.health,
+      s: player.shooting ? 1 : 0,
+      g: player.gun,
+      kil: player.kills,
+      dmg: player.damage,
+      rwds: [player.place, player.skillpoints_inc, player.seasoncoins_inc].join('$'),
+      killer: player.eliminator,
+      cg: player.canusegadget ? 1 : 0,
+      lg: player.gadgetuselimit,
+      x: player.x,
+      y: player.y,
+      hit: player.hitdata,
+      el: player.elimlast,
+      em: player.emote,
+      spc: player.spectateid,
+      guns: playerloadout,
+     // np: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [],
+    };
+   
+    const lastSelfData = player.lastSelfData || {};
+    const changedSelfData = Object.fromEntries(
+      Object.entries(selfdata).filter(([key, value]) => lastSelfData[key] !== value)
+    );
 
-
+    player.lastSelfData = selfdata
+    
+    // Ensure an empty object is returned if nothing changed
+    const selfPlayerData = Object.keys(changedSelfData).length > 0 ? changedSelfData : {};
+    
+  
 
     let filteredplayers = {};
     player.nearbyids = new Set();
-    let thisnearbyids = new Set();
 
     if (room.state === "playing") {
       const playersInRange = player.nearbyplayers;
@@ -811,7 +821,7 @@ function sendBatchedMessages(roomId) {
 
       } else {
 
-        finalselfdata = selfPlayerData
+        finalselfdata = selfdata
 
       }
 
