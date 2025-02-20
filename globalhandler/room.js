@@ -605,7 +605,9 @@ function sendBatchedMessages(roomId) {
       return transformed;
     };
 
-    room.dummiesfiltered = JSON.stringify(transformData(room.dummies), null, 2)
+ //   room.dummiesfiltered = JSON.stringify(room.dummies)
+
+ room.dummiesfiltered = transformData(room.dummies)
 
   }
 
@@ -696,7 +698,7 @@ function sendBatchedMessages(roomId) {
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
-    dm: room.dummiesfiltered,
+   // dm: room.dummiesfiltered,
     kf: room.newkillfeed,
     // ob: eventsender,
 
@@ -718,6 +720,7 @@ function sendBatchedMessages(roomId) {
 
 
 
+    player.npfix = JSON.stringify(player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [])
     const selfdata = {
       id: player.nmb,
       state: player.state,
@@ -737,6 +740,7 @@ function sendBatchedMessages(roomId) {
       em: player.emote,
       spc: player.spectateid,
       guns: playerloadout,
+      np: player.npfix
      // np: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [],
     };
    
@@ -835,7 +839,7 @@ function sendBatchedMessages(roomId) {
         { key: 'sb', value: room.scoreboard },
         { key: 'sd', value: finalselfdata },
         { key: 'pd', value: player.pd },
-        { key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [] },
+        //{ key: 'np', value: player.nearbyfinalids ? Array.from(player.nearbyfinalids) : ["-1"] },
 
       ].reduce((acc, { key, value }) => {
         // Check if value is not null, undefined, an empty array, or an empty object
@@ -849,7 +853,7 @@ function sendBatchedMessages(roomId) {
 
     }
 
-    //playerSpecificMessage.np = player.nearbyfinalids && player.pids_send_allowed ? Array.from(player.nearbyfinalids) : []
+  //  playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []
 
 
 
