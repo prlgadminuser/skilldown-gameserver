@@ -698,7 +698,7 @@ function sendBatchedMessages(roomId) {
   const newMessage = {
     pd: playerData, // Always send full player data
     rd: roomdata,
-   // dm: room.dummiesfiltered,
+    dm: room.dummiesfiltered,
     kf: room.newkillfeed,
     // ob: eventsender,
 
