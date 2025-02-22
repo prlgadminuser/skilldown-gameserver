@@ -87,6 +87,7 @@ const gamemodeconfig = {
     show_timer: false,
     custom_map: 2,
     teamsize: 1,
+    healspawner: true,
   },
   3: {
     can_hit_dummies: true,
