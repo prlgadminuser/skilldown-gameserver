@@ -144,9 +144,6 @@ const mapsconfig = {
     width: 800,
     height: 800,
     spawns: [
-      { x: 0, y: 0 },
-      { x: 0, y: -800 },
-      { x: 0, y: 800 },
       { x: -800, y: 0 },
       { x: 800, y: 0 },
     ]  
