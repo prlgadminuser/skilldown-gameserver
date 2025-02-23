@@ -1,7 +1,7 @@
 "use strict";
 
 const { LZString, axios, Limiter } = require('./..//index.js');
-const { matchmaking_timeout, server_tick_rate, game_start_time, batchedMessages, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
+const { matchmaking_timeout, server_tick_rate, game_start_time, rooms, mapsconfig, gunsconfig, gamemodeconfig, matchmakingsp, player_idle_timeout, room_max_open_time } = require('./config.js');
 const { handleBulletFired } = require('./bullets.js');
 const { handleMovement } = require('./player.js');
 const { startRegeneratingHealth, startDecreasingHealth } = require('./match-modifiers');
@@ -504,12 +504,6 @@ function cleanupRoom(roomId) {
   }
 }
 
-function addToBatch(roomId, messages) {
-  if (!batchedMessages.has(roomId)) {
-    batchedMessages.set(roomId, []);
-  }
-  batchedMessages.get(roomId).push(...messages);
-}
 
 function getDistance(x1, y1, x2, y2) {
   return Math.sqrt(
@@ -882,10 +876,6 @@ function sendBatchedMessages(roomId) {
   });
 
   room.lastSentMessage = jsonString
-
-
-  // Clear the batch after sending
-  batchedMessages.set(roomId, []);
 
 }
 

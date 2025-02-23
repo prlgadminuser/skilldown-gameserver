@@ -1,10 +1,9 @@
 "use strict";
 
-const batchedMessages = new Map();
 const rooms = new Map();
 
 const gridcellsize = 100; 
-const server_tick_rate = 16.4 //17
+const server_tick_rate = 16.5 //17
 const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
 const game_start_time = 1000
@@ -462,7 +461,6 @@ const transformedMaps = Object.keys(mapsconfig).reduce((acc, key) => {
 //helper functions for grid retrival
 
 module.exports = {
-  batchedMessages,
   server_tick_rate,
   matchmaking_timeout,
   player_idle_timeout,
