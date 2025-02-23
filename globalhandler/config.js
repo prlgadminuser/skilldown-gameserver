@@ -218,7 +218,7 @@ const mapsconfig = {
 
 const gunsconfig = {
 
-  W001: {  // Default pistol
+  1: {  // Default pistol
     cooldown: 500,
     distance: 300,
     maxexistingtime: 400,
@@ -250,7 +250,7 @@ const gunsconfig = {
   ],
   },
 
-  W002: { // Default Shotgun
+  2: { // Default Shotgun
     cooldown: 800,
     distance: 250,
     maxexistingtime: 500,
@@ -272,7 +272,7 @@ const gunsconfig = {
   ],
   },
 
-  W003: { // Default Sniper
+  3: { // Default Sniper
     cooldown: 600,
     distance: 300,
     maxexistingtime: 2000,
@@ -294,7 +294,7 @@ const gunsconfig = {
   ],
   },
 
-  W004: { // DEV WEAPON - UNRELEASED - DONT USE!!!!!!!
+  4: { // DEV WEAPON - UNRELEASED - DONT USE!!!!!!!
     cooldown: 300,
     distance: 250,
     maxexistingtime: 5000,
