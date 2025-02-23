@@ -1262,7 +1262,7 @@ function updatePlayerDirection(player, direction) {
 function handlePlayerMoveIntervalAll(room) {
 
   room.players.forEach((player) => {
-    if (player.moving === "true" && player.state === 1) {
+    if (player.moving && player.state === 1) {
       handleMovement(player, room);
     };
   });
