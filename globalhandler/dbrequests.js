@@ -37,6 +37,7 @@ async function verifyPlayer(token) {
           sp: 1,
           gadget: 1,
           nickname: 1,
+          loadout: 1,
         },
       }
     );
@@ -54,6 +55,7 @@ async function verifyPlayer(token) {
       sp,
       gadget,
       nickname,
+      loadout,
     } = userInformation;
 
     return {
@@ -66,6 +68,7 @@ async function verifyPlayer(token) {
       skillpoints: sp,
       gadget: gadget,
       nickname: nickname,
+      loadout: loadout,
     };
 
    

@@ -255,10 +255,19 @@ function playerLeave(roomId, playerId) {
 
 async function joinRoom(ws, gamemode, playerVerified) {
   try {
-    const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname } = playerVerified;
+    const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname, loadout } = playerVerified;
 
+    const fallbackloadout = { 1: "1", 2: "4", 3: "2" }
     const gadgetselected = gadget || 1;
     const finalskillpoints = skillpoints || 0;
+    const max_length = 16
+    const min_length = 4
+
+    if (nickname.length < min_length || nickname.length > max_length) {
+
+      ws.close(4004)
+    }
+
     const finalnickname = nickname.replace(/[:$]/g, '');
 
     const roomjoiningvalue = matchmakingsp(finalskillpoints);
@@ -332,7 +341,7 @@ async function joinRoom(ws, gamemode, playerVerified) {
       place: null,
       shooting: false,
       shoot_direction: 90,
-      loadout: { 1: "1", 2: "4", 3: "2" },
+      loadout: loadout || fallbackloadout,
       bullets: new Map(),
       spectatingPlayer: playerId,
       emote: 0,
