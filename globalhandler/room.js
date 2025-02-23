@@ -616,8 +616,6 @@ function sendBatchedMessages(roomId) {
 
   }
 
-
-
   let roomdata = [
     state_map[room.state],
     room.zone,
@@ -694,9 +692,6 @@ function sendBatchedMessages(roomId) {
         playerData[player.nmb] = currentPlayerData;
 
       }
-
-
-
     }
   });
 
@@ -706,23 +701,18 @@ function sendBatchedMessages(roomId) {
     dm: room.dummiesfiltered,
     kf: room.newkillfeed,
     // ob: eventsender,
-
   };
 
-  const jsonString = JSON.stringify(newMessage);
+ // const jsonString = JSON.stringify(newMessage);
 
   room.players.forEach(player => {
-
-
 
     // Create player-specific message with minimal selfPlayerData
     const playerloadout = [
       player.loadout[1],
       player.loadout[2],
       player.loadout[3],
-
     ].join('$')
-
 
 
     player.npfix = JSON.stringify(player.nearbyfinalids ? Array.from(player.nearbyfinalids) : [])
@@ -756,12 +746,9 @@ function sendBatchedMessages(roomId) {
     );
 
     player.lastSelfData = selfdata
-    
     // Ensure an empty object is returned if nothing changed
     const selfPlayerData = Object.keys(changedSelfData).length > 0 ? changedSelfData : {};
     
-  
-
     let filteredplayers = {};
     player.nearbyids = new Set();
 
@@ -784,10 +771,7 @@ function sendBatchedMessages(roomId) {
         return result;
       }, {});
 
-
-
         player.nearbyfinalids = player.nearbyids
-
 
       player.pd = filteredplayers;
       player.pdHashes = previousHashes; // Save updated hashes
@@ -801,11 +785,7 @@ function sendBatchedMessages(roomId) {
       }
     }
 
-
-
-
     // const eventSender = findNearestCircles(player, room);
-
 
     let playerSpecificMessage;
 
@@ -815,8 +795,6 @@ function sendBatchedMessages(roomId) {
 
       };
     } else {
-
-
 
       let finalselfdata
 
@@ -858,11 +836,7 @@ function sendBatchedMessages(roomId) {
       }, {});
 
     }
-
   //  playerSpecificMessage.np = player.nearbyfinalids ? Array.from(player.nearbyfinalids) : []
-
-
-
     const currentMessageHash = generateHash(playerSpecificMessage);
 
     const playermsg = JSON.stringify(playerSpecificMessage)
@@ -874,9 +848,6 @@ function sendBatchedMessages(roomId) {
       player.lastMessageHash = currentMessageHash; // Store the new hash
     }
   });
-
-  room.lastSentMessage = jsonString
-
 }
 
 
