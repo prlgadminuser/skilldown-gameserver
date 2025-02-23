@@ -257,7 +257,7 @@ async function joinRoom(ws, gamemode, playerVerified) {
   try {
     const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname, loadout } = playerVerified;
 
-    const fallbackloadout = { 1: "1", 2: "4", 3: "2" }
+    const fallbackloadout = { 1: "W001", 2: "W002", 3: "W003" }
     const gadgetselected = gadget || 1;
     const finalskillpoints = skillpoints || 0;
     const max_length = 16

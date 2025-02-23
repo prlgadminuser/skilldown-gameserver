@@ -217,7 +217,8 @@ const mapsconfig = {
 
 
 const gunsconfig = {
-  1: {
+
+  W001: {  // Default pistol
     cooldown: 500,
     distance: 300,
     maxexistingtime: 400,
@@ -242,13 +243,36 @@ const gunsconfig = {
       */
     ],
     damageconfig: [
-      { threshold: 35, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
-      { threshold: 60, damageMultiplier: 0.70 }, // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.25 } // Layer 4: 1/4 damage if within 100% of max distance
-      // You can add more layers here
+      { threshold: 35, damageMultiplier: 1 },    
+      { threshold: 60, damageMultiplier: 0.70 }, 
+      { threshold: 100, damageMultiplier: 0.25 } 
+
   ],
   },
-  2: {
+
+  W002: { // Default Shotgun
+    cooldown: 800,
+    distance: 250,
+    maxexistingtime: 500,
+    maxbounces: 5,
+    damage: 6,
+    width: 6,
+    height: 8,
+    useplayerangle: true,
+    can_bullets_bounce: false,
+    bullets: [
+      { angle: -5, speed: 27, delay: 0, offset: 0 },
+      { angle: 0, speed: 27, delay: 0, offset: 0 },
+      { angle: 5, speed: 27, delay: 0, offset: 0 },
+  ],
+    damageconfig: [
+      { threshold: 25, damageMultiplier: 1 },   
+      { threshold: 55, damageMultiplier: 0.8 }, 
+      { threshold: 100, damageMultiplier: 0.30 } 
+  ],
+  },
+
+  W003: { // Default Sniper
     cooldown: 600,
     distance: 300,
     maxexistingtime: 2000,
@@ -263,54 +287,14 @@ const gunsconfig = {
 
     ],
     damageconfig: [
-      { threshold: 45, damageMultiplier: 1 },    // Layer 1: Full damage if within 25% of max distance
-      { threshold: 80, damageMultiplier: 0.80 }, // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.70 } // Layer 4: 1/4 damage if within 100% of max distance
+      { threshold: 45, damageMultiplier: 1 },    
+      { threshold: 80, damageMultiplier: 0.80 }, 
+      { threshold: 100, damageMultiplier: 0.70 } 
       // You can add more layers here
   ],
-  },
-  3: {
-    cooldown: 1000,
-    damage: 15,
-    useplayerangle: true,
-    maxexistingtime: 2000,
-    width: 6,
-    height: 8,
-    bullets: [
-      { angle: 0, speed: 10, distance: 500, delay: 0, offset: 0 },
-      { angle: 20, speed: 10, distance: 500, delay: 100, offset: 0 },
-      { angle: -20, speed: 10, distance: 500, delay: 200, offset: 0 },
-      { angle: 40, speed: 10, distance: 500, delay: 300, offset: 0 },
-      { angle: -40, speed: 10, distance: 500, delay: 400, offset: 0 }
-    ]
   },
 
-  4: {
-    cooldown: 800,
-    distance: 250,
-    maxexistingtime: 500,
-    maxbounces: 5,
-    damage: 6,
-    width: 6,
-    height: 8,
-    useplayerangle: true,
-    can_bullets_bounce: false,
-    bullets: [
-      // Shotgun pellets configuration
-     // { angle: -8, speed: 25, delay: 0, offset: 0 },
-      { angle: -5, speed: 27, delay: 0, offset: 0 },
-      { angle: 0, speed: 27, delay: 0, offset: 0 },
-      { angle: 5, speed: 27, delay: 0, offset: 0 },
-     // { angle: 8, speed: 25, delay: 0, offset: 0 }
-  ],
-    damageconfig: [
-      { threshold: 25, damageMultiplier: 1 },   
-      { threshold: 55, damageMultiplier: 0.8 }, // Layer 1: Full damage if within 25% of max distance // Layer 2: 3/4 damage if within 50% of max distance
-      { threshold: 100, damageMultiplier: 0.30 } // Layer 4: 1/4 damage if within 100% of max distance
-      // You can add more layers here
-  ],
-  },
-  5: {
+  W004: { // DEV WEAPON - UNRELEASED - DONT USE!!!!!!!
     cooldown: 300,
     distance: 250,
     maxexistingtime: 5000,
