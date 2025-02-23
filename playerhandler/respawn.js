@@ -3,9 +3,9 @@
 function respawnplayer(room, player) {
 
 
+
   player.visible = false
   player.state = 2
-
   player.respawns--
 
   player.moving = false

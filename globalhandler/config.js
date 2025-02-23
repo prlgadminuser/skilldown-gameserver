@@ -5,11 +5,11 @@ const rooms = new Map();
 
 const gridcellsize = 100; 
 const server_tick_rate = 16.4 //17
-const matchmaking_timeout = 1800000
+const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
-const game_start_time = 5000
+const game_start_time = 1000
 const game_win_rest_time = 10000
-const room_max_open_time = 3600000
+const room_max_open_time = 600000 //600000
 const maxClients = 100;
 
 const hitboxplayer = {
@@ -145,6 +145,9 @@ const mapsconfig = {
     width: 800,
     height: 800,
     spawns: [
+   //   { x: 0, y: 0 },
+    //  { x: 0, y: -800 },
+      //{ x: 0, y: 800 },
       { x: -800, y: 0 },
       { x: 800, y: 0 },
     ]  

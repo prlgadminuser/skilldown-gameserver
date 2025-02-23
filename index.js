@@ -269,7 +269,7 @@ wss.on("connection", (ws, req) => {
                    handleRequest(result, parsedMessage);
                  }
                } catch (error) {
-
+                console.error('Error handling request:', error);
                }
 
              });
