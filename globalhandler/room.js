@@ -735,6 +735,7 @@ function sendBatchedMessages(roomId) {
       lg: player.gadgetuselimit,
       x: player.x,
       y: player.y,
+      d: player.direction2,
       hit: player.hitdata,
       el: player.elimlast,
       em: player.emote,
