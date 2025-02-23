@@ -297,12 +297,6 @@ async function joinRoom(ws, gamemode, playerVerified) {
 
     const playerRateLimiter = createRateLimiter();
 
-    // Determine spawn position index
-    //  const playerNumberID = room.currentplayerid;
-    // room.currentplayerid += 1
-    //  const spawnPositions = room.spawns;
-    //  const spawnIndex = playerNumberID % spawnPositions.length;
-
     const newPlayer = {
       ws,
       lastmsg: 0,
@@ -511,79 +505,7 @@ function getDistance(x1, y1, x2, y2) {
   );
 
 }
-/*
-function sendBatchedMessages(roomId) {
-  const room = rooms.get(roomId);
 
-
-
-  const playerData = Array.from(room.players.values()).reduce((acc, player) => {
-
-    if (player.visible !== false) {
-      
-      
-      const formattedBullets = player.bullets.reduce((acc, bullet) => {
-        acc[bullet.timestamp] = {
-          x: bullet.x,
-          y: bullet.y,
-          d: bullet.direction,
-        };
-        return acc;
-      }, {});
-
-      acc[player.playerId] = {
-        x: player.x,
-        y: player.y,
-        d: player.direction,
-        h: player.health,
-        s: player.shooting,
-        g: player.gun,
-        ping: player.ping,
-        hd: player.hitdata,
-        b: formattedBullets,
-      };
-
-
-      // Include additional properties only when room state is not "playing"
-      if (room.state !== "playing") {
-        acc[player.playerId].hat = player.hat;
-        acc[player.playerId].top = player.top;
-        acc[player.playerId].player_color = player.player_color;
-        acc[player.playerId].hat_color = player.hat_color;
-        acc[player.playerId].top_color = player.top_color;
-      }
-    }
-
-    return acc;
-  }, {});
-
-  const newMessage = {
-    ...playerData ? { playerData } : {},
-    //coins: room.coins,
-    state: room.state,
-    z: room.zone,
-    pl: room.maxplayers,
-    pg: room.sendping,
-    rp: room.players.size,
-    //coins: room.coins,
-    ...(room.eliminatedPlayers && room.eliminatedPlayers.length > 0) ? { eliminatedPlayers: room.eliminatedPlayers } : {},
-  };
-
-  const jsonString = JSON.stringify(newMessage);
-  const compressedString = LZString.compressToUint8Array(jsonString);
-
-  if (room.lastSentMessage !== jsonString) {
-    room.players.forEach((player) => {
-      player.ws.send(compressedString, { binary: true });
-    });
-
-    room.lastSentMessage = jsonString;
-  }
-
-  batchedMessages.set(roomId, []); // Clear the batch after sending
-} 
-
-*/
 
 const state_map = {
   "waiting": 1,
@@ -591,7 +513,6 @@ const state_map = {
   "countdown": 3,
   "playing": 4
 }
-
 
 
 function sendBatchedMessages(roomId) {
@@ -1383,7 +1304,6 @@ function handlePlayerMoveIntervalAll(room) {
 
 module.exports = {
   joinRoom,
-  addToBatch,
   sendBatchedMessages,
   createRoom,
   generateRandomCoins,
