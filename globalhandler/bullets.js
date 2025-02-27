@@ -166,7 +166,7 @@ async function shootBullet(room, player, bulletdata) {
   const radians1 = toRadians(angle - 90);
   const xOffset = offset * Math.cos(radians);
   const yOffset = offset * Math.sin(radians);
-  const timestamp = Math.random().toString(36).substring(2, 7);
+  const timestamp = Math.random().toString(36).substring(2, 5);
 
   const x1 = parseFloat((30 * Math.cos(radians1)).toFixed(1)); // Offset along the x-axis
 const y1 = parseFloat((30 * Math.sin(radians1)).toFixed(1)); // Offset along the y-axis

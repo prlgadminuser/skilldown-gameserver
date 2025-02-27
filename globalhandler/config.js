@@ -299,9 +299,8 @@ const gunsconfig = {
     maxexistingtime: 400,
     maxbounces: 1,
     damage: 4,
-    width: 5,
-    height: 6,
-    can_bullets_bounce: true,
+    width: 6,
+    height: 20,
     useplayerangle: true,
     bullets: [
       { angle: 0, speed: 35, delay: 0, offset: 0 },
@@ -324,7 +323,6 @@ const gunsconfig = {
     width: 60,
     height: 4,
     useplayerangle: true,
-    can_bullets_bounce: true,
     bullets: [
       { angle: 0, speed: 25, delay: 0, offset: 0 },
       { angle: 0, speed: 25, delay: 200, offset: 0 },
