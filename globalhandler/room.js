@@ -765,9 +765,10 @@ function sendBatchedMessages(roomId) {
 
     // Throttle the message sending for performance
     if (player.ws && currentMessageHash !== player.lastMessageHash) {
-    //const compressedPlayerMessage = LZString.compressToUint8Array(playermsg)
-    const compressedPlayerMessage = LZString.compressToUTF16(playermsg)
+    const compressedPlayerMessage = LZString.compressToUint8Array(playermsg)
+ // const compressedPlayerMessage = LZString.compressToUTF16(playermsg)
       player.ws.send(compressedPlayerMessage, { binary: true });
+     // console.log(compressedPlayerMessage.length)
       player.lastMessageHash = currentMessageHash; // Store the new hash
     }
   });
