@@ -301,6 +301,7 @@ const gunsconfig = {
     damage: 4,
     width: 5,
     height: 6,
+    can_bullets_bounce: true,
     useplayerangle: true,
     bullets: [
       { angle: 0, speed: 35, delay: 0, offset: 0 },
