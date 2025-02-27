@@ -3,7 +3,7 @@
 const rooms = new Map();
 
 const gridcellsize = 100; 
-const server_tick_rate = 16.5 //17
+const server_tick_rate = 15.5 //17
 const matchmaking_timeout = 120000
 const player_idle_timeout = 10000
 const game_start_time = 1000
@@ -254,7 +254,7 @@ const gunsconfig = {
     distance: 250,
     maxexistingtime: 500,
     maxbounces: 5,
-    damage: 6,
+    damage: 10,
     width: 6,
     height: 8,
     useplayerangle: true,
@@ -293,7 +293,48 @@ const gunsconfig = {
   ],
   },
 
-  4: { // DEV WEAPON - UNRELEASED - DONT USE!!!!!!!
+  4: {  // XNITRO SMG
+    cooldown: 300,
+    distance: 350,
+    maxexistingtime: 400,
+    maxbounces: 1,
+    damage: 4,
+    width: 5,
+    height: 6,
+    useplayerangle: true,
+    bullets: [
+      { angle: 0, speed: 35, delay: 0, offset: 0 },
+      { angle: 2, speed: 34, delay: 50, offset: 3 },
+      { angle: -2, speed: 34, delay: 100, offset: 6 }
+    ],
+    damageconfig: [
+     // { threshold: 50, damageMultiplier: 1 },
+     // { threshold: 100, damageMultiplier: 0.70 },
+     // { threshold: 150, damageMultiplier: 0.40 }
+    ],
+  },
+
+  5: {  // ARCADE BLASTER
+    cooldown: 700,
+    distance: 1000,
+    maxexistingtime: 500,
+    maxbounces: 2,
+    damage: 10,
+    width: 60,
+    height: 4,
+    useplayerangle: true,
+    bullets: [
+      { angle: 0, speed: 25, delay: 0, offset: 0 },
+      { angle: 0, speed: 25, delay: 200, offset: 0 },
+      { angle: 0, speed: 25, delay: 400, offset: 0 },
+    ],
+    damageconfig: [
+    //  { threshold: 150, damageMultiplier: 1 },
+    //  { threshold: 300, damageMultiplier: 0.5 }
+    ],
+  },
+
+  DEVLOCKED: { // DEV WEAPON - UNRELEASED - DONT USE!!!!!!!
     cooldown: 300,
     distance: 250,
     maxexistingtime: 5000,
@@ -318,6 +359,7 @@ const gunsconfig = {
       // You can add more layers here
   ],
   },
+
 };
 
 
