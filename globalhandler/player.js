@@ -1,4 +1,4 @@
-"use strict";
+qw"use strict";
 
 const { isCollisionWithCachedWalls } = require('./collisions');
 const { respawnplayer } = require('./../playerhandler/respawn')
@@ -59,8 +59,8 @@ function handleMovement(player, room) { // all hitbox should be more then the ot
   newY = Math.min(Math.max(newY, -room.mapHeight), room.mapHeight);
 
   // Apply new position and store last processed position
-  player.x = parseFloat(newX.toFixed(1)); // Store precise position
-  player.y = parseFloat(newY.toFixed(1));
+  player.x = parseFloat(newX.toFixed(0)); // Store precise position
+  player.y = parseFloat(newY.toFixed(0));
 }
 
 
