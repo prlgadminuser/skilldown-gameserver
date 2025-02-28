@@ -226,9 +226,9 @@ function closeRoom(roomId) {
     removeRoomFromIndex(room)
 
 
-    console.log(`Room ${roomId} closed.`);
+  //  console.log(`Room ${roomId} closed.`);
   } else {
-    console.log(`Room ${roomId} not found.`);
+  //  console.log(`Room ${roomId} not found.`);
   }
 }
 
@@ -491,7 +491,7 @@ function cleanupRoom(roomId) {
 
   const playersWithOpenConnections = room.players.filter(player => player.ws && player.ws.readyState === WebSocket.OPEN);
 
-  console.log(playersWithOpenConnections);
+  //console.log(playersWithOpenConnections);
   // Close the room if it has no players
   if (room.players.size < 1 || playersWithOpenConnections.length < 1 || !room.players || room.players.size === 0) {
     closeRoom(roomId);
@@ -549,7 +549,7 @@ function sendBatchedMessages(roomId) {
       if (generateHash(JSON.stringify(dummiesfiltered)) !== room.previousdummies) {
         // Update room.dummiesfiltered if there's a change
         room.dummiesfiltered = dummiesfiltered;
-        console.log("true")
+      //  console.log("true")
       } else {
         room.dummiesfiltered = undefined
       }
@@ -992,14 +992,14 @@ function createRoom(roomId, gamemode, gmconfig, splevel) {
 
   const roomopentoolong = room.timeoutIds.push(setTimeout(() => {
     closeRoom(roomId);
-    console.log(`Room ${roomId} closed due to timeout.`);
+  //  console.log(`Room ${roomId} closed due to timeout.`);
   }, room_max_open_time));
   room.runtimeout = roomopentoolong;
 
   // Countdown timer update every second
 
 
-  console.log("Room", room.roomId, "created")
+ // console.log("Room", room.roomId, "created")
   return room;
 }
 

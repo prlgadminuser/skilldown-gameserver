@@ -131,7 +131,7 @@ function generateRandomTarget(mapWidth, mapHeight, previousTargetX = 0, previous
   const randomX = previousTargetX + offsetX;
   const randomY = previousTargetY + offsetY;
 
-  console.log(randomX, randomY);
+//  console.log(randomX, randomY);
 
   return { targetX: randomX, targetY: randomY };
 }
