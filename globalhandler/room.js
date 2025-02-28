@@ -514,6 +514,15 @@ const state_map = {
   "playing": 4
 }
 
+const getAllKeys = (data) => {
+  const allKeys = [];
+  for (const value of Object.values(data)) {
+    // Collect all keys from each value object
+    allKeys.push(...Object.keys(value));
+  }
+  return allKeys;
+};
+
 
 function sendBatchedMessages(roomId) {
   const room = rooms.get(roomId);
@@ -531,11 +540,32 @@ function sendBatchedMessages(roomId) {
       return transformed;
     };
 
- //   room.dummiesfiltered = JSON.stringify(room.dummies)
+    room.dummieskeys = Object.keys(room.dummies);
 
- room.dummiesfiltered = transformData(room.dummies)
+    const dummiesfiltered = transformData(room.dummies);
+  
+    if (room.state === "playing") {
 
+      if (generateHash(JSON.stringify(dummiesfiltered)) !== room.previousdummies) {
+        // Update room.dummiesfiltered if there's a change
+        room.dummiesfiltered = dummiesfiltered;
+        console.log("true")
+      } else {
+        room.dummiesfiltered = undefined
+      }
+    
+      // Update the previous dummies regardless of whether it changed
+      room.previousdummies = generateHash(JSON.stringify(dummiesfiltered));
+
+    }  else {
+        
+      room.dummiesfiltered = dummiesfiltered;
+     
+    }
+   
   }
+
+
 
   let roomdata = [
     state_map[room.state],
@@ -621,6 +651,7 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
+    dmk: room.dummieskeys,
     kf: room.newkillfeed,
     // ob: eventsender,
   };
@@ -739,6 +770,7 @@ function sendBatchedMessages(roomId) {
         { key: 'rd', value: newMessage.rd },
         { key: 'kf', value: newMessage.kf },
         { key: 'dm', value: newMessage.dm },
+        { key: 'dmk', value: newMessage.dmk },
         { key: 'cl', value: player.nearbycircles },
         { key: 'an', value: player.nearbyanimations },
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },
