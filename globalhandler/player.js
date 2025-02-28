@@ -1,4 +1,4 @@
-qw"use strict";
+"use strict";
 
 const { isCollisionWithCachedWalls } = require('./collisions');
 const { respawnplayer } = require('./../playerhandler/respawn')
