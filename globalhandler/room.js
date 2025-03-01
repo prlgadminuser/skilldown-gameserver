@@ -226,9 +226,9 @@ function closeRoom(roomId) {
     removeRoomFromIndex(room)
 
 
-  //  console.log(`Room ${roomId} closed.`);
+  //console.log(`Room ${roomId} closed.`);
   } else {
-  //  console.log(`Room ${roomId} not found.`);
+  //console.log(`Room ${roomId} not found.`);
   }
 }
 
