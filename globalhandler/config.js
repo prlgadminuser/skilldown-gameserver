@@ -14,8 +14,8 @@ const maxClients = 100;
 const playerhitbox = {
   xMin: 14,
   xMax: 14,
-  yMin: 54, //59
-  yMax: 44, //49
+  yMin: 50, //59
+  yMax: 49, //49
   }
 
 const playerHitboxWidth = 45; 
