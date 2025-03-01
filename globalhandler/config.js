@@ -218,7 +218,7 @@ const mapsconfig = {
 const gunsconfig = {
 
   1: {  // Default pistol
-    can_bullets_bounce: true,
+    //can_bullets_bounce: true,
     cooldown: 500,
     distance: 300,
     maxexistingtime: 400,
