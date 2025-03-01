@@ -20,10 +20,10 @@ function handleMovement(player, room) { // all hitbox should be more then the ot
 
   const deltaTime = 1; // Fixed time step in ms
 
-  const xMin = player.x - playerhitbox.xMin + 2;  
-  const xMax = player.x + playerhitbox.xMax + 2;
-  const yMin = player.y - playerhitbox.yMin + 2;
-  const yMax = player.y + playerhitbox.yMax + 2
+  const xMin = player.x - (playerhitbox.xMin + 2);  
+  const xMax = player.x + (playerhitbox.xMax + 2);
+  const yMin = player.y - (playerhitbox.yMin + 2);
+  const yMax = player.y + (playerhitbox.yMax + 2)
 
   player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
 
