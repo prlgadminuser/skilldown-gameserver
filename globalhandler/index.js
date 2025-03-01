@@ -74,7 +74,7 @@ const wss = new WebSocket.Server({
   },
   //perMessageDeflate: true,
   proxy: true,
-  maxPayload: 1004,
+  maxPayload: 20,
   //maxPayload: 10 * 1024 * 1024 
 });
 
