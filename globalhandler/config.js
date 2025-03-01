@@ -11,11 +11,11 @@ const game_win_rest_time = 10000
 const room_max_open_time = 600000 //600000
 const maxClients = 100;
 
-const hitboxplayer = {
- xMin: 14,
- xMax: 14,
- yMin: 50,
- yMax: 43,
+const playerhitbox = {
+  xMin: 14,
+  xMax: 14,
+  yMin: 54, //59
+  yMax: 45, //49
   }
 
 const playerHitboxWidth = 45; 
@@ -58,7 +58,7 @@ const gamemodeconfig = {
   1: {
     can_hit_dummies: false,
     can_hit_players: true,
-    maxplayers: 2,
+    maxplayers: 5,
     respawns_allowed: 0,
     playerhealth: 77,
     playerspeed: 2.2,         //(0.26 * server_tick_rate) / 17,
@@ -218,7 +218,7 @@ const mapsconfig = {
 const gunsconfig = {
 
   1: {  // Default pistol
-    //can_bullets_bounce: true,
+ //   can_bullets_bounce: true,
     cooldown: 500,
     distance: 300,
     maxexistingtime: 400,
@@ -523,4 +523,5 @@ module.exports = {
   room_max_open_time,
   SpatialGrid,
   gridcellsize,
+  playerhitbox,
 };

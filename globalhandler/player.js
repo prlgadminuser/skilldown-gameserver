@@ -8,7 +8,7 @@ const { spawnAnimation } = require('./../gameObjectEvents/deathrespawn')
 const { handleElimination } = require('../playerhandler/eliminated');
 const { updateTeamScore } = require('./../teamfighthandler/changescore')
 const { findCollidedWall } = require('./collisions');
-const { globalspeedmultiplier } = require('./config');
+const { playerhitbox } = require('./config.js')
 
 
 
@@ -20,10 +20,10 @@ function handleMovement(player, room) { // all hitbox should be more then the ot
 
   const deltaTime = 1; // Fixed time step in ms
 
-  const xMin = player.x - 16;  
-  const xMax = player.x + 16;
-  const yMin = player.y - 61;
-  const yMax = player.y + 51
+  const xMin = player.x - playerhitbox.xMin + 2;  
+  const xMax = player.x + playerhitbox.xMax + 2;
+  const yMin = player.y - playerhitbox.yMin + 2;
+  const yMax = player.y + playerhitbox.yMax + 2
 
   player.nearbywalls = room.grid.getWallsInArea(xMin, xMax, yMin, yMax);
 

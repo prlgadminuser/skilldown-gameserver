@@ -3,6 +3,7 @@
 const wallblocksize = 50
 
 const halfBlockSize = wallblocksize / 2;
+const { playerhitbox } = require('./config.js')
 
 function isCollisionWithWalls(grid, x, y) {
   const xMin = x - 20;
@@ -34,10 +35,10 @@ function isCollisionWithWalls(grid, x, y) {
 function isCollisionWithCachedWalls(walls, x, y) {
 
   
-  const xMin = x - 14;
-  const xMax = x + 14;
-  const yMin = y - 59;
-  const yMax = y + 49;
+  const xMin = x - playerhitbox.xMin;
+  const xMax = x + playerhitbox.xMax;
+  const yMin = y - playerhitbox.yMin;
+  const yMax = y + playerhitbox.yMax;
 
   const nearbyWalls = walls
 
