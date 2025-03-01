@@ -5,19 +5,14 @@ const { handlePlayerCollision, handleDummyCollision } = require('./player');
 const { playerHitboxHeight, playerHitboxWidth, gunsconfig, server_tick_rate, globalspeedmultiplier } = require('./config');
 
 const BULLET_MOVE_INTERVAL = server_tick_rate // milliseconds
+
+// Helper functions
 const calculateDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 const toRadians = degrees => degrees * (Math.PI / 180);
+
+
 const playerHalfWidth = playerHitboxWidth / 2.4;
 const playerHalfHeight = playerHitboxHeight / 2.4;
-
-
-function getRotatedDimensions(width, height, angle) {
-  const radians = toRadians(angle);
-  const newWidth = Math.abs(width * Math.cos(radians)) + Math.abs(height * Math.sin(radians));
-  const newHeight = Math.abs(width * Math.sin(radians)) + Math.abs(height * Math.cos(radians));
-  return { newWidth, newHeight };
-}
-
 // Collision Detection
 function isCollisionWithPlayer(bullet, player, height, width) {
 
@@ -73,9 +68,8 @@ function moveBullet(room, player, bullet) {
 
   }
 
-  const { newWidth, newHeight } = getRotatedDimensions(width, height, direction);
 
-  if (!isCollisionWithBullet(room.grid, newX, newY, newHeight, newWidth)) {
+  if (!isCollisionWithBullet(room.grid, newX, newY, height, width)) {
     bullet.x = newX;
     bullet.y = newY;
 
@@ -90,7 +84,7 @@ function moveBullet(room, player, bullet) {
       );
 
       for (const otherPlayer of potentialTargets) {
-        if (isCollisionWithPlayer(bullet, otherPlayer, newHeight, newWidth)) {
+        if (isCollisionWithPlayer(bullet, otherPlayer, height, width)) {
           let finalDamage
 
           finalDamage = calculateFinalDamage(distanceTraveled, distance, damage, damageconfig);
@@ -107,7 +101,7 @@ function moveBullet(room, player, bullet) {
       if (room.dummies.hasOwnProperty(key)) {
         const dummy = room.dummies[key];
         
-        if (isCollisionWithPlayer(bullet, dummy, newHeight, newWidth)) { // Reuse the same collision function
+        if (isCollisionWithPlayer(bullet, dummy, height, width)) { // Reuse the same collision function
           // Handle the dummy collision
 
           let finalDamage
@@ -135,7 +129,7 @@ function moveBullet(room, player, bullet) {
   } else {
     // Check if the bullet can bounce
     if (canbounce === true) {
-      const collidedWall = findCollidedWall(room.grid, newX, newY, newHeight, newWidth); // Find the wall the bullet collided with
+      const collidedWall = findCollidedWall(room.grid, newX, newY, height, width); // Find the wall the bullet collided with
       if (collidedWall) {
         adjustBulletDirection(bullet, collidedWall, 50);
        // bullet.bouncesLeft = bouncesLeft - 1; // Decrease bouncesLeft
@@ -166,7 +160,7 @@ async function shootBullet(room, player, bulletdata) {
   const radians1 = toRadians(angle - 90);
   const xOffset = offset * Math.cos(radians);
   const yOffset = offset * Math.sin(radians);
-  const timestamp = Math.random().toString(36).substring(2, 5);
+  const timestamp = Math.random().toString(36).substring(2, 7);
 
   const x1 = parseFloat((30 * Math.cos(radians1)).toFixed(1)); // Offset along the x-axis
 const y1 = parseFloat((30 * Math.sin(radians1)).toFixed(1)); // Offset along the y-axis

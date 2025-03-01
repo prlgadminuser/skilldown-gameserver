@@ -218,6 +218,7 @@ const mapsconfig = {
 const gunsconfig = {
 
   1: {  // Default pistol
+    can_bullets_bounce: true,
     cooldown: 500,
     distance: 300,
     maxexistingtime: 400,
@@ -256,9 +257,9 @@ const gunsconfig = {
     maxbounces: 5,
     damage: 10,
     width: 6,
-    height: 8,
+    height: 3,
     useplayerangle: true,
-    can_bullets_bounce: false,
+    //can_bullets_bounce: false,
     bullets: [
       { angle: -5, speed: 27, delay: 0, offset: 0 },
       { angle: 0, speed: 27, delay: 0, offset: 0 },
@@ -300,8 +301,9 @@ const gunsconfig = {
     maxbounces: 1,
     damage: 4,
     width: 6,
-    height: 20,
+    height: 3,
     useplayerangle: true,
+    //can_bullets_bounce: true,
     bullets: [
       { angle: 0, speed: 35, delay: 0, offset: 0 },
       { angle: 2, speed: 34, delay: 50, offset: 3 },
@@ -320,8 +322,8 @@ const gunsconfig = {
     maxexistingtime: 500,
     maxbounces: 2,
     damage: 10,
-    width: 60,
-    height: 4,
+    width: 6,
+    height: 60,
     useplayerangle: true,
     bullets: [
       { angle: 0, speed: 25, delay: 0, offset: 0 },

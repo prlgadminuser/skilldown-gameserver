@@ -257,6 +257,7 @@ async function joinRoom(ws, gamemode, playerVerified) {
   try {
     const { playerId, hat, top, player_color, hat_color, top_color, gadget, skillpoints, nickname, loadout } = playerVerified;
 
+    //const fallbackloadout = { 1: "1", 2: "5", 3: "DEVLOCKED" }
     const fallbackloadout = { 1: "1", 2: "2", 3: "3" }
     const gadgetselected = gadget || 1;
     const finalskillpoints = skillpoints || 0;
@@ -336,6 +337,7 @@ async function joinRoom(ws, gamemode, playerVerified) {
       shooting: false,
       shoot_direction: 90,
       loadout: loadout || fallbackloadout,
+      //loadout: fallbackloadout,
       bullets: new Map(),
       spectatingPlayer: playerId,
       emote: 0,
