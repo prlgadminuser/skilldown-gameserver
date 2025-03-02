@@ -30,7 +30,7 @@ function releaseRoomLock() {
 function getAvailableRoom(gamemode, spLevel) {
   const key = `${gamemode}_${spLevel}`;
   const roomList = roomIndex.get(key) || [];
-  return roomList.find(room => room.players.size < gamemodeconfig[gamemode].maxplayers && room.state === 'waiting');
+  return roomList.find(room => room.players.size < room.maxplayers && room.state === 'waiting');
 }
 
 function addRoomToIndex(room) {
@@ -222,6 +222,8 @@ function closeRoom(roomId) {
     });
 
 
+
+    roomStateLock.delete(roomId);
     rooms.delete(roomId);
     removeRoomFromIndex(room)
 
