@@ -544,8 +544,6 @@ function sendBatchedMessages(roomId) {
       return transformed;
     };
 
-    room.dummieskeys = Object.keys(room.dummies);
-
     const dummiesfiltered = transformData(room.dummies);
   
     if (room.state === "playing") {
@@ -655,7 +653,6 @@ function sendBatchedMessages(roomId) {
     pd: playerData, // Always send full player data
     rd: roomdata,
     dm: room.dummiesfiltered,
-    dmk: room.dummieskeys,
     kf: room.newkillfeed,
     // ob: eventsender,
   };
@@ -774,7 +771,6 @@ function sendBatchedMessages(roomId) {
         { key: 'rd', value: newMessage.rd },
         { key: 'kf', value: newMessage.kf },
         { key: 'dm', value: newMessage.dm },
-        { key: 'dmk', value: newMessage.dmk },
         { key: 'cl', value: player.nearbycircles },
         { key: 'an', value: player.nearbyanimations },
         { key: 'td', value: player.teamdata && room.state !== "playing" ? player.teamdata : undefined },

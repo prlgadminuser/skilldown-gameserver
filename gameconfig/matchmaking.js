@@ -2,9 +2,8 @@
 
 const matchmaking = {
   1: {
-    1: 700,
-    2: 800,
-    3: 900
+    1: 1000,
+    2: 2000,
   }
 }
 
@@ -25,7 +24,7 @@ function matchmakingsp(target) {
   }
 
 
-  console.log(matchmakingsp("749"))
+ // console.log(matchmakingsp("999"))
   
 module.exports = {
     matchmaking,
