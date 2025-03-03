@@ -49,7 +49,7 @@ const gamemodeconfig = {
       placereward: [0],
       seasoncoinsreward: [0],
       show_timer: true,
-      custom_map: 3,
+      custom_map: 4,
       teamsize: 1,
       //health_autodamage: true,
     },
