@@ -37,7 +37,7 @@ const gamemodeconfig = {
       healspawner: true,
     },
     3: {
-   //   can_hit_dummies: true,
+      can_hit_dummies: true,
       can_hit_players: false,
       maxplayers: 1,
       respawns_allowed: 1,
@@ -49,7 +49,7 @@ const gamemodeconfig = {
       placereward: [0],
       seasoncoinsreward: [0],
       show_timer: true,
-      custom_map: 5,
+      custom_map: 3,
       teamsize: 1,
       //health_autodamage: true,
     },
