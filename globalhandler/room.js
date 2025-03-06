@@ -594,12 +594,20 @@ function sendBatchedMessages(roomId) {
     if (player.visible !== false) {
       // Create a plain object where the key is bullet.timestamp
       const formattedBullets = {};
-      player.bullets.forEach(bullet => {
-        formattedBullets[bullet.timestamp] =
-          `${Math.round(bullet.x)}:${Math.round(bullet.y)}:${Math.round(bullet.direction)}:${bullet.gunid}`;
-      });
+player.bullets.forEach(bullet => {
+  const timestamp = bullet.timestamp;
+  const x = Math.round(bullet.x);
+  const y = Math.round(bullet.y);
+  const direction = Math.round(bullet.direction);
+  const gunid = bullet.gunid;
+  formattedBullets[timestamp] = `${timestamp}=${x},${y},${direction},${gunid};`;
+});
+
       // If there are bullets, prepend with "$b" and add it to player data
-      const finalBullets = Object.keys(formattedBullets).length > 0 ? "$b" + JSON.stringify(formattedBullets) : undefined;
+      const finalBullets = Object.keys(formattedBullets).length > 0 
+  ? "$b" + Object.values(formattedBullets).join("") 
+  : undefined;
+
 
       if (room.state === "playing") {
 
