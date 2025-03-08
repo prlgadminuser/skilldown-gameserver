@@ -682,6 +682,7 @@ player.bullets.forEach(bullet => {
       id: player.nmb,
       state: player.state,
       h: player.health,
+      sh: player.starthealth,
       s: player.shooting ? 1 : 0,
       g: player.gun,
       kil: player.kills,
